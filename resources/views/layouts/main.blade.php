@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<html lang="..." class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +7,11 @@
 
     <title>@yield('title', 'Gereja St. Ignatius Loyola')</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -39,7 +40,7 @@
                     <div class="flex flex-col justify-center">
                         <a href="/" class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight hover:opacity-80 transition uppercase tracking-wide">
                             Gereja St. Ignatius Loyola<br class="hidden md:block"> 
-                            <span class="text-logo-red">Temanggal</span>
+                            <span class="text-logo-red">Kalasan Tengah</span>
                         </a>
                         <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
                             Paroki Maria Marganingsih Kalasan
@@ -49,38 +50,71 @@
 
                 <!-- HEADER KANAN: Menu Desktop -->
                 <div class="hidden md:flex md:items-center md:gap-x-8">
-                    @php
-                        $menus = [
-                            '/' => 'Beranda',
-                            'sejarah' => 'Sejarah',
-                            'pengumuman' => 'Pengumuman',
-                            'teritorial' => 'Teritorial',
-                            'organisasi' => 'Organisasi'
-                        ];
-                    @endphp
+                    
+                    <!-- 1. BERANDA -->
+                    <a href="/" 
+                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                        Beranda
+                    </a>
 
-                    @foreach($menus as $url => $label)
-                        @php
-                            // Logika Pengecekan Aktif yang Lebih Akurat
-                            $isActive = false;
-                            if ($url === '/') {
-                                // Jika URL adalah '/', cek apakah path saat ini benar-benar '/'
-                                $isActive = request()->path() === '/'; 
-                            } else {
-                                // Untuk menu lain, cek awalan (misal: /pengumuman/detail juga akan aktif)
-                                $isActive = request()->is($url . '*');
-                            }
-                        @endphp
+                    <!-- 2. SEJARAH -->
+                    <a href="/sejarah" 
+                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                        Sejarah
+                    </a>
 
-                        <a href="{{ url($url) }}" 
-                           class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                           {{ $isActive 
-                                ? 'text-logo-red border-logo-red' 
-                                : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' 
-                           }}">
-                            {{ $label }}
-                        </a>
-                    @endforeach
+                    <!-- 3. PENGUMUMAN -->
+                    <a href="/pengumuman" 
+                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                        Pengumuman
+                    </a>
+
+                    <!-- 4. TERITORIAL (DROPDOWN) -->
+                    <div class="relative h-full flex items-center group" x-data="{ dropdownOpen: false }">
+                        <button @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false"
+                                class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
+                                {{ request()->is('teritorial*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                            Teritorial
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <!-- Isi Dropdown -->
+                        <div x-show="dropdownOpen" 
+                             @mouseenter="dropdownOpen = true" 
+                             @mouseleave="dropdownOpen = false"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 translate-y-2"
+                             class="absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden z-50">
+                             
+                             <div class="py-2">
+                                 @if(isset($globalTerritories))
+                                     @foreach($globalTerritories as $wilayah)
+                                        <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
+                                            Wilayah {{ $wilayah->name }}
+                                        </a>
+                                     @endforeach
+                                 @endif
+                                 <a href="/teritorial" class="block px-4 py-3 text-xs text-center text-gray-500 bg-gray-50 font-bold uppercase hover:bg-gray-100">
+                                     Lihat Peta Besar
+                                 </a>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. ORGANISASI -->
+                    <a href="/organisasi" 
+                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                        Organisasi
+                    </a>
+
                 </div>
 
                 <!-- Mobile Menu Button -->
@@ -96,20 +130,37 @@
         </div>
 
         <!-- Mobile Menu Dropdown -->
-        <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50">
+        <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[80vh]">
             <div class="pt-2 pb-4 space-y-1 px-4">
-                @foreach($menus as $url => $label)
-                    @php
-                        $isActive = ($url === '/') ? (request()->path() === '/') : request()->is($url . '*');
-                    @endphp
-                    <a href="{{ url($url) }}" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition
-                        {{ $isActive 
-                            ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' 
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' 
-                        }}">
-                        {{ $label }}
-                    </a>
-                @endforeach
+                
+                <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Beranda
+                </a>
+                
+                <a href="/sejarah" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Sejarah
+                </a>
+
+                <a href="/pengumuman" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('pengumuman*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Pengumuman
+                </a>
+
+                <!-- Mobile Teritorial (List ke bawah) -->
+                <div class="border-t border-b border-gray-100 py-2">
+                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Wilayah Teritorial</div>
+                    @if(isset($globalTerritories))
+                        @foreach($globalTerritories as $wilayah)
+                        <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue hover:bg-blue-50 ml-2 border-l-2 border-gray-200">
+                            {{ $wilayah->name }}
+                        </a>
+                        @endforeach
+                    @endif
+                </div>
+
+                <a href="/organisasi" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('organisasi*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Organisasi
+                </a>
+
             </div>
         </div>
     </nav>
@@ -126,9 +177,10 @@
             </header>
         @endif
 
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            @yield('content')
-        </div>
+        <!-- Hapus container bawaan disini agar banner bisa full width di halaman home -->
+        <!-- Content spesifik halaman akan mengatur containernya sendiri jika perlu -->
+        @yield('content')
+        
     </main>
 
     <!-- Footer -->
@@ -153,36 +205,36 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="hover:text-logo-yellow transition">Beranda</a></li>
                         <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Pengumuman</a></li>
+                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Jadwal Misa & Pengumuman</a></li>
                         <li><a href="/teritorial" class="hover:text-logo-yellow transition">Pembagian Wilayah</a></li>
-                        <li><a href="https://gerejakalasan.org/" class="hover:text-logo-yellow transition">Paroki Maria Marganingsih Kalasan</a></li>
                     </ul>
                 </div>
 
-                <!-- FOOTER KANAN: Kritik & Saran -->
-            <div>
-                <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
-                <p class="text-sm text-gray-100 mb-3">
-                    Masukan Anda sangat berarti bagi perkembangan pelayanan gereja kami.
-                </p>
+                <!-- Kritik Saran -->
+                <div>
+                    <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
+                    <p class="text-sm text-gray-100 mb-3">
+                        Masukan Anda sangat berarti bagi perkembangan pelayanan gereja kami.
+                    </p>
 
-                <!-- PESAN SUKSES (Muncul setelah kirim) -->
-                @if(session('success_feedback'))
-                    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
-                        {{ session('success_feedback') }}
-                    </div>
-                @endif
+                    @if(session('success_feedback'))
+                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
+                            {{ session('success_feedback') }}
+                        </div>
+                    @endif
 
-                <form action="{{ route('feedback.store') }}" method="POST" class="space-y-2">
-                    @csrf
-                    <textarea name="message" rows="3" required 
-                        class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" 
-                        placeholder="Tulis pesan Anda di sini..."></textarea>
-                    
-                    <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
-                        Kirim Pesan
-                    </button>
-                </form>
+                    <form action="{{ route('feedback.store') }}" method="POST" class="space-y-2">
+                        @csrf
+                        <textarea name="message" rows="3" required 
+                            class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" 
+                            placeholder="Tulis pesan Anda di sini..."></textarea>
+                        
+                        <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
+                            Kirim Pesan
+                        </button>
+                    </form>
+                </div>
+
             </div>
             
             <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">

@@ -69,7 +69,23 @@ class PageController extends Controller
         return view('pages.detail-pengumuman', compact('announcement', 'others'));
     }
 
-    
-    public function teritorial() { return view('pages.teritorial'); }
+
+    public function teritorial()
+    {
+        // Ambil semua wilayah beserta data lingkungannya
+        $territories = \App\Models\Territory::with('lingkungans')->get();
+        
+        // Hitung total lingkungan untuk statistik
+        $totalLingkungan = \App\Models\Lingkungan::count();
+
+        return view('pages.teritorial', compact('territories', 'totalLingkungan'));
+    }
+    public function showTeritorial($slug)
+    {
+        // Cari wilayah berdasarkan slug, load juga data lingkungannya
+        $territory = \App\Models\Territory::where('slug', $slug)->with('lingkungans')->firstOrFail();
+        
+        return view('pages.detail-teritorial', compact('territory'));
+    }
     public function organisasi() { return view('pages.organisasi'); }
 }

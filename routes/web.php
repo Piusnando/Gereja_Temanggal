@@ -19,8 +19,11 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/sejarah', [PageController::class, 'sejarah']);
 Route::get('/pengumuman', [PageController::class, 'pengumuman']);
 Route::get('/pengumuman/{id}', [PageController::class, 'detailPengumuman'])->name('pengumuman.detail');
-Route::get('/teritorial', [PageController::class, 'teritorial']);
+// Route Detail Wilayah (Dinamis berdasarkan slug)
+Route::get('/teritorial', [PageController::class, 'teritorial'])->name('teritorial.index');
+Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->name('teritorial.show');
 Route::get('/organisasi', [PageController::class, 'organisasi']);
+
 
 
 //Route Public (Untuk kirim pesan dari Footer)
@@ -62,5 +65,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Route Kritik Saran Admin
     Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('admin.feedback.index');
     Route::delete('/feedback/{id}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
+
     
 });

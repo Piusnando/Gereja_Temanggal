@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View; // Tambahkan ini
-use App\Models\SiteSetting; // Tambahkan ini
-use Illuminate\Support\Facades\Schema; // Tambahkan ini
+use App\Models\Territory;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProvider;
+use App\Models\SiteSetting; // Tambahkan ini
+use Illuminate\Support\Facades\View; // Tambahkan ini
+use Illuminate\Support\Facades\Schema; // Tambahkan ini
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,12 @@ class AppServiceProvider extends ServiceProvider
 
             // Gunakan Tailwind untuk Pagination
             Paginator::useTailwind();
+        }
+
+        // Share data Wilayah ke semua view untuk Navbar Dropdown
+        if (\Illuminate\Support\Facades\Schema::hasTable('territories')) {
+            $globalTerritories = Territory::all();
+            View::share('globalTerritories', $globalTerritories);
         }
     }
 }

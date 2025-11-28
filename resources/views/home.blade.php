@@ -61,8 +61,8 @@
             <div class="max-w-4xl drop-shadow-lg pointer-events-auto mt-10">
                 <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-2 text-logo-yellow">Selamat Datang di Website Resmi</h2>
                 <h1 class="text-3xl md:text-6xl font-extrabold leading-tight mb-4 text-white drop-shadow-md">
-                    Gereja St. Ignatius<br>
-                    <span class="text-red-500">Loyola Temanggal</span>
+                    Gereja St. Ignatius Loyola<br>
+                    <span class="text-red-500">Kalasan Tengah</span>
                 </h1>
                 <p class="text-sm md:text-lg font-medium text-gray-200 mt-2 bg-black/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">
                     Paroki Maria Marganingsih Kalasan
