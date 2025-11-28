@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Auth\LoginController; // <-- Tambahkan ini
@@ -18,6 +20,10 @@ Route::get('/sejarah', [PageController::class, 'sejarah']);
 Route::get('/pengumuman', [PageController::class, 'pengumuman']);
 Route::get('/teritorial', [PageController::class, 'teritorial']);
 Route::get('/organisasi', [PageController::class, 'organisasi']);
+
+
+//Route Public (Untuk kirim pesan dari Footer)
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 
 
 /*
@@ -51,5 +57,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Route Pengumuman
     Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
+
+    // Route Kritik Saran Admin
+    Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('admin.feedback.index');
+    Route::delete('/feedback/{id}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
     
 });

@@ -159,18 +159,30 @@
                     </ul>
                 </div>
 
-                <!-- Kritik Saran -->
-                <div>
-                    <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
-                    <form action="#" method="POST" class="space-y-2">
-                        @csrf
-                        <textarea name="message" rows="3" class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" placeholder="Tulis pesan Anda..."></textarea>
-                        <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
-                            Kirim Pesan
-                        </button>
-                    </form>
-                </div>
+                <!-- FOOTER KANAN: Kritik & Saran -->
+            <div>
+                <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
+                <p class="text-sm text-gray-100 mb-3">
+                    Masukan Anda sangat berarti bagi perkembangan pelayanan gereja kami.
+                </p>
 
+                <!-- PESAN SUKSES (Muncul setelah kirim) -->
+                @if(session('success_feedback'))
+                    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
+                        {{ session('success_feedback') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('feedback.store') }}" method="POST" class="space-y-2">
+                    @csrf
+                    <textarea name="message" rows="3" required 
+                        class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" 
+                        placeholder="Tulis pesan Anda di sini..."></textarea>
+                    
+                    <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
+                        Kirim Pesan
+                    </button>
+                </form>
             </div>
             
             <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">

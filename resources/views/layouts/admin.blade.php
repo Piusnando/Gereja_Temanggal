@@ -59,6 +59,14 @@
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.announcements*') ? 'text-yellow-400' : 'group-hover:text-yellow-400' }} transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                 <span class="font-medium">Pengumuman</span>
             </a>
+
+            <!-- 4. KRITIK & SARAN -->
+            <a href="{{ route('admin.feedback.index') }}" 
+            class="flex items-center px-4 py-3 rounded-lg transition-colors group {{ request()->routeIs('admin.feedback*') ? 'bg-active text-white shadow-lg' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                <!-- Icon Chat Bubble -->
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.feedback*') ? 'text-yellow-400' : 'group-hover:text-yellow-400' }} transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                <span class="font-medium">Kritik & Saran</span>
+            </a>
             
             <!-- Tambahkan menu lain di sini nanti -->
         </nav>
