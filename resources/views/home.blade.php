@@ -146,9 +146,9 @@
                         {{ Str::limit($item->content, 120) }}
                     </p>
                     
-                    <a href="#" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 mt-auto transition">
+                    <a href="{{ route('pengumuman.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 mt-auto transition">
                         Baca Selengkapnya
-                        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <svg ... >...</svg>
                     </a>
                 </div>
             </div>

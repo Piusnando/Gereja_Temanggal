@@ -52,6 +52,24 @@ class PageController extends Controller
             'currentCategory' => $request->category
         ]);
     }
+
+    public function detailPengumuman($id)
+    {
+        // 1. Ambil data pengumuman berdasarkan ID
+        // Jika tidak ketemu, otomatis halaman 404
+        $announcement = \App\Models\Announcement::findOrFail($id);
+
+        // 2. Ambil beberapa pengumuman lain untuk Sidebar (Berita Terkait)
+        // Kecuali pengumuman yang sedang dibuka
+        $others = \App\Models\Announcement::where('id', '!=', $id)
+                    ->orderBy('event_date', 'desc')
+                    ->take(5)
+                    ->get();
+
+        return view('pages.detail-pengumuman', compact('announcement', 'others'));
+    }
+
+    
     public function teritorial() { return view('pages.teritorial'); }
     public function organisasi() { return view('pages.organisasi'); }
 }

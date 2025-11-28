@@ -18,6 +18,7 @@ use App\Http\Controllers\Auth\LoginController; // <-- Tambahkan ini
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/sejarah', [PageController::class, 'sejarah']);
 Route::get('/pengumuman', [PageController::class, 'pengumuman']);
+Route::get('/pengumuman/{id}', [PageController::class, 'detailPengumuman'])->name('pengumuman.detail');
 Route::get('/teritorial', [PageController::class, 'teritorial']);
 Route::get('/organisasi', [PageController::class, 'organisasi']);
 
