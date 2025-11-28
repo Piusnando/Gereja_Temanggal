@@ -237,24 +237,33 @@
                     </div>
 
                     <!-- Box Teritorial -->
-                    <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-logo-blue grow relative overflow-hidden">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-logo-blue flex flex-col relative overflow-hidden h-full">
                         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                             <span class="bg-blue-100 text-logo-blue p-2 rounded-lg mr-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </span>
                             Teritorial Gereja
                         </h2>
+                        
                         <p class="text-gray-600 mb-6 leading-relaxed">
-                            Wilayah pelayanan Pastoral di Gereja St. Ignatius Loyola mencakup beberapa lingkungan di sekitar Kalasan.
+                            Wilayah pelayanan Pastoral di Gereja St. Ignatius Loyola mencakup 
+                            <strong>{{ $territories->count() }} Wilayah</strong> utama.
                         </p>
-                        <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100">
-                            <ul class="grid grid-cols-2 gap-3 text-sm text-gray-700 font-medium">
-                                <li class="flex items-center"><span class="w-2 h-2 bg-logo-blue rounded-full mr-2"></span>Lingkungan A</li>
-                                <li class="flex items-center"><span class="w-2 h-2 bg-logo-blue rounded-full mr-2"></span>Lingkungan B</li>
-                                <li class="flex items-center"><span class="w-2 h-2 bg-logo-blue rounded-full mr-2"></span>Lingkungan C</li>
-                                <li class="flex items-center"><span class="w-2 h-2 bg-logo-blue rounded-full mr-2"></span>Lingkungan D</li>
+
+                        <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 grow">
+                            <!-- Loop Data Wilayah dari Database -->
+                            <ul class="grid grid-cols-1 gap-3 text-sm text-gray-700 font-medium">
+                                @forelse($territories as $wilayah)
+                                    <li class="flex items-start">
+                                        <span class="w-2 h-2 bg-logo-blue rounded-full mr-2 mt-1.5 shrink-0"></span>
+                                        <span class="leading-tight">Wilayah {{ $wilayah->name }}</span>
+                                    </li>
+                                @empty
+                                    <li class="text-gray-400 italic">Data wilayah belum tersedia.</li>
+                                @endforelse
                             </ul>
                         </div>
+
                         <div class="mt-8">
                             <a href="/teritorial" class="block w-full text-center py-3 bg-white border-2 border-logo-blue text-logo-blue rounded-xl font-bold hover:bg-logo-blue hover:text-white transition duration-300 shadow-sm">
                                 Lihat Peta Wilayah

@@ -13,14 +13,16 @@ class PageController extends Controller
     {
         $banners = \App\Models\Banner::where('is_active', true)->latest()->get();
         
-        // PERBAIKAN DISINI:
-        // Menggunakan orderBy('event_date', 'desc') 
-        // Artinya: Tanggal acara yang paling baru/masa depan akan tampil paling atas.
+        // Pengumuman terbaru
         $announcements = \App\Models\Announcement::orderBy('event_date', 'desc')
                             ->take(3)
                             ->get();
 
-        return view('home', compact('banners', 'announcements'));
+        // TAMBAHAN: Ambil data Wilayah untuk ditampilkan di box teritorial
+        // Kita ambil semua wilayah (karena cuma ada 4)
+        $territories = \App\Models\Territory::all();
+
+        return view('home', compact('banners', 'announcements', 'territories'));
     }
 
     // Fungsi halaman lain
