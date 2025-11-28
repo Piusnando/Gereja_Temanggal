@@ -153,8 +153,9 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="hover:text-logo-yellow transition">Beranda</a></li>
                         <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Jadwal Misa & Pengumuman</a></li>
+                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Pengumuman</a></li>
                         <li><a href="/teritorial" class="hover:text-logo-yellow transition">Pembagian Wilayah</a></li>
+                        <li><a href="https://gerejakalasan.org/" class="hover:text-logo-yellow transition">Paroki Maria Marganingsih Kalasan</a></li>
                     </ul>
                 </div>
 
