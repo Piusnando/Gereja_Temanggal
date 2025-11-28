@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View; // Tambahkan ini
 use App\Models\SiteSetting; // Tambahkan ini
 use Illuminate\Support\Facades\Schema; // Tambahkan ini
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
 
             // Bagikan variabel $globalLogo ke semua view
             View::share('globalLogo', $globalLogo);
+
+            // Gunakan Tailwind untuk Pagination
+            Paginator::useTailwind();
         }
     }
 }

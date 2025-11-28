@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="..." class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,41 +26,58 @@
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
 
     <!-- Navbar -->
-    <!-- PERUBAHAN DISINI: -->
-    <!-- Menghapus 'sticky top-0'. Diganti 'relative' agar z-index tetap jalan tapi tidak nempel -->
-    <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm" x-data="{ open: false }">
+    <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm transition-all duration-300" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-24">
                 
                 <!-- HEADER KIRI: Logo & Nama -->
-                <div class="flex items-center space-x-3">
-                    
-                    <!-- Logo Global dari AppServiceProvider -->
+                <div class="flex items-center gap-4">
                     <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
                          alt="Logo Gereja" 
-                         class="h-16 w-auto object-contain">
+                         class="h-14 w-auto object-contain drop-shadow-sm hover:scale-105 transition duration-300">
                     
                     <div class="flex flex-col justify-center">
-                        <a href="/" class="text-lg md:text-xl font-bold text-logo-blue leading-tight hover:opacity-80 transition uppercase tracking-wide">
-                            Gereja St. Ignatius Loyola<br class="hidden md:block"> <span class="text-logo-red">Kalasan Tengah</span>
+                        <a href="/" class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight hover:opacity-80 transition uppercase tracking-wide">
+                            Gereja St. Ignatius Loyola<br class="hidden md:block"> 
+                            <span class="text-logo-red">Temanggal</span>
                         </a>
-                        <span class="text-xs md:text-sm text-gray-600 font-medium mt-0.5">
+                        <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
                             Paroki Maria Marganingsih Kalasan
                         </span>
                     </div>
                 </div>
 
                 <!-- HEADER KANAN: Menu Desktop -->
-                <div class="hidden md:flex md:items-center md:space-x-8">
-                    @foreach([
-                        '/' => 'Beranda',
-                        'sejarah' => 'Sejarah',
-                        'pengumuman' => 'Pengumuman',
-                        'teritorial' => 'Teritorial',
-                        'organisasi' => 'Organisasi'
-                    ] as $route => $label)
-                        <a href="{{ url($route) }}" 
-                           class="{{ request()->is(ltrim($route, '/')) ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-300' }} border-b-2 px-1 pt-1 text-sm font-bold uppercase transition duration-150 ease-in-out h-full flex items-center">
+                <div class="hidden md:flex md:items-center md:gap-x-8">
+                    @php
+                        $menus = [
+                            '/' => 'Beranda',
+                            'sejarah' => 'Sejarah',
+                            'pengumuman' => 'Pengumuman',
+                            'teritorial' => 'Teritorial',
+                            'organisasi' => 'Organisasi'
+                        ];
+                    @endphp
+
+                    @foreach($menus as $url => $label)
+                        @php
+                            // Logika Pengecekan Aktif yang Lebih Akurat
+                            $isActive = false;
+                            if ($url === '/') {
+                                // Jika URL adalah '/', cek apakah path saat ini benar-benar '/'
+                                $isActive = request()->path() === '/'; 
+                            } else {
+                                // Untuk menu lain, cek awalan (misal: /pengumuman/detail juga akan aktif)
+                                $isActive = request()->is($url . '*');
+                            }
+                        @endphp
+
+                        <a href="{{ url($url) }}" 
+                           class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                           {{ $isActive 
+                                ? 'text-logo-red border-logo-red' 
+                                : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' 
+                           }}">
                             {{ $label }}
                         </a>
                     @endforeach
@@ -67,8 +85,8 @@
 
                 <!-- Mobile Menu Button -->
                 <div class="-mr-2 flex items-center md:hidden">
-                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition">
+                        <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -77,17 +95,18 @@
             </div>
         </div>
 
-        <!-- Mobile Menu -->
-        <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden bg-white border-t border-gray-200 shadow-lg absolute w-full left-0 z-50">
-            <div class="pt-2 pb-3 space-y-1 px-2">
-                @foreach([
-                    '/' => 'Beranda',
-                    'sejarah' => 'Sejarah',
-                    'pengumuman' => 'Pengumuman',
-                    'teritorial' => 'Teritorial',
-                    'organisasi' => 'Organisasi'
-                ] as $route => $label)
-                    <a href="{{ url($route) }}" class="block px-3 py-2 rounded-md text-base font-bold uppercase {{ request()->is(ltrim($route, '/')) ? 'bg-blue-50 text-logo-red' : 'text-gray-700 hover:text-logo-blue hover:bg-gray-50' }}">
+        <!-- Mobile Menu Dropdown -->
+        <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50">
+            <div class="pt-2 pb-4 space-y-1 px-4">
+                @foreach($menus as $url => $label)
+                    @php
+                        $isActive = ($url === '/') ? (request()->path() === '/') : request()->is($url . '*');
+                    @endphp
+                    <a href="{{ url($url) }}" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition
+                        {{ $isActive 
+                            ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' 
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' 
+                        }}">
                         {{ $label }}
                     </a>
                 @endforeach
