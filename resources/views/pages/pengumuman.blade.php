@@ -120,13 +120,11 @@
                         
                         <!-- Untuk saat ini link ke detail belum ada, kita arahkan ke # dulu atau modal -->
                         <div class="mt-auto pt-4 border-t border-gray-100">
-                             <!-- Anda bisa membuat halaman detail nanti: href="/pengumuman/{{ $item->id }}" -->
-                            <button class="text-sm font-bold text-logo-red hover:text-red-800 flex items-center transition cursor-pointer">
-                                <a href="{{ route('pengumuman.detail', $item->id) }}" class="text-sm font-bold text-logo-red hover:text-red-800 flex items-center transition cursor-pointer">
-                                    Baca Selengkapnya
-                                </a>
-                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </button>
+                            <a href="{{ route('pengumuman.detail', $item->id) }}" class="text-sm font-bold text-logo-red hover:text-red-800 flex items-center transition cursor-pointer group">
+                                Baca Selengkapnya
+                                <!-- Tambahkan group-hover pada icon agar bergerak saat link dihover -->
+                                <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
                         </div>
                     </div>
                 </div>

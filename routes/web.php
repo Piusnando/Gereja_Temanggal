@@ -3,10 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Admin\LiturgyController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Auth\LoginController; // <-- Tambahkan ini
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,8 @@ Route::get('/pengumuman/{id}', [PageController::class, 'detailPengumuman'])->nam
 Route::get('/teritorial', [PageController::class, 'teritorial'])->name('teritorial.index');
 Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->name('teritorial.show');
 Route::get('/organisasi', [PageController::class, 'organisasi']);
+Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
+Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
 
 
 
@@ -66,5 +69,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('admin.feedback.index');
     Route::delete('/feedback/{id}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
 
+    // 1. DATABASE PETUGAS
+    Route::get('/liturgy/personnels', [LiturgyController::class, 'personnelIndex'])->name('admin.liturgy.personnels');
+    Route::get('/liturgy/personnels/create', [LiturgyController::class, 'personnelCreate'])->name('admin.liturgy.personnels.create');
+    Route::post('/liturgy/personnels', [LiturgyController::class, 'personnelStore'])->name('admin.liturgy.personnels.store');
+
+    // 2. KELOLA JADWAL
+    Route::get('/liturgy/schedules', [LiturgyController::class, 'scheduleIndex'])->name('admin.liturgy.schedules');
+    Route::get('/liturgy/schedules/create', [LiturgyController::class, 'scheduleCreate'])->name('admin.liturgy.schedules.create');
+    Route::post('/liturgy/schedules', [LiturgyController::class, 'scheduleStore'])->name('admin.liturgy.schedules.store');
     
+    // 3. ASSIGN (Penugasan)
+    Route::get('/liturgy/schedules/{id}/assign', [LiturgyController::class, 'scheduleEdit'])->name('admin.liturgy.assign');
+    Route::post('/liturgy/schedules/{id}/assign', [LiturgyController::class, 'assignmentStore'])->name('admin.liturgy.assign.store');
+    Route::delete('/liturgy/assignments/{id}', [LiturgyController::class, 'assignmentDestroy'])->name('admin.liturgy.assign.destroy');
 });

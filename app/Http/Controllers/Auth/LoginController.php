@@ -23,11 +23,9 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        // Coba Login (Laravel otomatis cek hash password)
+        // Coba Login
        if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-
-            // PASTIKAN INI KE ADMIN, BUKAN '/'
             return redirect()->intended('admin/settings'); 
         }
 

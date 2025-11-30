@@ -90,4 +90,29 @@ class PageController extends Controller
         return view('pages.detail-teritorial', compact('territory'));
     }
     public function organisasi() { return view('pages.organisasi'); }
+
+    public function jadwalPetugas() {
+        $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
+                        // Tambahkan 'assignments.lingkungan' agar data lingkungan ikut termuat
+                        ->with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])
+                        ->orderBy('event_at', 'asc')
+                        ->get();
+        return view('pages.jadwal-petugas', compact('schedules'));
+    }
+
+    public function showPetugasRole($role)
+    {
+        // Ambil jadwal MASA DEPAN yang memiliki petugas dengan peran tersebut
+        $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
+            ->whereHas('assignments', function($q) use ($role) {
+                $q->where('role', $role);
+            })
+            ->with(['assignments' => function($q) use ($role) {
+                $q->where('role', $role)->with(['personnel.lingkungan', 'lingkungan']);
+            }])
+            ->orderBy('event_at', 'asc')
+            ->get();
+
+        return view('pages.petugas-role', compact('schedules', 'role'));
+    }
 }

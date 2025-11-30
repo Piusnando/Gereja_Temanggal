@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<html lang="..." class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,11 +22,17 @@
         .text-logo-red { color: #DC2626; }
         .bg-logo-red { background-color: #DC2626; }
         .text-logo-yellow { color: #FFCC00; }
+        
+        /* Fix Dropdown agar tidak tertutup */
+        .nav-dropdown {
+            z-index: 9999 !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
 
     <!-- Navbar -->
+    <!-- PERBAIKAN: Tambahkan 'relative z-50' agar selalu di atas elemen lain -->
     <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm transition-all duration-300" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-24">
@@ -50,7 +55,7 @@
                 </div>
 
                 <!-- HEADER KANAN: Menu Desktop -->
-                <div class="hidden md:flex md:items-center md:gap-x-8">
+                <div class="hidden lg:flex lg:items-center lg:gap-x-6 xl:gap-x-8">
                     
                     <!-- 1. BERANDA -->
                     <a href="/" 
@@ -82,7 +87,6 @@
                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
-                        <!-- Isi Dropdown -->
                         <div x-show="dropdownOpen" 
                              @mouseenter="dropdownOpen = true" 
                              @mouseleave="dropdownOpen = false"
@@ -92,7 +96,7 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden z-50">
+                             class="nav-dropdown absolute top-[90%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
                              
                              <div class="py-2">
                                  @if(isset($globalTerritories))
@@ -116,10 +120,43 @@
                         Organisasi
                     </a>
 
+                    <!-- 6. PETUGAS LITURGI (DROPDOWN) -->
+                    <div class="relative h-full flex items-center group" x-data="{ liturgiOpen: false }">
+                        <button @mouseenter="liturgiOpen = true" @mouseleave="liturgiOpen = false"
+                                class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
+                                {{ request()->is('petugas/*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                            Petugas Liturgi
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="liturgiOpen" 
+                             @mouseenter="liturgiOpen = true" 
+                             @mouseleave="liturgiOpen = false"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 translate-y-2"
+                             class="nav-dropdown absolute top-[90%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+                             
+                             <div class="py-2">
+                                 @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
+                                 <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
+                                     {{ $tugas }}
+                                 </a>
+                                 @endforeach
+                                 <a href="/jadwal-petugas" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
+                                     Lihat Semua Jadwal
+                                 </a>
+                             </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <div class="-mr-2 flex items-center md:hidden">
+                <div class="-mr-2 flex items-center lg:hidden">
                     <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition">
                         <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -131,7 +168,7 @@
         </div>
 
         <!-- Mobile Menu Dropdown -->
-        <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[80vh]">
+        <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[80vh]">
             <div class="pt-2 pb-4 space-y-1 px-4">
                 
                 <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
@@ -146,7 +183,7 @@
                     Pengumuman
                 </a>
 
-                <!-- Mobile Teritorial (List ke bawah) -->
+                <!-- Mobile Teritorial -->
                 <div class="border-t border-b border-gray-100 py-2">
                     <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Wilayah Teritorial</div>
                     @if(isset($globalTerritories))
@@ -161,6 +198,19 @@
                 <a href="/organisasi" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('organisasi*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
                     Organisasi
                 </a>
+
+                <!-- Mobile Petugas -->
+                <div class="border-t border-gray-100 py-2">
+                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Petugas Liturgi</div>
+                    @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
+                    <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue hover:bg-blue-50 ml-2 border-l-2 border-gray-200">
+                        {{ $tugas }}
+                    </a>
+                    @endforeach
+                    <a href="/jadwal-petugas" class="block px-4 py-2 text-sm text-logo-blue font-bold ml-2">
+                        Lihat Semua Jadwal →
+                    </a>
+                </div>
 
             </div>
         </div>
@@ -178,14 +228,11 @@
             </header>
         @endif
 
-        <!-- Hapus container bawaan disini agar banner bisa full width di halaman home -->
-        <!-- Content spesifik halaman akan mengatur containernya sendiri jika perlu -->
         @yield('content')
-        
     </main>
 
     <!-- Footer -->
-    <footer class="bg-logo-blue text-white mt-auto border-t-4 border-logo-red">
+    <footer class="bg-logo-blue text-white mt-auto border-t-4 border-logo-red relative z-10">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
@@ -214,10 +261,6 @@
                 <!-- Kritik Saran -->
                 <div>
                     <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
-                    <p class="text-sm text-gray-100 mb-3">
-                        Masukan Anda sangat berarti bagi perkembangan pelayanan gereja kami.
-                    </p>
-
                     @if(session('success_feedback'))
                         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
                             {{ session('success_feedback') }}
@@ -229,13 +272,11 @@
                         <textarea name="message" rows="3" required 
                             class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" 
                             placeholder="Tulis pesan Anda di sini..."></textarea>
-                        
                         <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
                             Kirim Pesan
                         </button>
                     </form>
                 </div>
-
             </div>
             
             <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">
