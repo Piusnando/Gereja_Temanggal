@@ -21,8 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'role', // <--- Tambahkan ini
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -32,6 +33,12 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    // Helper untuk mengecek role (opsional tapi sangat berguna)
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 
     /**
      * Get the attributes that should be cast.

@@ -26,7 +26,11 @@ class LoginController extends Controller
         // Coba Login
        if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-            return redirect()->intended('admin/settings'); 
+
+            // Pastikan ini mengarah ke /admin/liturgy/schedules atau /admin/profile
+            // Jangan ke /admin/users karena itu dibatasi middleware super_admin
+            // Paling aman ke dashboard umum atau jadwal:
+            return redirect()->route('admin.liturgy.schedules'); 
         }
 
         // Jika gagal, kembalikan dengan error

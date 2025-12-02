@@ -1,3 +1,26 @@
 Nama : AdminGereja
-Email : admingereja@kalteng.com
+Email : admin@gerejatemanggal.com
 pass : adminIgnatiusLoyol@2026.
+
+Nama : MisdinarKalteng
+Email : misdinar@gerejatemanggal.com
+pass : misdinarkalteng
+
+Nama : Pengurus Gereja
+Email : pengurus@gerejatemanggal.com
+pass : ignatiusloyola2026
+
+Nama : Koordinator Musik
+Email : musik@gerejatemanggal.com
+pass : musikTemanggal2026
+
+Nama : Lektor
+Email : lektor@gerejatemanggal.com
+pass : lektortemanggal
+
+
+cara drploy local
+
+php artisan serve --host=0.0.0.0 --port=8000
+
+ngrok http 8000
