@@ -1,7 +1,23 @@
 <tr class="hover:bg-gray-50 transition">
-    <td class="px-5 py-4 border-b border-gray-200 text-sm font-bold text-gray-800">
-        {{ $person->name }}
+    <!-- KOLOM NAMA DENGAN COUNTER -->
+    <td class="px-5 py-4 border-b border-gray-200 text-sm">
+        <div class="flex items-center">
+            <span class="font-bold text-gray-800">{{ $person->name }}</span>
+            
+            {{-- Badge Jumlah Tugas --}}
+            @if($person->assignments_count > 0)
+                <span class="ml-2 bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200" title="Total Penugasan">
+                    {{ $person->assignments_count }}x
+                </span>
+            @else
+                <span class="ml-2 text-gray-400 text-[10px] italic">
+                    (Baru)
+                </span>
+            @endif
+        </div>
     </td>
+
+    <!-- KOLOM ASAL (Tetap) -->
     <td class="px-5 py-4 border-b border-gray-200 text-sm">
         @if($person->is_external)
             {{ $person->external_description }}
@@ -9,6 +25,8 @@
             {{ $person->lingkungan->name ?? '-' }}
         @endif
     </td>
+
+    <!-- KOLOM STATUS (Tetap) -->
     <td class="px-5 py-4 border-b border-gray-200 text-sm">
         @if($person->is_external)
             <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">Luar Paroki</span>
@@ -16,8 +34,9 @@
             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">Internal</span>
         @endif
     </td>
+
+    <!-- KOLOM AKSI (Tetap) -->
     <td class="px-5 py-4 border-b border-gray-200 text-sm text-center">
-        <!-- Tombol Hapus -->
         <form action="{{ route('admin.liturgy.personnels.destroy', $person->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data {{ $person->name }}?');">
             @csrf
             @method('DELETE')

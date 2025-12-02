@@ -27,22 +27,28 @@ class LiturgyController extends Controller
 
         // 2. LOGIKA ADMIN MELIHAT SEMUA (TAMPILAN TERPISAH PER KATEGORI)
         if (!$type) {
+            // Tambahkan ->withCount('assignments') di setiap query
             $groupedData = [
-                'Misdinar' => LiturgyPersonnel::with('lingkungan')->where('type', 'Misdinar')->orderBy('name')->get(),
-                'Lektor'   => LiturgyPersonnel::with('lingkungan')->where('type', 'Lektor')->orderBy('name')->get(),
-                'Mazmur'   => LiturgyPersonnel::with('lingkungan')->where('type', 'Mazmur')->orderBy('name')->get(),
-                'Organis'  => LiturgyPersonnel::with('lingkungan')->where('type', 'Organis')->orderBy('name')->get(),
-                // Tambahkan kategori lain jika perlu
+                'Misdinar' => LiturgyPersonnel::with('lingkungan')->withCount('assignments')->where('type', 'Misdinar')->orderBy('name')->get(),
+                'Lektor'   => LiturgyPersonnel::with('lingkungan')->withCount('assignments')->where('type', 'Lektor')->orderBy('name')->get(),
+                'Mazmur'   => LiturgyPersonnel::with('lingkungan')->withCount('assignments')->where('type', 'Mazmur')->orderBy('name')->get(),
+                'Organis'  => LiturgyPersonnel::with('lingkungan')->withCount('assignments')->where('type', 'Organis')->orderBy('name')->get(),
             ];
 
             return view('admin.liturgy.personnels', compact('groupedData', 'type'));
         }
 
-        // 3. LOGIKA SATU JENIS SAJA (TAMPILAN PAGINATION)
-        $query = LiturgyPersonnel::with('lingkungan');
+        
+
+        // 3. LOGIKA SATU JENIS SAJA (PAGINATION)
+        
+        // Pastikan ada ->withCount('assignments')
+        $query = LiturgyPersonnel::with('lingkungan')->withCount('assignments'); 
+        
         if ($type) {
             $query->where('type', $type);
         }
+
         $personnels = $query->latest()->paginate(15);
         
         return view('admin.liturgy.personnels', compact('personnels', 'type'));
