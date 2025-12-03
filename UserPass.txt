@@ -22,6 +22,10 @@ Nama : OMK
 Email : omk@gerejatemanggal.com
 pass : Donbosco2026
 
+Nama : PIA/PIR
+Email : piapir@gerejatemanggal.com
+pass : piapirtemanggal
+
 cara drploy local
 
 php artisan serve --host=0.0.0.0 --port=8000

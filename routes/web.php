@@ -119,10 +119,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     });
 
     // 6. ORGANISASI (Admin & Pengurus Gereja)
-    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir'])->group(function () {
+    Route::middleware(['role:admin,pengurus_gereja,omk,misdinar,lektor,direktur_musik,pia_pir'])->group(function () {
         
         // 1. Route Pengumuman (PINDAHKAN KE SINI)
-        Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
+        Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir'])->group(function () {
+            Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
+        });
         
         // 2. Route Organisasi
         Route::get('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'index'])->name('admin.organization.index');
