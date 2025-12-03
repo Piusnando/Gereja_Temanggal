@@ -32,57 +32,67 @@
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
 
     <!-- Navbar -->
-    <!-- PERBAIKAN: Tambahkan 'relative z-50' agar selalu di atas elemen lain -->
     <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm transition-all duration-300" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-24">
+            <!-- Gunakan 'justify-between' agar Logo di KIRI dan Menu di KANAN mentok -->
+            <div class="flex justify-between items-center h-24">
                 
-                <!-- HEADER KIRI: Logo & Nama -->
-                <div class="flex items-center gap-4">
-                    <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
-                         alt="Logo Gereja" 
-                         class="h-14 w-auto object-contain drop-shadow-sm hover:scale-105 transition duration-300">
-                    
-                    <div class="flex flex-col justify-center">
-                        <a href="/" class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight hover:opacity-80 transition uppercase tracking-wide">
-                            Gereja St. Ignatius Loyola<br class="hidden md:block"> 
-                            <span class="text-logo-red">Kalasan Tengah</span>
-                        </a>
-                        <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
-                            Paroki Maria Marganingsih Kalasan
-                        </span>
-                    </div>
+                <!-- ============================================ -->
+                <!-- 1. HEADER KIRI: Logo & Nama (POJOK KIRI)     -->
+                <!-- ============================================ -->
+                <div class="flex justify-start lg:w-0 lg:flex-1">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <!-- Logo -->
+                        <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
+                             alt="Logo Gereja" 
+                             class="h-14 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition duration-300">
+                        
+                        <!-- Teks Gereja -->
+                        <div class="flex flex-col justify-center">
+                            <span class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight uppercase tracking-wide group-hover:text-blue-800 transition">
+                                Gereja St. Ignatius Loyola
+                            </span>
+                            <span class="text-lg md:text-xl font-extrabold text-logo-red leading-none uppercase tracking-wide group-hover:text-red-700 transition">
+                                Kalasan Tengah
+                            </span>
+                            <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-1 uppercase">
+                                Paroki Maria Marganingsih Kalasan
+                            </span>
+                        </div>
+                    </a>
                 </div>
 
-                <!-- HEADER KANAN: Menu Desktop -->
-                <div class="hidden lg:flex lg:items-center lg:gap-x-6 xl:gap-x-8">
+                <!-- ============================================ -->
+                <!-- 2. HEADER KANAN: Menu Desktop (POJOK KANAN)  -->
+                <!-- ============================================ -->
+                <div class="hidden lg:flex lg:items-center lg:gap-x-8">
                     
                     <!-- 1. BERANDA -->
                     <a href="/" 
-                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Beranda
                     </a>
 
                     <!-- 2. SEJARAH -->
                     <a href="/sejarah" 
-                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Sejarah
                     </a>
 
                     <!-- 3. PENGUMUMAN -->
                     <a href="/pengumuman" 
-                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Pengumuman
                     </a>
 
                     <!-- 4. TERITORIAL (DROPDOWN) -->
-                    <div class="relative h-full flex items-center group" x-data="{ dropdownOpen: false }">
+                    <div class="relative h-24 flex items-center group" x-data="{ dropdownOpen: false }">
                         <button @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false"
-                                class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
-                                {{ request()->is('teritorial*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                                class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
+                                {{ request()->is('teritorial*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Teritorial
                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
@@ -96,7 +106,7 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 translate-y-2"
-                             class="nav-dropdown absolute top-[90%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+                             class="nav-dropdown absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
                              
                              <div class="py-2">
                                  @if(isset($globalTerritories))
@@ -115,16 +125,16 @@
 
                     <!-- 5. ORGANISASI -->
                     <a href="/organisasi" 
-                       class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Organisasi
                     </a>
 
                     <!-- 6. PETUGAS LITURGI (DROPDOWN) -->
-                    <div class="relative h-full flex items-center group" x-data="{ liturgiOpen: false }">
+                    <div class="relative h-24 flex items-center group" x-data="{ liturgiOpen: false }">
                         <button @mouseenter="liturgiOpen = true" @mouseleave="liturgiOpen = false"
-                                class="h-full flex items-center px-1 pt-1 text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
-                                {{ request()->is('petugas/*') ? 'text-logo-red border-logo-red' : 'text-gray-500 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                                class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
+                                {{ request()->is('petugas/*') || request()->is('jadwal-petugas') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Petugas Liturgi
                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
@@ -138,7 +148,7 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 translate-y-2"
-                             class="nav-dropdown absolute top-[90%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+                             class="nav-dropdown absolute top-[80%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
                              
                              <div class="py-2">
                                  @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
@@ -155,7 +165,9 @@
 
                 </div>
 
-                <!-- Mobile Menu Button -->
+                <!-- ============================================ -->
+                <!-- 3. MOBILE MENU BUTTON (HP Only)              -->
+                <!-- ============================================ -->
                 <div class="-mr-2 flex items-center lg:hidden">
                     <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition">
                         <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -167,37 +179,14 @@
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
+        <!-- Mobile Menu Dropdown (Tetap Sama) -->
         <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[80vh]">
             <div class="pt-2 pb-4 space-y-1 px-4">
-                
-                <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
-                    Beranda
-                </a>
-                
-                <a href="/sejarah" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
-                    Sejarah
-                </a>
-
-                <a href="/pengumuman" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('pengumuman*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
-                    Pengumuman
-                </a>
-
-                <!-- Mobile Teritorial -->
-                <div class="border-t border-b border-gray-100 py-2">
-                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Wilayah Teritorial</div>
-                    @if(isset($globalTerritories))
-                        @foreach($globalTerritories as $wilayah)
-                        <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue hover:bg-blue-50 ml-2 border-l-2 border-gray-200">
-                            {{ $wilayah->name }}
-                        </a>
-                        @endforeach
-                    @endif
-                </div>
-
-                <a href="/organisasi" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('organisasi*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-600 hover:bg-gray-50 hover:text-logo-blue' }}">
-                    Organisasi
-                </a>
+                <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Beranda</a>
+                <a href="/sejarah" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Sejarah</a>
+                <a href="/pengumuman" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Pengumuman</a>
+                <a href="/teritorial" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Teritorial</a>
+                <a href="/organisasi" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Organisasi</a>
 
                 <!-- Mobile Petugas -->
                 <div class="border-t border-gray-100 py-2">
