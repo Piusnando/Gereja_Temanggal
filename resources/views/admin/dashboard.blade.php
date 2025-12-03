@@ -155,12 +155,12 @@
     </div>
 
     <!-- UPDATE PASSWORD CARD (Untuk Semua User) -->
-    <div class="mt-8 bg-linear-to-r from-gray-800 to-gray-900 rounded-xl shadow-lg p-6 text-white flex justify-between items-center">
+    <div class="mt-8 bg-linear-to-r from-gray-800 to-gray-900 rounded-xl shadow-lg p-6 text-stone-950 flex justify-between items-center">
         <div>
             <h3 class="text-lg font-bold">Keamanan Akun</h3>
-            <p class="text-gray-300 text-sm mt-1">Ganti password secara berkala untuk keamanan.</p>
+            <p class="text-stone-950 text-sm mt-1">Ganti password secara berkala untuk keamanan.</p>
         </div>
-        <a href="{{ route('admin.profile') }}" class="bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-200 transition">
+        <a href="{{ route('admin.profile') }}" class="bg-neutral-200 text-gray-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-200 transition">
             Ganti Password
         </a>
     </div>

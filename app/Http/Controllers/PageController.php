@@ -92,11 +92,19 @@ class PageController extends Controller
     public function organisasi() { return view('pages.organisasi'); }
 
     public function jadwalPetugas() {
-        $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
-                        // Tambahkan 'assignments.lingkungan' agar data lingkungan ikut termuat
+        $schedules = \App\Models\LiturgySchedule::query()
+                        // [PERBAIKAN]
+                        // Gunakan whereDate agar membandingkan TANGGAL saja, bukan Jam/Detik.
+                        // Jadi Misa tadi pagi masih tetap muncul hari ini.
+                        ->whereDate('event_at', '>=', now()) 
+                        
+                        // ATAU: Jika ingin melihat SEMUA jadwal (termasuk masa lalu) untuk tes, 
+                        // Hapus baris whereDate di atas.
+                        
                         ->with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])
-                        ->orderBy('event_at', 'asc')
+                        ->orderBy('event_at', 'asc') // Urutkan dari yang terdekat
                         ->get();
+
         return view('pages.jadwal-petugas', compact('schedules'));
     }
 

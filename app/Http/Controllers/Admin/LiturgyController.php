@@ -123,6 +123,42 @@ class LiturgyController extends Controller
         return redirect()->route('admin.liturgy.schedules')->with('success', 'Jadwal Misa berhasil dibuat');
     }
 
+    // 1. TAMPILKAN FORM EDIT
+    public function editSchedule($id)
+    {
+        $schedule = LiturgySchedule::findOrFail($id);
+        return view('admin.liturgy.schedules_edit', compact('schedule'));
+    }
+
+    // 2. PROSES UPDATE DATA
+    public function updateSchedule(Request $request, $id)
+    {
+        $schedule = LiturgySchedule::findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'event_at' => 'required|date'
+        ]);
+
+        $schedule->update([
+            'title' => $request->title,
+            'event_at' => $request->event_at
+        ]);
+
+        return redirect()->route('admin.liturgy.schedules')->with('success', 'Jadwal berhasil diperbarui.');
+    }
+
+    // 3. PROSES HAPUS JADWAL
+    public function destroySchedule($id)
+    {
+        $schedule = LiturgySchedule::findOrFail($id);
+        
+        // Data di tabel assignment akan otomatis terhapus (Cascade) jika migrasi database benar
+        $schedule->delete();
+
+        return redirect()->route('admin.liturgy.schedules')->with('success', 'Jadwal Misa berhasil dihapus.');
+    }
+
     // =========================================================================
     // BAGIAN 3: PENUGASAN (ASSIGNMENT) - INTI SISTEM
     // =========================================================================

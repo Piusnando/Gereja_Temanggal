@@ -98,6 +98,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::middleware(['role:admin,pengurus_gereja,direktur_musik'])->group(function() {
             Route::get('/liturgy/schedules/create', [LiturgyController::class, 'scheduleCreate'])->name('admin.liturgy.schedules.create');
             Route::post('/liturgy/schedules', [LiturgyController::class, 'scheduleStore'])->name('admin.liturgy.schedules.store');
+
+            // --- TAMBAHKAN INI (EDIT & DELETE JADWAL) ---
+            Route::get('/liturgy/schedules/{id}/edit', [LiturgyController::class, 'editSchedule'])->name('admin.liturgy.schedules.edit');
+            Route::put('/liturgy/schedules/{id}', [LiturgyController::class, 'updateSchedule'])->name('admin.liturgy.schedules.update');
+            Route::delete('/liturgy/schedules/{id}', [LiturgyController::class, 'destroySchedule'])->name('admin.liturgy.schedules.destroy');
         });
         
         // D. MENGATUR/MENGISI PETUGAS (Admin, Pengurus, Dir. Musik, Misdinar, Lektor)
