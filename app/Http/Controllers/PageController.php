@@ -127,11 +127,14 @@ class PageController extends Controller
 
     public function showOrganization($category)
     {
-        // Decode URL (misal: "Pengurus%20Gereja" jadi "Pengurus Gereja")
+        // Decode URL
         $categoryName = urldecode($category);
 
+        // Ambil anggota berdasarkan kategori
+        // Pastikan Anda sudah membuat Model OrganizationMember dan migrasinya
         $members = OrganizationMember::where('category', $categoryName)
-                    ->with('lingkungan')
+                    ->with('lingkungan') // Pastikan relasi 'lingkungan' ada di model OrganizationMember
+                    ->orderBy('id', 'asc') // Urutkan (opsional)
                     ->get();
 
         return view('pages.organisasi', compact('members', 'categoryName'));

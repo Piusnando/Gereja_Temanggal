@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <html lang="..." class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -144,8 +145,10 @@
                                 class="nav-dropdown absolute top-[80%] left-0 w-56 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
                                 
                                 <div class="py-2">
-                                    @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA/PIR', 'Mazmur', 'Lektor'] as $org)
-                                    <a href="{{ route('organisasi.show', $org) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
+                                    @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
+                                    
+                                    <!-- Gunakan urlencode() untuk menangani karakter khusus seperti spasi atau & -->
+                                    <a href="{{ route('organisasi.show', ['category' => $org]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
                                         {{ $org }}
                                     </a>
                                     @endforeach
@@ -265,8 +268,9 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="hover:text-logo-yellow transition">Beranda</a></li>
                         <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Jadwal Misa & Pengumuman</a></li>
+                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Pengumuman</a></li>
                         <li><a href="/teritorial" class="hover:text-logo-yellow transition">Pembagian Wilayah</a></li>
+                        <li><a href="https://gerejakalasan.org/"></a>Paroki Kalasan</li>
                     </ul>
                 </div>
 
