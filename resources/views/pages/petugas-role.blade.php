@@ -25,25 +25,56 @@
                 <h2 class="text-xl font-bold text-gray-800 mb-4">{{ $schedule->title }}</h2>
                 
                 <div class="space-y-3">
-                    @foreach($schedule->assignments as $assign)
-                    <div class="flex items-center p-3 bg-blue-50/50 rounded-lg border border-blue-100">
-                        <div class="bg-white p-2 rounded-full text-logo-blue mr-4 shadow-sm">
+                @foreach($schedule->assignments as $assign)
+                <div class="flex items-center p-3 bg-blue-50/50 rounded-lg border border-blue-100 hover:bg-blue-100 transition">
+                    
+                    <!-- Ikon -->
+                    <div class="bg-white p-2 rounded-full text-logo-blue mr-4 shadow-sm shrink-0">
+                        @if(in_array($assign->role, ['Paduan Suara', 'Parkir']))
+                            <!-- Ikon Group -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        @else
+                            <!-- Ikon User -->
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        </div>
-                        <div>
-                            @if(in_array($role, ['Paduan Suara', 'Parkir']))
-                                <p class="font-bold text-gray-900 text-lg">{{ $assign->lingkungan->name ?? 'Lingkungan Terhapus' }}</p>
-                                <p class="text-xs text-gray-500">Tugas Kelompok / Wilayah</p>
-                            @else
-                                <p class="font-bold text-gray-900 text-lg">{{ $assign->personnel->name ?? '-' }}</p>
-                                <p class="text-xs text-gray-500">
-                                    {{ $assign->personnel->is_external ? 'Luar: ' . $assign->personnel->external_description : ($assign->personnel->lingkungan->name ?? '-') }}
-                                </p>
-                            @endif
-                        </div>
+                        @endif
                     </div>
-                    @endforeach
+
+                    <!-- Detail Nama -->
+                    <div>
+                        @if(in_array($role, ['Paduan Suara', 'Parkir']))
+                            {{-- LOGIKA BARU UNTUK KELOMPOK --}}
+                            @if($assign->lingkungan)
+                                <!-- Internal -->
+                                <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->lingkungan->name }}</p>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 uppercase tracking-wide mt-1">
+                                    Tugas Wilayah
+                                </span>
+                            @elseif($assign->description)
+                                <!-- Eksternal -->
+                                <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->description }}</p>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase tracking-wide mt-1">
+                                    Dari Luar Paroki
+                                </span>
+                            @else
+                                <!-- Data Kosong -->
+                                <p class="font-bold text-gray-400 italic">Data Tidak Ditemukan</p>
+                            @endif
+
+                        @else
+                            {{-- LOGIKA UNTUK PERORANGAN (Misdinar, Lektor, dll) --}}
+                            <p class="font-bold text-gray-900 text-lg leading-tight">
+                                {{ $assign->personnel->name ?? 'Nama Terhapus' }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                {{ $assign->personnel->is_external 
+                                    ? 'Luar: ' . $assign->personnel->external_description 
+                                    : ($assign->personnel->lingkungan->name ?? '-') 
+                                }}
+                            </p>
+                        @endif
+                    </div>
                 </div>
+                @endforeach
             </div>
         </div>
         @empty
