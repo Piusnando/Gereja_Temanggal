@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <html lang="..." class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -205,26 +204,76 @@
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown (Tetap Sama) -->
-        <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[80vh]">
-            <div class="pt-2 pb-4 space-y-1 px-4">
-                <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Beranda</a>
-                <a href="/sejarah" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Sejarah</a>
-                <a href="/pengumuman" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Pengumuman</a>
-                <a href="/teritorial" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Teritorial</a>
-                <a href="/organisasi" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition hover:bg-gray-50">Organisasi</a>
+        <!-- Mobile Menu Dropdown -->
+        <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out">
+            <div class="pt-2 pb-6 space-y-1 px-4">
+                
+                <!-- 1. BERANDA -->
+                <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Beranda
+                </a>
+                
+                <!-- 2. SEJARAH -->
+                <a href="/sejarah" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Sejarah
+                </a>
 
-                <!-- Mobile Petugas -->
-                <div class="border-t border-gray-100 py-2">
-                    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Petugas Liturgi</div>
-                    @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
-                    <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue hover:bg-blue-50 ml-2 border-l-2 border-gray-200">
-                        {{ $tugas }}
-                    </a>
-                    @endforeach
-                    <a href="/jadwal-petugas" class="block px-4 py-2 text-sm text-logo-blue font-bold ml-2">
-                        Lihat Semua Jadwal →
-                    </a>
+                <!-- 3. PENGUMUMAN -->
+                <a href="/pengumuman" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('pengumuman*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Pengumuman
+                </a>
+
+                <!-- 4. TERITORIAL (ACCORDION) -->
+                <div x-data="{ expanded: false }" class="border-b border-gray-100">
+                    <button @click="expanded = ! expanded" class="flex justify-between items-center w-full px-4 py-3 rounded-lg text-base font-bold uppercase text-gray-700 hover:bg-gray-50 hover:text-logo-blue transition focus:outline-none">
+                        <span>Teritorial</span>
+                        <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" x-collapse class="pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-b-lg">
+                        @if(isset($globalTerritories))
+                            @foreach($globalTerritories as $wilayah)
+                            <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue border-l-2 border-gray-200 hover:border-logo-blue transition">
+                                Wilayah {{ $wilayah->name }}
+                            </a>
+                            @endforeach
+                        @endif
+                        <a href="/teritorial" class="block px-4 py-2 text-sm font-bold text-logo-blue border-l-2 border-transparent">
+                            Lihat Peta Besar →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 5. ORGANISASI (ACCORDION) -->
+                <div x-data="{ expanded: false }" class="border-b border-gray-100">
+                    <button @click="expanded = ! expanded" class="flex justify-between items-center w-full px-4 py-3 rounded-lg text-base font-bold uppercase text-gray-700 hover:bg-gray-50 hover:text-logo-blue transition focus:outline-none">
+                        <span>Organisasi</span>
+                        <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" x-collapse class="pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-b-lg">
+                        @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
+                        <a href="{{ route('organisasi.show', ['category' => $org]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue border-l-2 border-gray-200 hover:border-logo-blue transition">
+                            {{ $org }}
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- 6. PETUGAS LITURGI (ACCORDION) -->
+                <div x-data="{ expanded: false }" class="border-b border-gray-100">
+                    <button @click="expanded = ! expanded" class="flex justify-between items-center w-full px-4 py-3 rounded-lg text-base font-bold uppercase text-gray-700 hover:bg-gray-50 hover:text-logo-blue transition focus:outline-none">
+                        <span>Petugas Liturgi</span>
+                        <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" x-collapse class="pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-b-lg">
+                        @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
+                        <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue border-l-2 border-gray-200 hover:border-logo-blue transition">
+                            {{ $tugas }}
+                        </a>
+                        @endforeach
+                        <a href="/jadwal-petugas" class="block px-4 py-2 text-sm font-bold text-logo-blue border-l-2 border-transparent">
+                            Lihat Semua Jadwal →
+                        </a>
+                    </div>
                 </div>
 
             </div>
