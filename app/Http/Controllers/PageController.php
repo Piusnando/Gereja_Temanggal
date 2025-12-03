@@ -6,6 +6,7 @@ use App\Models\Banner;
 use App\Models\SiteSetting;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
+use App\Models\OrganizationMember;
 
 class PageController extends Controller
 {
@@ -122,5 +123,17 @@ class PageController extends Controller
             ->get();
 
         return view('pages.petugas-role', compact('schedules', 'role'));
+    }
+
+    public function showOrganization($category)
+    {
+        // Decode URL (misal: "Pengurus%20Gereja" jadi "Pengurus Gereja")
+        $categoryName = urldecode($category);
+
+        $members = OrganizationMember::where('category', $categoryName)
+                    ->with('lingkungan')
+                    ->get();
+
+        return view('pages.organisasi', compact('members', 'categoryName'));
     }
 }

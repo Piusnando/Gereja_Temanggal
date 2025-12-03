@@ -123,12 +123,35 @@
                         </div>
                     </div>
 
-                    <!-- 5. ORGANISASI -->
-                    <a href="/organisasi" 
-                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
-                        Organisasi
-                    </a>
+                    <!-- 5. ORGANISASI (DROPDOWN) -->
+                    <div class="relative h-24 flex items-center group" x-data="{ orgOpen: false }">
+                        <button @mouseenter="orgOpen = true" @mouseleave="orgOpen = false"
+                                class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
+                                {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                            Organisasi
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="orgOpen" 
+                                @mouseenter="orgOpen = true" 
+                                @mouseleave="orgOpen = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-2"
+                                class="nav-dropdown absolute top-[80%] left-0 w-56 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+                                
+                                <div class="py-2">
+                                    @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA/PIR', 'Mazmur', 'Lektor'] as $org)
+                                    <a href="{{ route('organisasi.show', $org) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
+                                        {{ $org }}
+                                    </a>
+                                    @endforeach
+                                </div>
+                        </div>
+                    </div>
 
                     <!-- 6. PETUGAS LITURGI (DROPDOWN) -->
                     <div class="relative h-24 flex items-center group" x-data="{ liturgiOpen: false }">

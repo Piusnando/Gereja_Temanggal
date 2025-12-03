@@ -23,7 +23,8 @@ Route::get('/pengumuman', [PageController::class, 'pengumuman']);
 Route::get('/pengumuman/{id}', [PageController::class, 'detailPengumuman'])->name('pengumuman.detail');
 Route::get('/teritorial', [PageController::class, 'teritorial'])->name('teritorial.index');
 Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->name('teritorial.show');
-Route::get('/organisasi', [PageController::class, 'organisasi']);
+Route::get('/organisasi/{category}', [PageController::class, 'showOrganization'])->name('organisasi.show');
+Route::get('/organisasi', function() { return redirect('/organisasi/Pengurus Gereja'); });
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
 Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
 
@@ -115,6 +116,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
         // E. MENGHAPUS DATA PETUGAS (Hanya Admin)
         Route::delete('/liturgy/personnels/{id}', [LiturgyController::class, 'personnelDestroy'])->name('admin.liturgy.personnels.destroy');
+
+        
     });
 
+    // 6. ORGANISASI (Admin & Pengurus Gereja)
+    Route::get('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'index'])->name('admin.organization.index');
+    Route::get('/organization/create', [App\Http\Controllers\Admin\OrganizationController::class, 'create'])->name('admin.organization.create');
+    Route::post('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'store'])->name('admin.organization.store');
+    Route::delete('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'destroy'])->name('admin.organization.destroy');
 });

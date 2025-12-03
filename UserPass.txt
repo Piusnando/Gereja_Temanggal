@@ -18,6 +18,9 @@ Nama : Lektor
 Email : lektor@gerejatemanggal.com
 pass : lektortemanggal
 
+Nama : OMK
+Email : omk@gerejatemanggal.com
+pass : Donbosco2026
 
 cara drploy local
 
