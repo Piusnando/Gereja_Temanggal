@@ -30,22 +30,22 @@
 
         <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">Kategori</label>
-            <select name="category" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <option value="" disabled selected>-- Pilih Kategori --</option>
-                @foreach([
-                    'Pengumuman Gereja', 
-                    'Paroki', 
-                    'Wilayah', 
-                    'Lingkungan', 
-                    'OMK', 
-                    'Misdinar', 
-                    'PIA/PIR', 
-                    'Calon Manten', 
-                    'Berita Duka'
-                ] as $cat)
-                    <option value="{{ $cat }}">{{ $cat }}</option>
+            <select name="category" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" required>
+                
+                <!-- Jika kategorinya lebih dari 1 (Admin), tampilkan opsi default -->
+                @if(count($categories) > 1)
+                    <option value="" disabled selected>-- Pilih Kategori --</option>
+                @endif
+
+                <!-- Loop kategori sesuai hak akses -->
+                @foreach($categories as $cat)
+                    <option value="{{ $cat }}" {{ (count($categories) == 1) ? 'selected' : '' }}>
+                        {{ $cat }}
+                    </option>
                 @endforeach
+
             </select>
+            @error('category') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
         </div>
 
         <div class="mb-4">

@@ -66,9 +66,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     });
 
 
-    // 3. ADMIN & PENGURUS GEREJA (Pengumuman, Kritik Saran)
     Route::middleware(['role:admin,pengurus_gereja'])->group(function () {
-        Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
         Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('admin.feedback.index');
         Route::delete('/feedback/{id}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
     });
@@ -121,8 +119,19 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     });
 
     // 6. ORGANISASI (Admin & Pengurus Gereja)
-    Route::get('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'index'])->name('admin.organization.index');
-    Route::get('/organization/create', [App\Http\Controllers\Admin\OrganizationController::class, 'create'])->name('admin.organization.create');
-    Route::post('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'store'])->name('admin.organization.store');
-    Route::delete('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'destroy'])->name('admin.organization.destroy');
+    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir'])->group(function () {
+        
+        // 1. Route Pengumuman (PINDAHKAN KE SINI)
+        Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
+        
+        // 2. Route Organisasi
+        Route::get('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'index'])->name('admin.organization.index');
+        Route::get('/organization/create', [App\Http\Controllers\Admin\OrganizationController::class, 'create'])->name('admin.organization.create');
+        Route::post('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'store'])->name('admin.organization.store');
+        Route::delete('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'destroy'])->name('admin.organization.destroy');
+        Route::get('/organization/{id}/edit', [App\Http\Controllers\Admin\OrganizationController::class, 'edit'])->name('admin.organization.edit');
+        Route::put('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'update'])->name('admin.organization.update');
+    });
+         
+    
 });

@@ -76,6 +76,17 @@
                 <h3 class="text-xl font-bold text-gray-800 group-hover:text-green-600 transition">Kritik & Saran</h3>
                 <p class="text-sm text-gray-500 mt-2">Lihat masukan dari umat.</p>
             </a>
+
+            <a href="{{ route('admin.announcements.index') }}" class="group block bg-white rounded-xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="bg-blue-100 text-blue-600 p-3 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Informasi</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition">Kelola Pengumuman</h3>
+                <p class="text-sm text-gray-500 mt-2">Buat pengumuman kegiatan {{ strtoupper(str_replace('_', '/', Auth::user()->role)) }}.</p>
+            </a>
         @endif
 
         {{-- 3. JADWAL LITURGI (Semua Pengurus Inti) --}}
@@ -153,6 +164,18 @@
         @endif
 
     </div>
+
+    <!-- Card Organisasi -->
+            <a href="{{ route('admin.organization.index') }}" class="group block bg-white rounded-xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="bg-purple-100 text-purple-600 p-3 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Organisasi</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-purple-600 transition">Struktur Anggota</h3>
+                <p class="text-sm text-gray-500 mt-2">Update data pengurus dan anggota {{ strtoupper(str_replace('_', '/', Auth::user()->role)) }}.</p>
+            </a>
 
     <!-- UPDATE PASSWORD CARD (Untuk Semua User) -->
     <div class="mt-8 bg-linear-to-r from-gray-800 to-gray-900 rounded-xl shadow-lg p-6 text-stone-950 flex justify-between items-center">

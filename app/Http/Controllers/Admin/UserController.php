@@ -23,14 +23,13 @@ class UserController extends Controller
     {
         return view('admin.users.create');
     }
-
-    public function store(Request $request)
+public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik',
+            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik,omk,pia_pir',
         ]);
 
         User::create([

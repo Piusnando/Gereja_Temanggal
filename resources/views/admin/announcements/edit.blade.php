@@ -20,18 +20,9 @@
 
         <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">Kategori</label>
-            <select name="category" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                @foreach([
-                    'Pengumuman Gereja', 
-                    'Paroki', 
-                    'Wilayah', 
-                    'Lingkungan', 
-                    'OMK', 
-                    'Misdinar', 
-                    'PIA/PIR', 
-                    'Calon Manten', 
-                    'Berita Duka'
-                ] as $cat)
+            <select name="category" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" required>
+                
+                @foreach($categories as $cat)
                     <option value="{{ $cat }}" {{ $announcement->category == $cat ? 'selected' : '' }}>
                         {{ $cat }}
                     </option>

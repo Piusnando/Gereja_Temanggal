@@ -25,6 +25,8 @@
                 <option value="lektor">Lektor</option>
                 <option value="direktur_musik">Direktur Musik</option>
                 <option value="pengurus_gereja">Pengurus Gereja</option>
+                <option value="omk">OMK (Orang Muda Katolik)</option>
+                <option value="pia_pir">PIA / PIR</option>
                 <option value="admin">Admin (Super User)</option>
             </select>
         </div>
