@@ -55,7 +55,10 @@ class OrganizationController extends Controller
     public function create()
     {
         $allowed = $this->getAllowedCategories();
-        $lingkungans = Lingkungan::all();
+        $lingkungans = \App\Models\Lingkungan::all();
+        
+        // PERBAIKAN:
+        // Gunakan compact('allowed') karena view create.blade.php meminta variabel $allowed
         return view('admin.organization.create', compact('lingkungans', 'allowed'));
     }
 
@@ -86,13 +89,19 @@ class OrganizationController extends Controller
         $member = OrganizationMember::findOrFail($id);
         $allowed = $this->getAllowedCategories();
 
-        // Cek Hak Akses: User tidak boleh edit data di luar kategorinya
+        // Cek Hak Akses
         if (!in_array($member->category, $allowed)) {
             abort(403, 'Anda tidak memiliki hak untuk mengedit kategori ini.');
         }
 
         $lingkungans = Lingkungan::all();
-        return view('admin.organization.edit', compact('member', 'lingkungans', 'allowed'));
+
+        // UBAH DI SINI: Kirim $allowed sebagai 'categories'
+        return view('admin.organization.edit', [
+            'member' => $member,
+            'lingkungans' => $lingkungans,
+            'categories' => $allowed // <--- INI SOLUSINYA
+        ]);
     }
 
     public function update(Request $request, $id)
