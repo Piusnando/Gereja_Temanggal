@@ -75,14 +75,19 @@
         <!-- LIST PENGUMUMAN (GRID) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @forelse($announcements as $item)
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 flex flex-col h-full group">
+                <!-- CARD WRAPPER: Tambahkan 'group', 'hover:-translate-y-2', 'hover:shadow-2xl' -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 flex flex-col h-full group hover:-translate-y-2 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 ease-in-out cursor-pointer">
                     
                     <!-- FOTO -->
                     <div class="h-52 w-full bg-gray-200 relative overflow-hidden">
-                        <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://via.placeholder.com/500x300?text=Gereja+Temanggal' }}" 
-                             alt="{{ $item->title }}" 
-                             class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
+                        <!-- GAMBAR: Tambahkan 'group-hover:scale-110' dan ganti placeholder -->
+                        <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/500x300?text=Gereja+Temanggal' }}" 
+                            alt="{{ $item->title }}" 
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out">
                         
+                        <!-- Overlay Gelap Tipis saat Hover -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
+
                         <!-- Badge Kategori -->
                         @php
                             $colors = [
@@ -98,38 +103,41 @@
                             ];
                             $badgeColor = $colors[$item->category] ?? 'bg-blue-500';
                         @endphp
-                        <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider">
+                        <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider z-10">
                             {{ $item->category }}
                         </div>
                     </div>
 
                     <!-- KONTEN -->
-                    <div class="p-6 flex flex-col grow">
+                    <div class="p-6 flex flex-col grow relative">
+                        <!-- Tanggal -->
                         <div class="flex items-center text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
                             <svg class="w-4 h-4 mr-1 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             {{ $item->event_date->translatedFormat('d F Y') }}
                         </div>
 
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition">
+                        <!-- Judul: Berubah warna saat hover -->
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition-colors duration-300 line-clamp-2">
                             {{ $item->title }}
                         </h3>
                         
+                        <!-- Deskripsi -->
                         <p class="text-gray-600 text-sm line-clamp-3 mb-4 grow">
                             {{ Str::limit($item->content, 120) }}
                         </p>
                         
-                        <!-- Untuk saat ini link ke detail belum ada, kita arahkan ke # dulu atau modal -->
+                        <!-- Link Baca Selengkapnya -->
                         <div class="mt-auto pt-4 border-t border-gray-100">
-                            <a href="{{ route('pengumuman.detail', $item->id) }}" class="text-sm font-bold text-logo-red hover:text-red-800 flex items-center transition cursor-pointer group">
+                            <a href="{{ route('pengumuman.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 transition">
                                 Baca Selengkapnya
-                                <!-- Tambahkan group-hover pada icon agar bergerak saat link dihover -->
-                                <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                <!-- Icon Panah: Bergerak saat hover -->
+                                <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-1 md:col-span-3 text-center py-20">
+                <div class="col-span-1 md:col-span-3 text-center py-20 bg-white rounded-xl border border-gray-200 border-dashed">
                     <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>

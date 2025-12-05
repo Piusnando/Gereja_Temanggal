@@ -101,17 +101,22 @@
             </a>
         </div>
 
-        <!-- Grid Cards (Sama seperti sebelumnya) -->
+        <!-- Grid Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @forelse($announcements as $item)
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 flex flex-col h-full">
+            <!-- Tambahkan class 'group', 'hover:-translate-y-2', 'hover:shadow-2xl' -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 flex flex-col h-full group hover:-translate-y-2 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 ease-in-out cursor-pointer">
                 
                 <!-- BAGIAN GAMBAR -->
-                <div class="h-52 w-full bg-gray-200 relative overflow-hidden group">
-                    <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/500x300?text=Gereja+Temanggal' }}" ... >
-                         alt="{{ $item->title }}" 
-                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="h-52 w-full bg-gray-200 relative overflow-hidden">
+                    <!-- Tambahkan 'group-hover:scale-110' untuk efek zoom -->
+                    <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : asset('images/no-image.jpg') }}" 
+                    alt="{{ $item->title }}" 
+                    class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out">
                     
+                    <!-- Overlay Gelap Tipis saat Hover (Opsional, agar teks badge tetap kontras) -->
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
+
                     @php
                         $colors = [
                             'Pengumuman Gereja' => 'bg-blue-600',
@@ -126,19 +131,20 @@
                         ];
                         $badgeColor = $colors[$item->category] ?? 'bg-blue-500';
                     @endphp
-                    <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider">
+                    <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider z-10">
                         {{ $item->category }}
                     </div>
                 </div>
 
                 <!-- CONTENT -->
-                <div class="p-6 flex flex-col grow">
+                <div class="p-6 flex flex-col grow relative">
                     <div class="flex items-center text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
                         <svg class="w-4 h-4 mr-1 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         {{ $item->event_date->translatedFormat('d F Y') }}
                     </div>
 
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition line-clamp-2">
+                    <!-- Judul berubah warna saat hover -->
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition-colors duration-300 line-clamp-2">
                         {{ $item->title }}
                     </h3>
                     
@@ -146,9 +152,11 @@
                         {{ Str::limit($item->content, 120) }}
                     </p>
                     
-                    <a href="{{ route('pengumuman.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 mt-auto transition">
+                    <!-- Link & Panah -->
+                    <a href="{{ route('pengumuman.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 mt-auto transition group/link">
                         Baca Selengkapnya
-                        <svg ... >...</svg>
+                        <!-- Panah bergeser ke kanan saat hover card atau hover link -->
+                        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             </div>
