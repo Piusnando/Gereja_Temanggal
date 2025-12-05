@@ -96,11 +96,11 @@
             <div class="bg-white rounded-xl shadow-md hover:shadow-2xl transition duration-300 border border-gray-100 flex flex-col h-full group">
                 
                 <!-- Header Card -->
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center group-hover:bg-logo-blue group-hover:text-white transition">
-                    <h3 class="text-lg font-bold">
+                <!-- PERBAIKAN DISINI: Menggunakan group-hover:bg-[#003399] agar background berubah biru -->
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center transition-colors duration-300 group-hover:bg-[#003399]">
+                    <h3 class="text-lg font-bold text-gray-800 transition-colors duration-300 group-hover:text-white">
                         {{ $wilayah->name }}
                     </h3>
-                    <svg class="w-5 h-5 text-gray-300 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
 
                 <!-- Body Card -->
@@ -121,7 +121,7 @@
                 </div>
 
                 <!-- Footer Card -->
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto text-center">
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto text-center transition-colors duration-300 group-hover:bg-gray-100">
                     <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="inline-block w-full text-sm font-bold text-logo-blue hover:text-logo-red transition">
                         Lihat Detail Profil Wilayah →
                     </a>
