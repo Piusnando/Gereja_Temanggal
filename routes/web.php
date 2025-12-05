@@ -66,8 +66,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
 
     Route::middleware(['role:admin,pengurus_gereja'])->group(function () {
-        Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('admin.feedback.index');
-        Route::delete('/feedback/{id}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
+        Route::get('/feedback', [App\Http\Controllers\Admin\FeedbackController::class, 'index'])->name('admin.feedback.index');
+        Route::delete('/feedback/{id}', [App\Http\Controllers\Admin\FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
     });
 
 
