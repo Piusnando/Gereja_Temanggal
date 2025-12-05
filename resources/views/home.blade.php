@@ -6,7 +6,6 @@
 @section('content')
 
     {{-- SECTION 1: HERO BANNER (SLIDER) --}}
-    <!-- Tambahkan class 'mb-12' untuk memberi jarak ke bawah -->
     <div x-data="{ 
             activeSlide: 1, 
             slides: [
@@ -32,7 +31,7 @@
             interval: null
         }" 
         x-init="resetTimer()"
-        class="relative w-full h-[400px] md:h-[600px] overflow-hidden rounded-b-[3rem] shadow-2xl group border-b-8 border-logo-red mb-12"> <!-- mb-12 adalah kuncinya -->
+        class="relative w-full h-[400px] md:h-[600px] overflow-hidden rounded-b-[3rem] shadow-2xl group border-b-8 border-logo-red mb-12">
         
         <!-- Jika tidak ada banner -->
         @if($banners->isEmpty())
@@ -62,13 +61,15 @@
                 <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-2 text-logo-yellow">Selamat Datang di Website Resmi</h2>
                 <h1 class="text-3xl md:text-6xl font-extrabold leading-tight mb-4 text-white drop-shadow-md">
                     Gereja St. Ignatius Loyola<br>
-                    <span class="text-red-500">Kalasan Tengah</span>
+                    <!-- PERUBAHAN: text-logo-red -->
+                    <span class="text-logo-red">Kalasan Tengah</span>
                 </h1>
                 <p class="text-sm md:text-lg font-medium text-gray-200 mt-2 bg-black/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">
                     Paroki Maria Marganingsih Kalasan
                 </p>
                 <div class="mt-8">
-                    <a href="#jadwal" class="bg-logo-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300">
+                    <!-- PERUBAHAN: bg-logo-red -->
+                    <a href="#jadwal" class="bg-logo-red hover:bg-red-800 text-white font-bold py-3 px-8 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300">
                         Lihat Jadwal Misa
                     </a>
                 </div>
@@ -86,7 +87,6 @@
 
 
     {{-- SECTION 2: PENGUMUMAN TERBARU --}}
-    <!-- Hapus class '-mt-10' dan 'relative z-10' agar tidak naik ke atas -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         
         <!-- Header Section -->
@@ -104,14 +104,14 @@
         <!-- Grid Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @forelse($announcements as $item)
-            <!-- Tambahkan class 'group', 'hover:-translate-y-2', 'hover:shadow-2xl' -->
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 flex flex-col h-full group hover:-translate-y-2 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 ease-in-out cursor-pointer">
                 
                 <!-- BAGIAN GAMBAR -->
                 <div class="h-52 w-full bg-gray-200 relative overflow-hidden">
-                    <!-- Tambahkan 'group-hover:scale-110' untuk efek zoom -->
-                    <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/600x400?text=No+Image' }}" ...>
-                    <!-- Overlay Gelap Tipis saat Hover (Opsional, agar teks badge tetap kontras) -->
+                    <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/500x300?text=Gereja+Temanggal' }}" 
+                         alt="{{ $item->title }}" 
+                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out">
+                    
                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
 
                     @php
@@ -136,11 +136,11 @@
                 <!-- CONTENT -->
                 <div class="p-6 flex flex-col grow relative">
                     <div class="flex items-center text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
+                        <!-- PERUBAHAN: text-logo-red -->
                         <svg class="w-4 h-4 mr-1 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         {{ $item->event_date->translatedFormat('d F Y') }}
                     </div>
 
-                    <!-- Judul berubah warna saat hover -->
                     <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition-colors duration-300 line-clamp-2">
                         {{ $item->title }}
                     </h3>
@@ -149,19 +149,15 @@
                         {{ Str::limit($item->content, 120) }}
                     </p>
                     
-                    <!-- Link & Panah -->
+                    <!-- PERUBAHAN: text-logo-red -->
                     <a href="{{ route('pengumuman.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 mt-auto transition group/link">
                         Baca Selengkapnya
-                        <!-- Panah bergeser ke kanan saat hover card atau hover link -->
                         <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             </div>
             @empty
             <div class="col-span-1 md:col-span-3 text-center py-16 bg-gray-50 rounded-xl border-dashed border-2 border-gray-300">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
                 <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada pengumuman</h3>
             </div>
             @endforelse
@@ -177,7 +173,8 @@
                 <!-- KOLOM KIRI: Peta Google Maps -->
                 <div class="flex flex-col h-full">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                        <span class="bg-red-100 text-red-600 p-2 rounded-lg mr-3">
+                        <!-- PERUBAHAN: text-logo-red -->
+                        <span class="bg-red-100 text-logo-red p-2 rounded-lg mr-3">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
                         </span>
                         Lokasi Gereja
@@ -211,11 +208,13 @@
                 <div class="flex flex-col space-y-8">
                     
                     <!-- Box Jadwal Misa -->
+                    <!-- PERUBAHAN: border-logo-red -->
                     <div class="bg-white rounded-2xl shadow-xl p-8 border-t-8 border-logo-red relative overflow-hidden group">
                         <!-- Decorative Background -->
                         <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-red-50 rounded-full opacity-50 transition group-hover:scale-110"></div>
                         
                         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center relative z-10">
+                            <!-- PERUBAHAN: text-logo-red -->
                             <span class="bg-red-100 text-logo-red p-2 rounded-lg mr-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </span>
@@ -226,6 +225,7 @@
                             <div class="flex items-center justify-between bg-linear-to-r from-red-50 to-white rounded-xl p-5 border border-red-100 hover:border-red-200 transition">
                                 <div>
                                     <h3 class="font-bold text-gray-900 text-lg">Misa Mingguan (Sabtu)</h3>
+                                    <!-- PERUBAHAN: text-logo-red -->
                                     <p class="text-logo-red text-sm font-medium">Gereja St. Ignatius Loyola</p>
                                 </div>
                                 <div class="text-right">
@@ -242,7 +242,8 @@
                     </div>
 
                     <!-- Box Teritorial -->
-                    <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-logo-blue flex flex-col relative overflow-hidden h-full">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-logo-blue grow relative overflow-hidden flex flex-col h-full">
+                        <!-- ... (Konten teritorial tetap sama) ... -->
                         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                             <span class="bg-blue-100 text-logo-blue p-2 rounded-lg mr-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -256,7 +257,6 @@
                         </p>
 
                         <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 grow">
-                            <!-- Loop Data Wilayah dari Database -->
                             <ul class="grid grid-cols-1 gap-3 text-sm text-gray-700 font-medium">
                                 @forelse($territories as $wilayah)
                                     <li class="flex items-start">

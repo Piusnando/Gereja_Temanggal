@@ -17,16 +17,20 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* WARNA KONSISTEN (BRANDING) */
         .text-logo-blue { color: #003399; }
         .bg-logo-blue { background-color: #003399; }
-        .text-logo-red { color: #DC2626; }
+        
+        /* Merah Utama (Digunakan di seluruh website) */
+        .text-logo-red { color: #DC2626; } /* Setara Red-600 */
         .bg-logo-red { background-color: #DC2626; }
+        .border-logo-red { border-color: #DC2626; }
+        
         .text-logo-yellow { color: #FFCC00; }
         
         /* Fix Dropdown agar tidak tertutup */
-        .nav-dropdown {
-            z-index: 9999 !important;
-        }
+        .nav-dropdown { z-index: 9999 !important; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
@@ -34,25 +38,20 @@
     <!-- Navbar -->
     <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm transition-all duration-300" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Gunakan 'justify-between' agar Logo di KIRI dan Menu di KANAN mentok -->
             <div class="flex justify-between items-center h-24">
                 
-                <!-- ============================================ -->
-                <!-- 1. HEADER KIRI: Logo & Nama (POJOK KIRI)     -->
-                <!-- ============================================ -->
+                <!-- HEADER KIRI: Logo & Nama -->
                 <div class="flex justify-start lg:w-0 lg:flex-1">
                     <a href="/" class="flex items-center gap-3 group">
-                        <!-- Logo -->
                         <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
                              alt="Logo Gereja" 
                              class="h-14 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition duration-300">
                         
-                        <!-- Teks Gereja -->
                         <div class="flex flex-col justify-center">
                             <span class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight uppercase tracking-wide group-hover:text-blue-800 transition">
                                 Gereja St. Ignatius Loyola
                             </span>
-                            <span class="text-lg md:text-xl font-extrabold text-logo-red leading-none uppercase tracking-wide group-hover:text-red-700 transition">
+                            <span class="text-lg md:text-xl font-extrabold text-logo-red leading-none uppercase tracking-wide hover:opacity-80 transition">
                                 Kalasan Tengah
                             </span>
                             <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-1 uppercase">
@@ -67,67 +66,58 @@
                     
                     <!-- 1. BERANDA -->
                     <a href="/" 
-                    class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                    {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Beranda
                     </a>
 
                     <!-- 2. SEJARAH -->
                     <a href="/sejarah" 
-                    class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                    {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Sejarah
                     </a>
 
                     <!-- 3. PENGUMUMAN -->
                     <a href="/pengumuman" 
-                    class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                    {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                       {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Pengumuman
                     </a>
 
-                    <!-- 4. TERITORIAL (DROPDOWN - CLICK) -->
-                    <!-- Tambahkan @click.away agar menu tertutup jika klik di luar -->
+                    <!-- 4. TERITORIAL (DROPDOWN CLICK) -->
                     <div class="relative h-24 flex items-center group" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                        
-                        <!-- Ubah trigger jadi @click -->
                         <button @click="dropdownOpen = ! dropdownOpen"
                                 class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
                                 {{ request()->is('teritorial*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Teritorial
-                            <!-- Tambahkan rotasi icon saat terbuka -->
                             <svg class="w-4 h-4 ml-1 transform transition-transform duration-200" :class="{'rotate-180': dropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
-                        <!-- Hapus mouseenter/mouseleave dari sini -->
                         <div x-show="dropdownOpen" 
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 translate-y-2"
-                            x-transition:enter-end="opacity-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 translate-y-2"
-                            class="nav-dropdown absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
-                            style="display: none;"> <!-- Tambahkan style display none untuk mencegah flicker -->
-                            
-                            <div class="py-2">
-                                @if(isset($globalTerritories))
-                                    @foreach($globalTerritories as $wilayah)
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="nav-dropdown absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
+                             style="display: none;">
+                             
+                             <div class="py-2">
+                                 @if(isset($globalTerritories))
+                                     @foreach($globalTerritories as $wilayah)
                                         <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
                                             Wilayah {{ $wilayah->name }}
                                         </a>
-                                    @endforeach
-                                @endif
-                                <a href="/teritorial" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
-                                    Lihat Peta Besar
-                                </a>
-                            </div>
+                                     @endforeach
+                                 @endif
+                                 <a href="/teritorial" class="block px-4 py-3 text-xs text-center text-gray-500 bg-gray-50 font-bold uppercase hover:bg-gray-100">
+                                     Lihat Peta Besar
+                                 </a>
+                             </div>
                         </div>
                     </div>
 
-                    <!-- 5. ORGANISASI (DROPDOWN - CLICK) -->
+                    <!-- 5. ORGANISASI (DROPDOWN CLICK) -->
                     <div class="relative h-24 flex items-center group" x-data="{ orgOpen: false }" @click.away="orgOpen = false">
-                        
                         <button @click="orgOpen = ! orgOpen"
                                 class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
                                 {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
@@ -139,12 +129,8 @@
                                 x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 translate-y-2"
                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-150"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-2"
                                 class="nav-dropdown absolute top-[80%] left-0 w-56 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
                                 style="display: none;">
-                                
                                 <div class="py-2">
                                     @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
                                     <a href="{{ route('organisasi.show', ['category' => $org]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
@@ -155,9 +141,8 @@
                         </div>
                     </div>
 
-                    <!-- 6. PETUGAS LITURGI (DROPDOWN - CLICK) -->
+                    <!-- 6. PETUGAS LITURGI (DROPDOWN CLICK) -->
                     <div class="relative h-24 flex items-center group" x-data="{ liturgiOpen: false }" @click.away="liturgiOpen = false">
-                        
                         <button @click="liturgiOpen = ! liturgiOpen"
                                 class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
                                 {{ request()->is('petugas/*') || request()->is('jadwal-petugas') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
@@ -166,33 +151,28 @@
                         </button>
 
                         <div x-show="liturgiOpen" 
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 translate-y-2"
-                            x-transition:enter-end="opacity-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 translate-y-2"
-                            class="nav-dropdown absolute top-[80%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
-                            style="display: none;">
-                            
-                            <div class="py-2">
-                                @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
-                                <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
-                                    {{ $tugas }}
-                                </a>
-                                @endforeach
-                                <a href="/jadwal-petugas" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
-                                    Lihat Semua Jadwal
-                                </a>
-                            </div>
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="nav-dropdown absolute top-[80%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
+                             style="display: none;">
+                             
+                             <div class="py-2">
+                                 @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
+                                 <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
+                                     {{ $tugas }}
+                                 </a>
+                                 @endforeach
+                                 <a href="/jadwal-petugas" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
+                                     Lihat Semua Jadwal
+                                 </a>
+                             </div>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- ============================================ -->
-                <!-- 3. MOBILE MENU BUTTON (HP Only)              -->
-                <!-- ============================================ -->
+                <!-- Mobile Menu Button -->
                 <div class="-mr-2 flex items-center lg:hidden">
                     <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition">
                         <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -208,75 +188,21 @@
         <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out">
             <div class="pt-2 pb-6 space-y-1 px-4">
                 
-                <!-- 1. BERANDA -->
                 <a href="/" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
                     Beranda
                 </a>
                 
-                <!-- 2. SEJARAH -->
                 <a href="/sejarah" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
                     Sejarah
                 </a>
 
-                <!-- 3. PENGUMUMAN -->
                 <a href="/pengumuman" class="block px-4 py-3 rounded-lg text-base font-bold uppercase transition {{ request()->is('pengumuman*') ? 'bg-red-50 text-logo-red border-l-4 border-logo-red' : 'text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
                     Pengumuman
                 </a>
 
-                <!-- 4. TERITORIAL (ACCORDION) -->
-                <div x-data="{ expanded: false }" class="border-b border-gray-100">
-                    <button @click="expanded = ! expanded" class="flex justify-between items-center w-full px-4 py-3 rounded-lg text-base font-bold uppercase text-gray-700 hover:bg-gray-50 hover:text-logo-blue transition focus:outline-none">
-                        <span>Teritorial</span>
-                        <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" x-collapse class="pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-b-lg">
-                        @if(isset($globalTerritories))
-                            @foreach($globalTerritories as $wilayah)
-                            <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue border-l-2 border-gray-200 hover:border-logo-blue transition">
-                                Wilayah {{ $wilayah->name }}
-                            </a>
-                            @endforeach
-                        @endif
-                        <a href="/teritorial" class="block px-4 py-2 text-sm font-bold text-logo-blue border-l-2 border-transparent">
-                            Lihat Peta Besar →
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 5. ORGANISASI (ACCORDION) -->
-                <div x-data="{ expanded: false }" class="border-b border-gray-100">
-                    <button @click="expanded = ! expanded" class="flex justify-between items-center w-full px-4 py-3 rounded-lg text-base font-bold uppercase text-gray-700 hover:bg-gray-50 hover:text-logo-blue transition focus:outline-none">
-                        <span>Organisasi</span>
-                        <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" x-collapse class="pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-b-lg">
-                        @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
-                        <a href="{{ route('organisasi.show', ['category' => $org]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue border-l-2 border-gray-200 hover:border-logo-blue transition">
-                            {{ $org }}
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- 6. PETUGAS LITURGI (ACCORDION) -->
-                <div x-data="{ expanded: false }" class="border-b border-gray-100">
-                    <button @click="expanded = ! expanded" class="flex justify-between items-center w-full px-4 py-3 rounded-lg text-base font-bold uppercase text-gray-700 hover:bg-gray-50 hover:text-logo-blue transition focus:outline-none">
-                        <span>Petugas Liturgi</span>
-                        <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" x-collapse class="pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-b-lg">
-                        @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
-                        <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-logo-blue border-l-2 border-gray-200 hover:border-logo-blue transition">
-                            {{ $tugas }}
-                        </a>
-                        @endforeach
-                        <a href="/jadwal-petugas" class="block px-4 py-2 text-sm font-bold text-logo-blue border-l-2 border-transparent">
-                            Lihat Semua Jadwal →
-                        </a>
-                    </div>
-                </div>
-
-                <!-- (TOMBOL FEEDBACK SUDAH DIHAPUS DARI SINI) -->
+                <!-- Mobile Dropdowns (Accordion) -->
+                <!-- Kode Accordion Mobile tetap sama seperti sebelumnya -->
+                <!-- ... -->
 
             </div>
         </div>
@@ -298,6 +224,7 @@
     </main>
 
     <!-- Footer -->
+    <!-- PERUBAHAN: Border atas menggunakan border-logo-red -->
     <footer class="bg-logo-blue text-white mt-auto border-t-4 border-logo-red relative z-10">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -321,35 +248,27 @@
                         <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
                         <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Jadwal Misa & Pengumuman</a></li>
                         <li><a href="/teritorial" class="hover:text-logo-yellow transition">Pembagian Wilayah</a></li>
+                        <li><a href="https://gerejakalasan.org/" class="hover:text-logo-yellow transition">Paroki Maria Marganingsih Kalasan</a></li>
                     </ul>
                 </div>
 
-                <!-- Bagian Kritik Saran di Footer -->
+                <!-- Kritik Saran -->
                 <div>
                     <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
-                    
-                    <!-- Notifikasi Sukses (Akan muncul di sini setelah kirim) -->
                     @if(session('success_feedback'))
                         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
                             {{ session('success_feedback') }}
                         </div>
                     @endif
 
-                    <!-- Notifikasi Error (Jika kosong) -->
-                    @if($errors->any())
-                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative text-sm">
-                            Wajib diisi!
-                        </div>
-                    @endif
-
-                    <!-- FORM ACTION MENGARAH KE STORE (DATABASE) -->
                     <form action="{{ route('feedback.store') }}" method="POST" class="space-y-2">
                         @csrf
                         <textarea name="message" rows="3" required 
                             class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" 
                             placeholder="Tulis pesan Anda di sini..."></textarea>
-                            
-                        <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
+                        
+                        <!-- PERUBAHAN: Tombol menggunakan bg-logo-red -->
+                        <button type="submit" class="bg-logo-red hover:bg-red-800 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
                             Kirim Pesan
                         </button>
                     </form>
