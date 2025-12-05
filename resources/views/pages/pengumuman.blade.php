@@ -81,10 +81,7 @@
                     <!-- FOTO -->
                     <div class="h-52 w-full bg-gray-200 relative overflow-hidden">
                         <!-- GAMBAR: Tambahkan 'group-hover:scale-110' dan ganti placeholder -->
-                        <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/500x300?text=Gereja+Temanggal' }}" 
-                            alt="{{ $item->title }}" 
-                            class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out">
-                        
+                        <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/600x400?text=No+Image' }}" ... > 
                         <!-- Overlay Gelap Tipis saat Hover -->
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
 
