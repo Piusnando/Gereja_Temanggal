@@ -75,14 +75,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Tombol Navigasi -->
-        <button @click="prev()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-logo-red text-white p-3 rounded-full transition duration-300 z-20 focus:outline-none group-hover:bg-logo-red backdrop-blur-sm">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
-        </button>
-        <button @click="next()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-logo-red text-white p-3 rounded-full transition duration-300 z-20 focus:outline-none group-hover:bg-logo-red backdrop-blur-sm">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-        </button>
     </div>
 
 
