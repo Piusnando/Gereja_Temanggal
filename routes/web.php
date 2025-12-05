@@ -28,9 +28,8 @@ Route::get('/organisasi', function() { return redirect('/organisasi/Pengurus Ger
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
 Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
 
-// Kirim Pesan (Public)
+// Route untuk Menyimpan Data ke DB (POST) - INI YANG DIPAKAI FOOTER
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
-
 /*
 |--------------------------------------------------------------------------
 | Auth Routes (Login/Logout)

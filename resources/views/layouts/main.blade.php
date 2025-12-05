@@ -145,8 +145,6 @@
                                 
                                 <div class="py-2">
                                     @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
-                                    
-                                    <!-- Gunakan urlencode() untuk menangani karakter khusus seperti spasi atau & -->
                                     <a href="{{ route('organisasi.show', ['category' => $org]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
                                         {{ $org }}
                                     </a>
@@ -276,6 +274,8 @@
                     </div>
                 </div>
 
+                <!-- (TOMBOL FEEDBACK SUDAH DIHAPUS DARI SINI) -->
+
             </div>
         </div>
     </nav>
@@ -317,26 +317,36 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="hover:text-logo-yellow transition">Beranda</a></li>
                         <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Pengumuman</a></li>
+                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Jadwal Misa & Pengumuman</a></li>
                         <li><a href="/teritorial" class="hover:text-logo-yellow transition">Pembagian Wilayah</a></li>
-                        <li><a href="https://gerejakalasan.org/"></a>Paroki Kalasan</li>
                     </ul>
                 </div>
 
-                <!-- Kritik Saran -->
+                <!-- Bagian Kritik Saran di Footer -->
                 <div>
                     <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
+                    
+                    <!-- Notifikasi Sukses (Akan muncul di sini setelah kirim) -->
                     @if(session('success_feedback'))
                         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
                             {{ session('success_feedback') }}
                         </div>
                     @endif
 
+                    <!-- Notifikasi Error (Jika kosong) -->
+                    @if($errors->any())
+                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative text-sm">
+                            Wajib diisi!
+                        </div>
+                    @endif
+
+                    <!-- FORM ACTION MENGARAH KE STORE (DATABASE) -->
                     <form action="{{ route('feedback.store') }}" method="POST" class="space-y-2">
                         @csrf
                         <textarea name="message" rows="3" required 
                             class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" 
                             placeholder="Tulis pesan Anda di sini..."></textarea>
+                            
                         <button type="submit" class="bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">
                             Kirim Pesan
                         </button>
