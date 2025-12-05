@@ -62,86 +62,88 @@
                     </a>
                 </div>
 
-                <!-- ============================================ -->
-                <!-- 2. HEADER KANAN: Menu Desktop (POJOK KANAN)  -->
-                <!-- ============================================ -->
+                <!-- HEADER KANAN: Menu Desktop -->
                 <div class="hidden lg:flex lg:items-center lg:gap-x-8">
                     
                     <!-- 1. BERANDA -->
                     <a href="/" 
-                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                    class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                    {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Beranda
                     </a>
 
                     <!-- 2. SEJARAH -->
                     <a href="/sejarah" 
-                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                    class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                    {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Sejarah
                     </a>
 
                     <!-- 3. PENGUMUMAN -->
                     <a href="/pengumuman" 
-                       class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
-                       {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
+                    class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
+                    {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Pengumuman
                     </a>
 
-                    <!-- 4. TERITORIAL (DROPDOWN) -->
-                    <div class="relative h-24 flex items-center group" x-data="{ dropdownOpen: false }">
-                        <button @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false"
+                    <!-- 4. TERITORIAL (DROPDOWN - CLICK) -->
+                    <!-- Tambahkan @click.away agar menu tertutup jika klik di luar -->
+                    <div class="relative h-24 flex items-center group" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                        
+                        <!-- Ubah trigger jadi @click -->
+                        <button @click="dropdownOpen = ! dropdownOpen"
                                 class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
                                 {{ request()->is('teritorial*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Teritorial
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <!-- Tambahkan rotasi icon saat terbuka -->
+                            <svg class="w-4 h-4 ml-1 transform transition-transform duration-200" :class="{'rotate-180': dropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
+                        <!-- Hapus mouseenter/mouseleave dari sini -->
                         <div x-show="dropdownOpen" 
-                             @mouseenter="dropdownOpen = true" 
-                             @mouseleave="dropdownOpen = false"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-2"
-                             class="nav-dropdown absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
-                             
-                             <div class="py-2">
-                                 @if(isset($globalTerritories))
-                                     @foreach($globalTerritories as $wilayah)
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-2"
+                            class="nav-dropdown absolute top-[80%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
+                            style="display: none;"> <!-- Tambahkan style display none untuk mencegah flicker -->
+                            
+                            <div class="py-2">
+                                @if(isset($globalTerritories))
+                                    @foreach($globalTerritories as $wilayah)
                                         <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
                                             Wilayah {{ $wilayah->name }}
                                         </a>
-                                     @endforeach
-                                 @endif
-                                 <a href="/teritorial" class="block px-4 py-3 text-xs text-center text-gray-500 bg-gray-50 font-bold uppercase hover:bg-gray-100">
-                                     Lihat Peta Besar
-                                 </a>
-                             </div>
+                                    @endforeach
+                                @endif
+                                <a href="/teritorial" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
+                                    Lihat Peta Besar
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 5. ORGANISASI (DROPDOWN) -->
-                    <div class="relative h-24 flex items-center group" x-data="{ orgOpen: false }">
-                        <button @mouseenter="orgOpen = true" @mouseleave="orgOpen = false"
+                    <!-- 5. ORGANISASI (DROPDOWN - CLICK) -->
+                    <div class="relative h-24 flex items-center group" x-data="{ orgOpen: false }" @click.away="orgOpen = false">
+                        
+                        <button @click="orgOpen = ! orgOpen"
                                 class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
                                 {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Organisasi
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg class="w-4 h-4 ml-1 transform transition-transform duration-200" :class="{'rotate-180': orgOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
                         <div x-show="orgOpen" 
-                                @mouseenter="orgOpen = true" 
-                                @mouseleave="orgOpen = false"
                                 x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 translate-y-2"
                                 x-transition:enter-end="opacity-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-150"
                                 x-transition:leave-start="opacity-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 translate-y-2"
-                                class="nav-dropdown absolute top-[80%] left-0 w-56 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+                                class="nav-dropdown absolute top-[80%] left-0 w-56 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
+                                style="display: none;">
                                 
                                 <div class="py-2">
                                     @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
@@ -153,36 +155,36 @@
                         </div>
                     </div>
 
-                    <!-- 6. PETUGAS LITURGI (DROPDOWN) -->
-                    <div class="relative h-24 flex items-center group" x-data="{ liturgiOpen: false }">
-                        <button @mouseenter="liturgiOpen = true" @mouseleave="liturgiOpen = false"
+                    <!-- 6. PETUGAS LITURGI (DROPDOWN - CLICK) -->
+                    <div class="relative h-24 flex items-center group" x-data="{ liturgiOpen: false }" @click.away="liturgiOpen = false">
+                        
+                        <button @click="liturgiOpen = ! liturgiOpen"
                                 class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none
                                 {{ request()->is('petugas/*') || request()->is('jadwal-petugas') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Petugas Liturgi
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg class="w-4 h-4 ml-1 transform transition-transform duration-200" :class="{'rotate-180': liturgiOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
                         <div x-show="liturgiOpen" 
-                             @mouseenter="liturgiOpen = true" 
-                             @mouseleave="liturgiOpen = false"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-2"
-                             class="nav-dropdown absolute top-[80%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
-                             
-                             <div class="py-2">
-                                 @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
-                                 <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
-                                     {{ $tugas }}
-                                 </a>
-                                 @endforeach
-                                 <a href="/jadwal-petugas" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
-                                     Lihat Semua Jadwal
-                                 </a>
-                             </div>
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-2"
+                            class="nav-dropdown absolute top-[80%] right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden"
+                            style="display: none;">
+                            
+                            <div class="py-2">
+                                @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
+                                <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-logo-blue font-medium border-b border-gray-50 last:border-0 transition">
+                                    {{ $tugas }}
+                                </a>
+                                @endforeach
+                                <a href="/jadwal-petugas" class="block px-4 py-3 text-xs text-center text-white bg-logo-blue font-bold uppercase hover:bg-blue-800">
+                                    Lihat Semua Jadwal
+                                </a>
+                            </div>
                         </div>
                     </div>
 
