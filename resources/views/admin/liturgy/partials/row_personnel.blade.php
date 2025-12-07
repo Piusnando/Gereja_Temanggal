@@ -17,7 +17,7 @@
         </div>
     </td>
 
-    <!-- KOLOM ASAL (Tetap) -->
+    <!-- KOLOM ASAL -->
     <td class="px-5 py-4 border-b border-gray-200 text-sm">
         @if($person->is_external)
             {{ $person->external_description }}
@@ -26,7 +26,7 @@
         @endif
     </td>
 
-    <!-- KOLOM STATUS (Tetap) -->
+    <!-- KOLOM STATUS -->
     <td class="px-5 py-4 border-b border-gray-200 text-sm">
         @if($person->is_external)
             <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">Luar Paroki</span>
@@ -35,7 +35,7 @@
         @endif
     </td>
 
-    <!-- KOLOM AKSI (Tetap) -->
+    <!-- KOLOM AKSI -->
     <td class="px-5 py-4 border-b border-gray-200 text-sm text-center">
         <form action="{{ route('admin.liturgy.personnels.destroy', $person->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data {{ $person->name }}?');">
             @csrf

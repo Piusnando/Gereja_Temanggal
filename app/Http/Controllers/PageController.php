@@ -43,12 +43,8 @@ class PageController extends Controller
         if ($request->has('category') && $request->category != '') {
             $query->where('category', $request->category);
         }
-
-        // 3. Urutkan berdasarkan Tanggal Acara (Terbaru di atas)
-        // 4. Pagination (9 item per halaman)
         $announcements = $query->orderBy('event_date', 'desc')->paginate(9);
 
-        // Kirim data ke view, sekalian kirim filter yang sedang aktif agar input tidak reset
         return view('pages.pengumuman', [
             'announcements' => $announcements,
             'currentSearch' => $request->search,
@@ -94,7 +90,6 @@ class PageController extends Controller
 
     public function jadwalPetugas() {
         $schedules = \App\Models\LiturgySchedule::query()
-                        // [PERBAIKAN]
                         // Gunakan whereDate agar membandingkan TANGGAL saja, bukan Jam/Detik.
                         // Jadi Misa tadi pagi masih tetap muncul hari ini.
                         ->whereDate('event_at', '>=', now()) 
@@ -134,7 +129,7 @@ class PageController extends Controller
         // Pastikan Anda sudah membuat Model OrganizationMember dan migrasinya
         $members = OrganizationMember::where('category', $categoryName)
                     ->with('lingkungan') // Pastikan relasi 'lingkungan' ada di model OrganizationMember
-                    ->orderBy('id', 'asc') // Urutkan (opsional)
+                    ->orderBy('id', 'asc') // Urutkan berdasarkan ID atau kriteria lain
                     ->get();
 
         return view('pages.organisasi', compact('members', 'categoryName'));

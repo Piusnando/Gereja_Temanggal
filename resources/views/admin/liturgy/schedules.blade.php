@@ -72,7 +72,6 @@
         </div>
         
         <!-- B. BODY KARTU (Statistik) -->
-        <!-- Gunakan 'grow' untuk mendorong footer ke bawah -->
         <div class="p-5 grow flex flex-col justify-center">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status Petugas</span>
@@ -87,7 +86,6 @@
         </div>
 
         <!-- C. FOOTER KARTU (Tombol Rapih) -->
-        <!-- Gunakan 'mt-auto' sebagai jaminan footer di bawah -->
         <div class="p-4 border-t border-gray-100 bg-white mt-auto">
             <a href="{{ route('admin.liturgy.assign', $schedule->id) }}" 
                class="flex items-center justify-center w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-4 rounded-lg transition shadow-md hover:shadow-lg gap-2 group-hover:bg-indigo-700">

@@ -14,7 +14,6 @@
         
         <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">Tanggal</label>
-            <!-- Perhatikan name="event_date" -->
             <input type="date" name="event_date" class="w-full border rounded p-2" required>
         </div>
 

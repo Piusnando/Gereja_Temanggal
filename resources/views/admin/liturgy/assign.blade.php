@@ -3,11 +3,6 @@
 <div class="flex gap-6">
     <!-- KIRI: Form Input -->
     <div class="w-1/3">
-        <!-- 
-           PERBAIKAN UTAMA DI SINI:
-           Jangan hardcode 'Misdinar', tapi ambil dari $roles[0] 
-           agar menyesuaikan role yang login.
-        -->
         <div class="bg-white p-6 rounded shadow mb-6" 
             x-data="{ role: '{{ $roles[0] ?? '' }}', isGroupExternal: false }">
             <h2 class="text-lg font-bold mb-2">Tambah Petugas</h2>

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth; // Jangan lupa import Auth
+use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
@@ -40,8 +40,8 @@ class AnnouncementController extends Controller
             'omk'            => ['OMK'],
             'pia_pir'        => ['PIA/PIR'],
             'misdinar'       => ['Misdinar'],
-            'lektor'         => ['Lektor'], // Jika Lektor boleh buat pengumuman
-            'direktur_musik' => ['Pengumuman Gereja'], // Atau kategori lain yang relevan
+            'lektor'         => ['Lektor'],
+            'direktur_musik' => ['Pengumuman Gereja'],
         ];
 
         return $map[$userRole] ?? []; // Default kosong jika tidak punya hak

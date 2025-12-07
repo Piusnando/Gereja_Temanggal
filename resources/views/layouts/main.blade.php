@@ -72,7 +72,7 @@
                     </a>
 
                     <!-- 2. SEJARAH -->
-                    <a href="/sejarah" 
+                    <a href="#" 
                        class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 
                        {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                         Sejarah

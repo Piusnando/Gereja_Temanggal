@@ -27,7 +27,6 @@
                 <select name="category" class="w-full border rounded p-2 bg-white focus:ring-2 focus:ring-pink-500 focus:outline-none" required>
                     <option value="" disabled selected>-- Pilih Kategori --</option>
                     
-                    {{-- PERBAIKAN: Gunakan $allowed, bukan $categories --}}
                     @foreach($allowed as $cat)
                         <option value="{{ $cat }}">{{ $cat }}</option>
                     @endforeach
