@@ -96,63 +96,73 @@
         <!-- Grid Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @forelse($announcements as $item)
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 flex flex-col h-full group hover:-translate-y-2 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 ease-in-out cursor-pointer">
-                
-                <!-- BAGIAN GAMBAR -->
-                <div class="h-52 w-full bg-gray-200 relative overflow-hidden">
-                    <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/500x300?text=Gereja+Temanggal' }}" 
-                         alt="{{ $item->title }}" 
-                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out">
-                    
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
+                <!-- UPDATE: Ganti DIV menjadi A, tambahkan 'block' dan 'href' di sini -->
+                    <a href="{{ route('pengumuman.detail', $item->id) }}" class="block bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 flex-col h-full group relative">
+                        
+                        <!-- HAPUS LINK ABSOLUTE YANG LAMA (SUDAH TIDAK PERLU) -->
+                        <!-- <a href="..." class="absolute inset-0 z-10"></a> -->
 
-                    @php
-                        $colors = [
-                            'Pengumuman Gereja' => 'bg-blue-600',
-                            'Paroki'            => 'bg-indigo-700',
-                            'Wilayah'           => 'bg-emerald-600',
-                            'Lingkungan'        => 'bg-green-600',
-                            'OMK'               => 'bg-orange-500',
-                            'Misdinar'          => 'bg-red-600',
-                            'PIA/PIR'           => 'bg-yellow-500',
-                            'Calon Manten'      => 'bg-pink-500',
-                            'Berita Duka'       => 'bg-gray-800',
-                        ];
-                        $badgeColor = $colors[$item->category] ?? 'bg-blue-500';
-                    @endphp
-                    <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider z-10">
-                        {{ $item->category }}
-                    </div>
-                </div>
+                        <!-- BAGIAN GAMBAR -->
+                        <div class="h-64 w-full bg-gray-50 relative overflow-hidden flex items-center justify-center">
+                            
+                            <img src="{{ $item->image_path ? asset('storage/' . $item->image_path) : 'https://placehold.co/600x400/png?text=Gereja+Temanggal' }}" 
+                                alt="{{ $item->title }}" 
+                                class="w-full h-full object-contain transform group-hover:scale-105 transition duration-700">
+                            
+                            @php
+                                $colors = [
+                                    'Pengumuman Gereja' => 'bg-blue-600',
+                                    'Paroki'            => 'bg-indigo-700',
+                                    'Wilayah'           => 'bg-emerald-600',
+                                    'Lingkungan'        => 'bg-green-600',
+                                    'OMK'               => 'bg-orange-500',
+                                    'Misdinar'          => 'bg-red-600',
+                                    'PIA/PIR'           => 'bg-yellow-500',
+                                    'Calon Manten'      => 'bg-pink-500',
+                                    'Berita Duka'       => 'bg-gray-800',
+                                ];
+                                $badgeColor = $colors[$item->category] ?? 'bg-blue-500';
+                            @endphp
+                            
+                            <!-- Badge Kategori -->
+                            <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider z-20">
+                                {{ $item->category }}
+                            </div>
+                        </div>
 
-                <!-- CONTENT -->
-                <div class="p-6 flex flex-col grow relative">
-                    <div class="flex items-center text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
-                        <!-- PERUBAHAN: text-logo-red -->
-                        <svg class="w-4 h-4 mr-1 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        {{ $item->event_date->translatedFormat('d F Y') }}
-                    </div>
+                        <!-- CONTENT -->
+                        <div class="p-6 flex flex-col grow">
+                            <div class="flex items-center text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
+                                <svg class="w-4 h-4 mr-1 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                {{ $item->event_date->translatedFormat('d F Y') }}
+                            </div>
 
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition-colors duration-300 line-clamp-2">
-                        {{ $item->title }}
-                    </h3>
-                    
-                    <p class="text-gray-600 text-sm line-clamp-3 mb-4 grow">
-                        {{ Str::limit($item->content, 120) }}
-                    </p>
-                    
-                    <!-- PERUBAHAN: text-logo-red -->
-                    <a href="{{ route('pengumuman.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-logo-red hover:text-red-800 mt-auto transition group/link">
-                        Baca Selengkapnya
-                        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-logo-blue transition line-clamp-2">
+                                {{ $item->title }}
+                            </h3>
+                            
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 grow">
+                                {{ Str::limit($item->content, 120) }}
+                            </p>
+                            
+                            <!-- Tombol Visual (Pakai span/div saja karena pembungkus utama sudah <a>) -->
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <span class="text-sm font-bold text-logo-red group-hover:text-red-800 flex items-center transition">
+                                    Baca Selengkapnya
+                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </span>
+                            </div>
+                        </div>
                     </a>
+                    @empty
+                    <div class="col-span-1 md:col-span-3 text-center py-16 bg-gray-50 rounded-xl border-dashed border-2 border-gray-300">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada pengumuman</h3>
+                    </div>
+                    @endforelse
                 </div>
-            </div>
-            @empty
-            <div class="col-span-1 md:col-span-3 text-center py-16 bg-gray-50 rounded-xl border-dashed border-2 border-gray-300">
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada pengumuman</h3>
-            </div>
-            @endforelse
         </div>
     </div>
 

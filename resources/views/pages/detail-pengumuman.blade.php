@@ -8,24 +8,36 @@
     
     <!-- HEADER GAMBAR (Opsional, jika ada foto) -->
     @if($announcement->image_path)
-        <div class="w-full h-[300px] md:h-[400px] relative">
-            <div class="absolute inset-0 bg-black/50 z-10"></div> <!-- Overlay -->
-            <img src="{{ asset('storage/' . $announcement->image_path) }}" 
-                 class="w-full h-full object-cover">
+        <!-- 
+            Update: 
+            1. h-[300px] diubah jadi h-auto min-h-[400px] md:h-[600px] agar poster panjang muat.
+            2. bg-gray-900 untuk mengisi ruang kosong kiri-kanan dengan warna gelap.
+        -->
+        <div class="w-full h-[400px] md:h-[600px] relative bg-gray-900 group">
             
-            <div class="absolute inset-0 z-20 flex items-center justify-center">
+            <!-- Gambar -->
+            <!-- Update: object-cover diganti object-contain agar gambar utuh -->
+            <img src="{{ asset('storage/' . $announcement->image_path) }}" 
+                 class="w-full h-full object-contain relative z-0">
+            
+            <!-- Overlay Gelap (Supaya teks judul tetap terbaca) -->
+            <!-- Dibuat sedikit transparan, dan makin gelap saat di hover -->
+            <div class="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition duration-500 z-10"></div>
+
+            <!-- Teks Judul di Tengah -->
+            <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
                 <div class="max-w-4xl px-4 text-center text-white">
-                    <span class="inline-block py-1 px-3 rounded-full bg-logo-red text-xs font-bold uppercase tracking-wider mb-3">
+                    <span class="inline-block py-1 px-3 rounded-full bg-logo-red text-xs font-bold uppercase tracking-wider mb-3 shadow-sm">
                         {{ $announcement->category }}
                     </span>
-                    <h1 class="text-3xl md:text-5xl font-bold leading-tight drop-shadow-lg">
+                    <h1 class="text-3xl md:text-5xl font-bold leading-tight drop-shadow-xl">
                         {{ $announcement->title }}
                     </h1>
                 </div>
             </div>
         </div>
     @else
-        <!-- Header Polos jika tidak ada gambar -->
+        <!-- Header Polos (Jika tidak ada gambar) -->
         <div class="bg-logo-blue pt-32 pb-16 text-center text-white px-4">
             <span class="inline-block py-1 px-3 rounded-full bg-white/20 text-xs font-bold uppercase tracking-wider mb-3">
                 {{ $announcement->category }}
