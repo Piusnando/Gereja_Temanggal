@@ -86,7 +86,32 @@ class PageController extends Controller
         
         return view('pages.detail-teritorial', compact('territory'));
     }
-    public function organisasi() { return view('pages.organisasi'); }
+    public function organisasi()
+    {
+        // 1. Ambil semua anggota, urutkan berdasarkan sort_order (Drag & Drop Admin)
+        $members = \App\Models\OrganizationMember::with('lingkungan')
+                    ->orderBy('sort_order', 'asc')
+                    ->get();
+
+        // 2. Kelompokkan data berdasarkan kategori
+        $groupedMembers = $members->groupBy('category');
+
+        // 3. Definisi Urutan Kategori (Agar urutannya rapi, bukan acak)
+        $categoriesOrder = [
+            'Pengurus Gereja', 
+            'OMK', 
+            'Misdinar', 
+            'KOMSOS', 
+            'PIA & PIR', 
+            'Mazmur', 
+            'Lektor', 
+            'Paduan Suara', 
+            'Organis'
+        ];
+
+        // 4. Kirim kedua variabel ke View (PENTING: Jangan lupa compact)
+        return view('pages.organisasi', compact('groupedMembers', 'categoriesOrder'));
+    }
 
     public function jadwalPetugas() {
         $schedules = \App\Models\LiturgySchedule::query()
@@ -122,16 +147,23 @@ class PageController extends Controller
 
     public function showOrganization($category)
     {
-        // Decode URL
+        // 1. Ambil anggota HANYA untuk kategori yang diminta
+        // Gunakan urldecode untuk menangani spasi (misal: Pengurus%20Gereja)
         $categoryName = urldecode($category);
 
-        // Ambil anggota berdasarkan kategori
-        // Pastikan Anda sudah membuat Model OrganizationMember dan migrasinya
-        $members = OrganizationMember::where('category', $categoryName)
-                    ->with('lingkungan') // Pastikan relasi 'lingkungan' ada di model OrganizationMember
-                    ->orderBy('id', 'asc') // Urutkan berdasarkan ID atau kriteria lain
+        $members = \App\Models\OrganizationMember::where('category', $categoryName)
+                    ->with('lingkungan')
+                    ->orderBy('sort_order', 'asc')
                     ->get();
 
-        return view('pages.organisasi', compact('members', 'categoryName'));
+        // 2. Tetap lakukan grouping agar format datanya sama dengan view 'pages.organisasi'
+        $groupedMembers = $members->groupBy('category');
+
+        // 3. Buat array order yang isinya HANYA kategori tersebut
+        // Ini kuncinya agar tidak error "Undefined variable $categoriesOrder"
+        $categoriesOrder = [$categoryName];
+
+        // 4. Return ke view yang sama
+        return view('pages.organisasi', compact('groupedMembers', 'categoriesOrder'));
     }
 }

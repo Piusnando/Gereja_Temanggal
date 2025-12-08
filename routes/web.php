@@ -1,15 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\FeedbackController; // Public
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\LiturgyController;
 use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\FeedbackController; // Public
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController; // Admin
 
 /*
@@ -23,6 +24,7 @@ Route::get('/pengumuman', [PageController::class, 'pengumuman']);
 Route::get('/pengumuman/{id}', [PageController::class, 'detailPengumuman'])->name('pengumuman.detail');
 Route::get('/teritorial', [PageController::class, 'teritorial'])->name('teritorial.index');
 Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->name('teritorial.show');
+Route::get('/organisasi', [PageController::class, 'organisasi'])->name('organisasi.index');
 Route::get('/organisasi/{category}', [PageController::class, 'showOrganization'])->name('organisasi.show');
 Route::get('/organisasi', function() { return redirect('/organisasi/Pengurus Gereja'); });
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
@@ -132,6 +134,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::delete('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'destroy'])->name('admin.organization.destroy');
         Route::get('/organization/{id}/edit', [App\Http\Controllers\Admin\OrganizationController::class, 'edit'])->name('admin.organization.edit');
         Route::put('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'update'])->name('admin.organization.update');
+        Route::post('/organization/reorder', [OrganizationController::class, 'reorder'])->name('admin.organization.reorder');
     });
          
     

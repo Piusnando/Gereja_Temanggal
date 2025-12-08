@@ -34,21 +34,17 @@ class OrganizationController extends Controller
     public function index(Request $request)
     {
         $allowed = $this->getAllowedCategories();
-        
-        // 1. Ambil Kategori yang sedang dipilih dari URL (agar tidak undefined di view)
         $category = $request->query('category'); 
 
-        // Filter Query berdasarkan hak akses
         $query = OrganizationMember::whereIn('category', $allowed);
 
-        // Filter tambahan dari dropdown (jika user memilih kategori tertentu)
         if ($category && $category != '') {
             $query->where('category', $category);
         }
 
-        $members = $query->latest()->paginate(10);
+        // UBAH DISINI: Urutkan berdasarkan sort_order, lalu get() semua
+        $members = $query->orderBy('sort_order', 'asc')->get();
         
-        // 2. JANGAN LUPA: Kirim variabel '$category' ke view di dalam compact
         return view('admin.organization.index', compact('members', 'allowed', 'category'));
     }
 
@@ -146,5 +142,20 @@ class OrganizationController extends Controller
         $member->delete();
 
         return back()->with('success', 'Anggota dihapus');
+    }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:organization_members,id',
+        ]);
+
+        foreach ($request->ids as $index => $id) {
+            // Update urutan berdasarkan posisi array (index + 1)
+            OrganizationMember::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+
+        return response()->json(['status' => 'success']);
     }
 }
