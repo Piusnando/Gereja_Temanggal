@@ -23,7 +23,7 @@
 </head>
 <body class="bg-gray-100 antialiased flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR WRAPPER (Bagian yang Hilang Sebelumnya) -->
+    <!-- SIDEBAR WRAPPER -->
     <aside class="w-64 bg-sidebar text-white flex flex-col shadow-xl md:flex z-30 shrink-0">
         
         <!-- 1. SIDEBAR HEADER -->
@@ -43,20 +43,25 @@
                 <span class="font-medium">Dashboard</span>
             </a>
 
-            <!-- MENU KHUSUS ADMIN (Logo & User) -->
+            <!-- MENU KHUSUS ADMIN UTAMA (Pengaturan Website & User) -->
             @if(Auth::user()->role == 'admin')
+                <div class="px-4 mt-4 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pengaturan Utama</div>
+
                 <a href="{{ route('admin.settings') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.settings') ? 'bg-active text-white' : '' }}">
                     <svg class="w-5 h-5 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     <span class="font-medium">Logo & Banner</span>
                 </a>
+                
+                <!-- MENU KELOLA USER (Hanya muncul 1 kali di sini) -->
                 <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.users*') ? 'bg-active text-white' : '' }}">
                     <svg class="w-5 h-5 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <span class="font-medium">Kelola User</span>
                 </a>
             @endif
 
+            <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Konten Website</div>
+
             <!-- MENU PENGUMUMAN -->
-            <!-- Akses: Admin, Pengurus, OMK, PIA/PIR -->
             @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir']))
             <a href="{{ route('admin.announcements.index') }}" 
             class="flex items-center px-4 py-3 rounded-lg transition-colors group {{ request()->routeIs('admin.announcements*') ? 'bg-active text-white shadow-lg' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
@@ -66,7 +71,6 @@
             @endif
 
             <!-- MENU ORGANISASI -->
-            <!-- Akses: Admin, Pengurus, OMK, Misdinar, Lektor, Musik, PIA/PIR -->
             @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'misdinar', 'lektor', 'direktur_musik', 'pia_pir']))
             <a href="{{ route('admin.organization.index') }}" 
             class="flex items-center px-4 py-3 rounded-lg transition-colors group {{ request()->routeIs('admin.organization*') ? 'bg-active text-white shadow-lg' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
@@ -75,7 +79,7 @@
             </a>
             @endif
 
-            <!-- KHUSUS KRITIK SARAN (OMK TIDAK BOLEH LIHAT) -->
+            <!-- MENU KRITIK SARAN -->
             @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
             <a href="{{ route('admin.feedback.index') }}" 
             class="flex items-center px-4 py-3 rounded-lg transition-colors group {{ request()->routeIs('admin.feedback*') ? 'bg-active text-white shadow-lg' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
@@ -84,76 +88,48 @@
             </a>
             @endif
             
-            <!-- MENU LITURGI (UNTUK SEMUA ROLE TERMASUK MISDINAR & LEKTOR) -->
+            <!-- MENU LITURGI -->
             @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik', 'misdinar', 'lektor']))
                 <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Liturgi & Peribadatan</div>
 
-                <!-- 5. DATABASE PETUGAS (ALL ROLE) - HANYA ADMIN -->
-                @if(Auth::user()->role == 'admin')
-                    <a href="{{ route('admin.liturgy.personnels') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition group {{ request()->fullUrlIs(route('admin.liturgy.personnels')) ? 'bg-active text-white' : '' }}">
-                        <svg class="w-5 h-5 mr-3 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        <span class="font-medium">Data Petugas (All)</span>
-                    </a>
-                @endif
-
-                <!-- 6. JADWAL (SEMUA BOLEH LIHAT) -->
+                <!-- JADWAL (SEMUA ROLE LITURGI) -->
                 <a href="{{ route('admin.liturgy.schedules') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition group {{ request()->routeIs('admin.liturgy.schedules*') ? 'bg-active text-white' : '' }}">
                     <svg class="w-5 h-5 mr-3 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     <span class="font-medium">
                         {{ in_array(Auth::user()->role, ['misdinar', 'lektor']) ? 'Lihat Jadwal' : 'Kelola Jadwal' }}
                     </span>
                 </a>
-                
-                <!-- 7. STRUKTUR ORGANISASI -->
-                <a href="{{ route('admin.organization.index') }}" 
-                class="flex items-center px-4 py-3 rounded-lg transition-colors group {{ request()->routeIs('admin.organization*') ? 'bg-active text-white shadow-lg' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <span class="font-medium">Struktur Organisasi</span>
-                </a>
 
-                <!-- DATABASE SPESIFIK (Shortcut) -->
+                <!-- DATABASE SPESIFIK (Shortcut Accordion) -->
                 <div x-data="{ openDb: true }" class="mt-4 mb-2">
-                    <div class="px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Database Spesifik</div>
+                    <div class="px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider flex justify-between cursor-pointer" @click="openDb = !openDb">
+                        <span>Database Petugas</span>
+                        <svg :class="{'rotate-180': openDb}" class="w-3 h-3 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
                     
-                    <!-- Admin & Pengurus -->
-                    @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
-                        <a href="{{ route('admin.liturgy.personnels', ['type' => 'Misdinar']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-red-500 mr-3"></span> Misdinar</a>
-                        <a href="{{ route('admin.liturgy.personnels', ['type' => 'Lektor']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-green-500 mr-3"></span> Lektor</a>
-                    @endif
+                    <div x-show="openDb" x-transition class="space-y-1">
+                        <!-- Admin & Pengurus: Semua Database -->
+                        @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
+                            <a href="{{ route('admin.liturgy.personnels') }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-gray-500 mr-3"></span> Semua Data</a>
+                            <a href="{{ route('admin.liturgy.personnels', ['type' => 'Misdinar']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-red-500 mr-3"></span> Misdinar</a>
+                            <a href="{{ route('admin.liturgy.personnels', ['type' => 'Lektor']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-green-500 mr-3"></span> Lektor</a>
+                        @endif
 
-                    <!-- Direktur Musik -->
-                    @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik']))
-                        <a href="{{ route('admin.liturgy.personnels', ['type' => 'Mazmur']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-yellow-500 mr-3"></span> Mazmur</a>
-                        <a href="{{ route('admin.liturgy.personnels', ['type' => 'Organis']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-purple-500 mr-3"></span> Organis</a>
-                    @endif
+                        <!-- Direktur Musik -->
+                        @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik']))
+                            <a href="{{ route('admin.liturgy.personnels', ['type' => 'Mazmur']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-yellow-500 mr-3"></span> Mazmur</a>
+                            <a href="{{ route('admin.liturgy.personnels', ['type' => 'Organis']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-purple-500 mr-3"></span> Organis</a>
+                        @endif
 
-                    <!-- KHUSUS ROLE MISDINAR (Hanya lihat Misdinar) -->
-                    @if(Auth::user()->role == 'misdinar')
-                        <a href="{{ route('admin.liturgy.personnels', ['type' => 'Misdinar']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-red-500 mr-3"></span> Data Misdinar</a>
-                    @endif
-
-                    <!-- KHUSUS ROLE LEKTOR (Hanya lihat Lektor) -->
-                    @if(Auth::user()->role == 'lektor')
-                        <a href="{{ route('admin.liturgy.personnels', ['type' => 'Lektor']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-green-500 mr-3"></span> Data Lektor</a>
-                    @endif
+                        <!-- Role Spesifik -->
+                        @if(Auth::user()->role == 'misdinar')
+                            <a href="{{ route('admin.liturgy.personnels', ['type' => 'Misdinar']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-red-500 mr-3"></span> Data Misdinar</a>
+                        @endif
+                        @if(Auth::user()->role == 'lektor')
+                            <a href="{{ route('admin.liturgy.personnels', ['type' => 'Lektor']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-green-500 mr-3"></span> Data Lektor</a>
+                        @endif
+                    </div>
                 </div>
-            @endif
-
-        </nav>
-
-            <!-- KHUSUS ADMIN -->
-            @if(Auth::user()->role == 'admin')
-                
-                <!-- Menu Kelola User (BARU) -->
-                <a href="{{ route('admin.users.index') }}" 
-                class="flex items-center px-4 py-3 rounded-lg transition-colors group {{ request()->routeIs('admin.users*') ? 'bg-active text-white shadow-lg' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.users*') ? 'text-yellow-400' : 'group-hover:text-yellow-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <span class="font-medium">Kelola User</span>
-                </a>
-
-                <!-- Menu Logo & Banner (YANG LAMA) -->
-                <a href="{{ route('admin.settings') }}" ... > </a>
-
             @endif
 
         </nav>
@@ -188,16 +164,12 @@
         </div>
     </aside>
 
-    <!-- KONTEN UTAMA (Content Wrapper) -->
+    <!-- KONTEN UTAMA -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden bg-gray-100">
-        <!-- Main Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 md:p-8">
-            
-            <!-- PENTING: Inilah Lubang Kunci Konten -->
             @yield('content')
-            
         </main>
     </div>
 
 </body>
-</html>
+</html> 
