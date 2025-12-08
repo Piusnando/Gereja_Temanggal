@@ -71,7 +71,7 @@
                 <table class="min-w-full leading-normal">
                     <thead class="bg-white text-gray-600 uppercase text-xs font-semibold border-b">
                         <tr>
-                            <th class="w-10 px-6 py-3 text-center">#</th>
+                            <th class="w-10 px-6 py-3 text-center"></th>
                             <th class="px-6 py-3 text-left">Foto</th>
                             <th class="px-6 py-3 text-left">Nama & Jabatan</th>
                             <th class="px-6 py-3 text-left">Lingkungan</th>
