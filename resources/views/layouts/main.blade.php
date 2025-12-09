@@ -36,29 +36,25 @@
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
 
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm transition-all duration-300" x-data="{ open: false }">
+    <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-24">
+            <!-- Tinggi header h-24 setara dengan 6rem (96px) -->
+            <div class="flex justify-between h-24"> 
                 
-                <!-- HEADER KIRI: Logo & Nama -->
-                <div class="flex justify-start lg:w-0 lg:flex-1">
-                    <a href="/" class="flex items-center gap-3 group">
-                        <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
-                             alt="Logo Gereja" 
-                             class="h-14 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition duration-300">
-                        
-                        <div class="flex flex-col justify-center">
-                            <span class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight uppercase tracking-wide group-hover:text-blue-800 transition">
-                                Gereja St. Ignatius Loyola
-                            </span>
-                            <span class="text-lg md:text-xl font-extrabold text-logo-red leading-none uppercase tracking-wide hover:opacity-80 transition">
-                                Kalasan Tengah
-                            </span>
-                            <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-1 uppercase">
-                                Paroki Maria Marganingsih Kalasan
-                            </span>
-                        </div>
-                    </a>
+                <!-- ... (Isi Logo & Menu Tetap Sama) ... -->
+                <div class="flex items-center gap-4">
+                    <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
+                        alt="Logo Gereja" 
+                        class="h-14 w-auto object-contain">
+                    <div class="flex flex-col justify-center">
+                        <a href="/" class="text-lg md:text-xl font-extrabold text-logo-blue leading-tight uppercase tracking-wide">
+                            Gereja St. Ignatius Loyola<br class="hidden md:block"> 
+                            <span class="text-logo-red">Kalasan Tengah</span>
+                        </a>
+                        <span class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
+                            Paroki Maria Marganingsih Kalasan
+                        </span>
+                    </div>
                 </div>
 
                 <!-- HEADER KANAN: Menu Desktop -->

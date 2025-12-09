@@ -31,47 +31,49 @@
             interval: null
         }" 
         x-init="resetTimer()"
-        class="relative w-full h-[400px] md:h-[600px] overflow-hidden rounded-b-[3rem] shadow-2xl group border-b-8 border-logo-red mb-12">
+        class="relative w-full group mb-12"
+        style="height: calc(100vh - 6rem);"> <!-- FIX: Menggunakan kalkulasi tinggi layar dikurangi header -->
         
-        <!-- Jika tidak ada banner -->
-        @if($banners->isEmpty())
-            <div class="absolute inset-0 bg-gray-800 flex items-center justify-center text-gray-500">
-                Belum ada banner yang diupload.
-            </div>
-        @endif
+        <!-- Wrapper Rounded di bawah -->
+        <div class="absolute inset-0 rounded-b-[3rem] overflow-hidden shadow-2xl border-b-8 border-logo-red">
+            
+            <!-- Jika tidak ada banner -->
+            @if($banners->isEmpty())
+                <div class="absolute inset-0 bg-gray-800 flex items-center justify-center text-gray-500">
+                    Belum ada banner yang diupload.
+                </div>
+            @endif
 
-        <!-- Loop Images -->
-        <template x-for="(slide, index) in slides" :key="index">
-            <div x-show="activeSlide === index + 1"
-                 x-transition:enter="transition transform duration-1000 ease-in-out"
-                 x-transition:enter-start="opacity-0 scale-105"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition transform duration-1000 ease-in-out"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95"
-                 class="absolute inset-0 bg-cover bg-center w-full h-full"
-                 :style="`background-image: url('${slide}')`">
-                 <div class="absolute inset-0 bg-black/40"></div>
-            </div>
-        </template>
+            <!-- Loop Images -->
+            <template x-for="(slide, index) in slides" :key="index">
+                <div x-show="activeSlide === index + 1"
+                     class="absolute inset-0 bg-cover bg-center w-full h-full transition-opacity duration-1000 ease-in-out"
+                     x-transition:enter="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     :style="`background-image: url('${slide}')`">
+                     <!-- Overlay Gelap agar tulisan terbaca -->
+                     <div class="absolute inset-0 bg-black/40"></div>
+                </div>
+            </template>
 
-        <!-- Teks Tengah -->
-        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-10 pointer-events-none">
-            <div class="max-w-4xl drop-shadow-lg pointer-events-auto mt-10">
-                <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-2 text-logo-yellow">Selamat Datang di Website Resmi</h2>
-                <h1 class="text-3xl md:text-6xl font-extrabold leading-tight mb-4 text-white drop-shadow-md">
-                    Gereja St. Ignatius Loyola<br>
-                    <!-- PERUBAHAN: text-logo-red -->
-                    <span class="text-logo-red">Kalasan Tengah</span>
-                </h1>
-                <p class="text-sm md:text-lg font-medium text-gray-200 mt-2 bg-black/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">
-                    Paroki Maria Marganingsih Kalasan
-                </p>
-                <div class="mt-8">
-                    <!-- PERUBAHAN: bg-logo-red -->
-                    <a href="#jadwal" class="bg-logo-red hover:bg-red-800 text-white font-bold py-3 px-8 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300">
-                        Lihat Jadwal Misa
-                    </a>
+            <!-- Teks Tengah -->
+            <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-10 pointer-events-none">
+                <div class="max-w-4xl drop-shadow-lg pointer-events-auto">
+                    <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-2 text-logo-yellow animate-bounce">Selamat Datang di Website Resmi</h2>
+                    <h1 class="text-4xl md:text-7xl font-extrabold leading-tight mb-6 text-white drop-shadow-md">
+                        Gereja St. Ignatius<br>
+                        <span class="text-red-500">Kalasan Tengah</span>
+                    </h1>
+                    <p class="text-lg md:text-2xl font-medium text-gray-100 mt-2 bg-black/30 inline-block px-6 py-2 rounded-full backdrop-blur-sm border border-white/20">
+                        Paroki Maria Marganingsih Kalasan
+                    </p>
+                    <div class="mt-10">
+                        <a href="#jadwal" class="bg-logo-red hover:bg-red-700 text-white text-lg font-bold py-4 px-10 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300">
+                            Lihat Jadwal Misa
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
