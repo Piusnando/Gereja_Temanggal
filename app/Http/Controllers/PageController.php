@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Banner;
-use App\Models\SiteSetting;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
-use App\Models\OrganizationMember;
 
 class PageController extends Controller
 {
@@ -27,7 +24,9 @@ class PageController extends Controller
     }
 
     // Fungsi halaman lain
-    public function sejarah() { return view('pages.sejarah'); }
+    public function sejarah() {
+        return view('pages.sejarah');
+    }
     public function pengumuman(Request $request)
     {
         // Mulai Query

@@ -77,9 +77,6 @@
             @forelse($announcements as $item)
             <!-- UPDATE: Ganti DIV menjadi A, tambahkan 'block' dan 'href' di sini -->
             <a href="{{ route('pengumuman.detail', $item->id) }}" class="block bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 flex-col h-full group relative">
-                
-                <!-- HAPUS LINK ABSOLUTE YANG LAMA (SUDAH TIDAK PERLU) -->
-                <!-- <a href="..." class="absolute inset-0 z-10"></a> -->
 
                 <!-- BAGIAN GAMBAR -->
                 <div class="h-64 w-full bg-gray-50 relative overflow-hidden flex items-center justify-center">
