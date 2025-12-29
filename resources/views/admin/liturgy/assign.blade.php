@@ -8,12 +8,6 @@
     <!-- ============================================= -->
     <div class="w-full md:w-1/3">
         
-        <!-- 
-            INIT ALPINE JS: 
-            - role: Default peran yang dipilih (ambil dari array pertama)
-            - selectedWilayah: ID wilayah yang sedang dipilih (kosong default)
-            - territoriesData: Data wilayah & lingkungan dari Controller dikonversi ke JSON
-        -->
         <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100 mb-6" 
             x-data="{ 
                 role: '{{ $roles[0] ?? '' }}', 
@@ -24,9 +18,8 @@
                 // FUNGSI INIT: Memantau perubahan Role
                 init() {
                     this.$watch('role', (value) => {
-                        // Setiap kali ganti peran, kembalikan ke mode 'existing' (pilih dari database)
-                        // Agar form input manual tertutup otomatis
                         this.inputMode = 'existing';
+                        this.selectedWilayah = ''; // Reset wilayah jika ganti peran
                     });
                 }
             }" x-init="init()">
@@ -42,13 +35,15 @@
 
             <!-- Alert -->
             @if(session('error'))
-                <div class="bg-red-50 text-red-700 p-3 rounded-lg text-sm mb-4 border border-red-200">
-                    {{ session('error') }}
+                <div class="bg-red-50 text-red-700 p-3 rounded-lg text-sm mb-4 border border-red-200 flex items-start">
+                    <svg class="w-5 h-5 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{{ session('error') }}</span>
                 </div>
             @endif
             @if(session('success'))
-                <div class="bg-green-50 text-green-700 p-3 rounded-lg text-sm mb-4 border border-green-200">
-                    {{ session('success') }}
+                <div class="bg-green-50 text-green-700 p-3 rounded-lg text-sm mb-4 border border-green-200 flex items-start">
+                    <svg class="w-5 h-5 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
@@ -58,21 +53,24 @@
                 <!-- 1. PILIH PERAN -->
                 <div class="mb-4">
                     <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Peran / Tugas</label>
-                    <select name="role" x-model="role" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select name="role" x-model="role" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
                         @foreach($roles as $r)
                             <option value="{{ $r }}">{{ $r }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- TOGGLE: INPUT BARU / LUAR -->
+                <!-- 
+                   TOGGLE: INPUT BARU / LUAR 
+                   Hanya muncul untuk Paduan Suara & Parkir
+                -->
                 <div class="mb-4 bg-yellow-50 p-3 rounded-lg border border-yellow-200" 
-                    x-show="['Paduan Suara', 'Parkir'].includes(role)" 
-                    x-transition>
+                     x-show="['Paduan Suara', 'Parkir'].includes(role)" 
+                     x-transition>
                     <label class="inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="is_new_external" value="1" class="form-checkbox h-4 w-4 text-yellow-600 rounded" 
-                            @change="inputMode = $el.checked ? 'new' : 'existing'"
-                            :checked="inputMode === 'new'">
+                               @change="inputMode = $el.checked ? 'new' : 'existing'"
+                               :checked="inputMode === 'new'">
                         <span class="ml-2 text-sm text-yellow-800 font-medium select-none">
                             Kelompok dari Luar Gereja / Paroki?
                         </span>
@@ -84,34 +82,61 @@
                 <!-- ============================================= -->
                 <div x-show="inputMode === 'existing'" x-transition>
                     
-                    <!-- A. TUGAS PERORANGAN -->
-                    <template x-if="['Misdinar', 'Lektor', 'Mazmur', 'Organis'].includes(role)">
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1" x-text="'Pilih Nama ' + role"></label>
-                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">-- Pilih Petugas --</option>
-                                <template x-if="role === 'Misdinar'">
-                                    @foreach($misdinars as $p) <option value="{{ $p->id }}">{{ $p->name }} {{ $p->lingkungan ? '('.$p->lingkungan->name.')' : '' }}</option> @endforeach
-                                </template>
-                                <template x-if="role === 'Lektor'">
-                                    @foreach($lektors as $p) <option value="{{ $p->id }}">{{ $p->name }} {{ $p->lingkungan ? '('.$p->lingkungan->name.')' : '' }}</option> @endforeach
-                                </template>
-                                <template x-if="role === 'Mazmur'">
-                                    @foreach($mazmurs as $p) <option value="{{ $p->id }}">{{ $p->name }}</option> @endforeach
-                                </template>
-                                <template x-if="role === 'Organis'">
-                                    @foreach($organis as $p) <option value="{{ $p->id }}">{{ $p->name }}</option> @endforeach
-                                </template>
+                    <!-- A. TUGAS PERORANGAN (DROPDOWN TERPISAH) -->
+                    <!-- Teknik ini menjamin semua data muncul -->
+                    
+                    <div class="space-y-4">
+                        <!-- Misdinar -->
+                        <div x-show="role === 'Misdinar'">
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Misdinar</label>
+                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Misdinar'">
+                                <option value="">-- Pilih Misdinar --</option>
+                                @foreach($misdinars as $p) 
+                                    <option value="{{ $p->id }}">{{ $p->name }} {{ $p->lingkungan ? '('.$p->lingkungan->name.')' : '' }}</option> 
+                                @endforeach
                             </select>
                         </div>
-                    </template>
 
-                    <!-- B. TUGAS KELOMPOK (Padus/Parkir) -->
+                        <!-- Lektor -->
+                        <div x-show="role === 'Lektor'">
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Lektor</label>
+                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Lektor'">
+                                <option value="">-- Pilih Lektor --</option>
+                                @foreach($lektors as $p) 
+                                    <option value="{{ $p->id }}">{{ $p->name }} {{ $p->lingkungan ? '('.$p->lingkungan->name.')' : '' }}</option> 
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Mazmur -->
+                        <div x-show="role === 'Mazmur'">
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Pemazmur</label>
+                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Mazmur'">
+                                <option value="">-- Pilih Pemazmur --</option>
+                                @foreach($mazmurs as $p) 
+                                    <option value="{{ $p->id }}">{{ $p->name }}</option> 
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Organis -->
+                        <div x-show="role === 'Organis'">
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Organis</label>
+                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Organis'">
+                                <option value="">-- Pilih Organis --</option>
+                                @foreach($organis as $p) 
+                                    <option value="{{ $p->id }}">{{ $p->name }}</option> 
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- B. TUGAS KELOMPOK (PADUS/PARKIR) -->
                     <template x-if="['Paduan Suara', 'Parkir'].includes(role)">
-                        <div class="space-y-4">
+                        <div class="space-y-4 bg-blue-50 p-4 rounded-lg border border-blue-100">
                             <div>
                                 <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Filter Wilayah</label>
-                                <select x-model="selectedWilayah" class="w-full border border-gray-300 rounded-lg p-2.5">
+                                <select x-model="selectedWilayah" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
                                     <option value="">-- Pilih Wilayah --</option>
                                     <template x-for="wilayah in territoriesData" :key="wilayah.id">
                                         <option :value="wilayah.id" x-text="wilayah.name"></option>
@@ -120,7 +145,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Lingkungan</label>
-                                <select name="lingkungan_id" class="w-full border border-gray-300 rounded-lg p-2.5 disabled:bg-gray-100" 
+                                <select name="lingkungan_id" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white disabled:bg-gray-100" 
                                         :disabled="selectedWilayah === ''">
                                     <option value="">-- Pilih Lingkungan --</option>
                                     <template x-for="wilayah in territoriesData">
@@ -133,6 +158,7 @@
                                         </template>
                                     </template>
                                 </select>
+                                <p x-show="selectedWilayah === ''" class="text-xs text-blue-500 mt-1 italic">* Pilih wilayah dulu.</p>
                             </div>
                         </div>
                     </template>
@@ -141,16 +167,16 @@
                 <!-- ============================================= -->
                 <!-- MODE 2: INPUT BARU / LUAR (NEW) -->
                 <!-- ============================================= -->
-                <div x-show="inputMode === 'new'" class="space-y-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200" x-transition>
+                <div x-show="inputMode === 'new'" class="space-y-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-4" x-transition>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">Nama Lengkap / Nama Kelompok</label>
-                        <input type="text" name="new_name" class="w-full border border-yellow-300 rounded-lg p-2.5 focus:ring-2 focus:ring-yellow-500" placeholder="Contoh: Budi Santoso / Padus Univ. Atma Jaya">
+                        <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">Nama Kelompok</label>
+                        <input type="text" name="new_name" class="w-full border border-yellow-300 rounded-lg p-2.5 focus:ring-2 focus:ring-yellow-500" placeholder="Contoh: Padus Univ. Atma Jaya">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">Asal (Paroki / Instansi)</label>
                         <input type="text" name="new_description" class="w-full border border-yellow-300 rounded-lg p-2.5 focus:ring-2 focus:ring-yellow-500" placeholder="Contoh: Paroki Nandan">
                     </div>
-                    <p class="text-xs text-yellow-600 italic">* Data ini akan otomatis tersimpan ke Database Petugas sebagai "Luar Paroki".</p>
+                    <p class="text-xs text-yellow-600 italic">* Data ini akan otomatis tersimpan sebagai "Luar Paroki".</p>
                 </div>
 
                 <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center">
@@ -165,11 +191,7 @@
     <!-- BAGIAN KANAN: TABEL DAFTAR PETUGAS -->
     <!-- ============================================= -->
     <div class="w-full md:w-2/3">
-        
-        <!-- Panggil file Partial Tabel agar kode lebih rapi -->
-        <!-- Pastikan file ini ada di resources/views/admin/liturgy/partials/table_assign.blade.php -->
         @include('admin.liturgy.partials.table_assign') 
-
     </div>
 </div>
 @endsection

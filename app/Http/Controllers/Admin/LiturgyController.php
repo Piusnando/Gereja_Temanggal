@@ -16,7 +16,6 @@ class LiturgyController extends Controller
     // =========================================================================
     // BAGIAN 1: DATABASE PETUGAS (PERSONNEL)
     // =========================================================================
-    
     public function personnelIndex(Request $request)
     {
         $type = $request->query('type'); // Ambil dari URL ?type=Misdinar
@@ -164,68 +163,72 @@ class LiturgyController extends Controller
     // BAGIAN 3: PENUGASAN (ASSIGNMENT) - INTI SISTEM
     // =========================================================================
 
+    // Pastikan import model ini ada di paling atas file
+    // use App\Models\Territory; 
+    // use App\Models\LiturgyPersonnel;
+    // use App\Models\LiturgySchedule;
+    // use App\Models\Lingkungan;
+
     public function scheduleEdit($id)
-    {   
+    {
+        // 1. Ambil Data Jadwal
         $schedule = LiturgySchedule::with(['assignments.personnel', 'assignments.lingkungan'])->findOrFail($id);
-        $userRole = Auth::user()->role;
+        $userRole = auth()->user()->role;
 
-        // A. FILTER DAFTAR TUGAS DI TABEL KANAN (Eager Loading Constraint)
-        // Agar Misdinar hanya melihat list Misdinar, dst.
-        $assignmentFilter = function($query) use ($userRole) {
-            if ($userRole == 'misdinar') {
-                $query->where('role', 'Misdinar');
-            } 
-            elseif ($userRole == 'lektor') {
-                $query->where('role', 'Lektor');
-            } 
-            elseif ($userRole == 'direktur_musik') {
-                $query->whereIn('role', ['Mazmur', 'Organis', 'Paduan Suara']);
-            }
-            // Admin & Pengurus mengambil semua (tidak masuk if)
-        };
-
-        $schedule = LiturgySchedule::with([
-            'assignments' => $assignmentFilter, 
-            'assignments.personnel', 
-            'assignments.lingkungan'
-        ])->findOrFail($id);
-        
-        // B. FILTER DROPDOWN INPUT DI KIRI (Agar pilihan sesuai role)
+        // 2. Inisialisasi Koleksi Kosong (Agar tidak error undefined variable)
         $misdinars = collect(); 
         $lektors   = collect();
         $mazmurs   = collect();
         $organis   = collect();
-        $territories = Territory::with(['lingkungans' => function($q) {
-            $q->orderBy('name'); // Urutkan lingkungan A-Z
+        
+        // 3. Ambil Data Wilayah & Lingkungan (Untuk Padus & Parkir)
+        // Kita gunakan get() agar semua wilayah termuat
+        $territories = \App\Models\Territory::with(['lingkungans' => function($q) {
+            $q->orderBy('name');
         }])->orderBy('name')->get();
-        $roles = [];
 
+        // 4. LOGIKA PENGAMBILAN DATA PETUGAS (WAJIB PAKAI get())
+        
+        // KASUS A: ADMIN & PENGURUS (Bisa akses semua data)
         if (in_array($userRole, ['admin', 'pengurus_gereja'])) {
-            $misdinars = LiturgyPersonnel::where('type', 'Misdinar')->orderBy('name')->get();
-            $lektors   = LiturgyPersonnel::where('type', 'Lektor')->orderBy('name')->get();
-            $mazmurs   = LiturgyPersonnel::where('type', 'Mazmur')->orderBy('name')->get();
-            $organis   = LiturgyPersonnel::where('type', 'Organis')->orderBy('name')->get();
-            $lingkungans = Lingkungan::orderBy('name')->get();
+            $misdinars = LiturgyPersonnel::where('type', 'Misdinar')->orderBy('name', 'asc')->get();
+            $lektors   = LiturgyPersonnel::where('type', 'Lektor')->orderBy('name', 'asc')->get();
+            $mazmurs   = LiturgyPersonnel::where('type', 'Mazmur')->orderBy('name', 'asc')->get();
+            $organis   = LiturgyPersonnel::where('type', 'Organis')->orderBy('name', 'asc')->get();
+            
             $roles = ['Misdinar', 'Lektor', 'Mazmur', 'Organis', 'Paduan Suara', 'Parkir'];
         } 
+        
+        // KASUS B: DIREKTUR MUSIK (Hanya Musik)
         elseif ($userRole == 'direktur_musik') {
-            $mazmurs   = LiturgyPersonnel::where('type', 'Mazmur')->orderBy('name')->get();
-            $organis   = LiturgyPersonnel::where('type', 'Organis')->orderBy('name')->get();
-            $lingkungans = Lingkungan::orderBy('name')->get(); 
+            $mazmurs   = LiturgyPersonnel::where('type', 'Mazmur')->orderBy('name', 'asc')->get();
+            $organis   = LiturgyPersonnel::where('type', 'Organis')->orderBy('name', 'asc')->get();
+            
             $roles = ['Mazmur', 'Organis', 'Paduan Suara'];
         }
+        
+        // KASUS C: MISDINAR (Hanya Misdinar)
         elseif ($userRole == 'misdinar') {
-            $misdinars = LiturgyPersonnel::where('type', 'Misdinar')->orderBy('name')->get();
-            $roles = ['Misdinar']; 
+            // Pastikan pakai get() agar SEMUA data misdinar muncul
+            $misdinars = LiturgyPersonnel::where('type', 'Misdinar')->orderBy('name', 'asc')->get();
+            
+            // Debugging (Opsional: Hapus tanda // di bawah jika ingin cek jumlah data di layar putih)
+            // dd($misdinars->count(), $misdinars->pluck('name')); 
+
+            $roles = ['Misdinar'];
         }
+        
+        // KASUS D: LEKTOR (Hanya Lektor)
         elseif ($userRole == 'lektor') {
-            $lektors = LiturgyPersonnel::where('type', 'Lektor')->orderBy('name')->get();
-            $roles = ['Lektor']; 
+            $lektors = LiturgyPersonnel::where('type', 'Lektor')->orderBy('name', 'asc')->get();
+            $roles = ['Lektor'];
         } 
+        
         else {
-            abort(403, 'Role Anda tidak memiliki akses pengaturan jadwal.');
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
+        // 5. Kirim ke View
         return view('admin.liturgy.assign', compact(
             'schedule', 'roles', 'territories',
             'misdinars', 'lektors', 'mazmurs', 'organis'
