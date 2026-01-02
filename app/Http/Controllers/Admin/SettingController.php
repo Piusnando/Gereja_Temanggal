@@ -34,7 +34,7 @@ class SettingController extends Controller
 
     public function storeBanner(Request $request)
     {
-        $request->validate(['image' => 'required|image|max:4096']); // Max 4MB
+        $request->validate(['image' => 'required|image|max:2048']); // Max 4MB
 
         $path = $request->file('image')->store('uploads/banners', 'public');
 
