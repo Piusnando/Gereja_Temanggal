@@ -173,7 +173,7 @@ class LiturgyController extends Controller
     {
         // 1. Ambil Data Jadwal
         $schedule = LiturgySchedule::with(['assignments.personnel', 'assignments.lingkungan'])->findOrFail($id);
-        $userRole = auth()->user()->role;
+        $userRole = Auth::user()->role;
 
         // 2. Inisialisasi Koleksi Kosong (Agar tidak error undefined variable)
         $misdinars = collect(); 

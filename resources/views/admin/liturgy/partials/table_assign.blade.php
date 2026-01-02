@@ -53,7 +53,7 @@
                             {{-- LOGIKA IKON & FORMAT --}}
                             @if($assign->lingkungan)
                                 <!-- Icon Lingkungan (Hijau) -->
-                                <div class="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full bg-green-100 text-green-600 mr-4">
+                                <div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-green-100 text-green-600 mr-4">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                 </div>
                                 <div>
@@ -66,7 +66,7 @@
                             @elseif($assign->personnel)
                                 @if($assign->personnel->is_external)
                                     <!-- Icon Eksternal (Kuning) -->
-                                    <div class="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                                    <div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-600 mr-4">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </div>
                                     <div>
@@ -77,7 +77,7 @@
                                     </div>
                                 @else
                                     <!-- Icon Internal (Abu/Biru) -->
-                                    <div class="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-4 group-hover:bg-blue-100 group-hover:text-blue-600 transition">
+                                    <div class="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-4 group-hover:bg-blue-100 group-hover:text-blue-600 transition">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                     </div>
                                     <div>
