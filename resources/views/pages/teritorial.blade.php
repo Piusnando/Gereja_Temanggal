@@ -24,7 +24,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20">
         
         <!-- STATISTIK CARD -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <!-- Box Total Wilayah -->
             <div class="bg-white rounded-xl shadow-lg p-6 flex items-center border-l-4 border-logo-red transform hover:-translate-y-1 transition duration-300">
                 <div class="bg-red-50 p-4 rounded-full mr-4 text-logo-red">
@@ -59,48 +59,26 @@
             </div>
         </div>
 
-        <!-- AREA PETA BESAR -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-12 border border-gray-200">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-1.447-.894L15 7m0 13V7"></path></svg>
-                    Peta Persebaran Wilayah
-                </h2>
-            </div>
-            
-            <div class="w-full h-[600px] relative bg-gray-200">
-                
-                <!-- 
-                   PASTE KODE EMBED DARI GOOGLE MY MAPS DI SINI 
-                   Contoh format linknya ada 'maps/d/embed?mid=XXXXX'
-                -->
-                <iframe 
-                    src="https://www.google.com/maps/d/u/0/embed?mid=1qL9-zchgfJVcgRiEtkLojOYuuQzdpYg&ehbc=2E312F" 
-                    width="100%" 
-                    height="100%" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-
-            </div>
-        </div>
-
-        <!-- DIREKTORI WILAYAH (GRID) -->
+        <!-- ============================================= -->
+        <!-- DIREKTORI WILAYAH (POSISI DIATAS) -->
+        <!-- ============================================= -->
         <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-logo-blue pl-3">
             Direktori Wilayah & Lingkungan
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             @foreach($territories as $wilayah)
-            <div class="bg-white rounded-xl shadow-md hover:shadow-2xl transition duration-300 border border-gray-100 flex flex-col h-full group">
+            
+            <!-- UPDATE: GANTI DIV MENJADI A AGAR BISA DIKLIK -->
+            <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="bg-white rounded-xl shadow-md hover:shadow-2xl transition duration-300 border border-gray-100 flex flex-col h-full group relative overflow-hidden">
                 
                 <!-- Header Card -->
-                <!-- PERBAIKAN DISINI: Menggunakan group-hover:bg-[#003399] agar background berubah biru -->
                 <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center transition-colors duration-300 group-hover:bg-[#003399]">
                     <h3 class="text-lg font-bold text-gray-800 transition-colors duration-300 group-hover:text-white">
                         {{ $wilayah->name }}
                     </h3>
+                    <!-- Icon Panah (Berubah warna saat hover) -->
+                    <svg class="w-5 h-5 text-gray-300 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
 
                 <!-- Body Card -->
@@ -111,23 +89,53 @@
                     
                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Daftar Lingkungan:</h4>
                     <ul class="grid grid-cols-1 gap-2">
-                        @foreach($wilayah->lingkungans as $lingkungan)
+                        @foreach($wilayah->lingkungans->take(5) as $lingkungan) <!-- Limit tampil 5 saja agar tidak terlalu panjang -->
                             <li class="flex items-start text-sm text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-green-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 {{ $lingkungan->name }}
                             </li>
                         @endforeach
+                        @if($wilayah->lingkungans->count() > 5)
+                            <li class="text-xs text-blue-500 italic ml-6">+ {{ $wilayah->lingkungans->count() - 5 }} Lingkungan lainnya</li>
+                        @endif
                     </ul>
                 </div>
 
                 <!-- Footer Card -->
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto text-center transition-colors duration-300 group-hover:bg-gray-100">
-                    <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="inline-block w-full text-sm font-bold text-logo-blue hover:text-logo-red transition">
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto text-center transition-colors duration-300 group-hover:bg-blue-50">
+                    <span class="inline-block w-full text-sm font-bold text-logo-blue group-hover:text-logo-red transition">
                         Lihat Detail Profil Wilayah →
-                    </a>
+                    </span>
                 </div>
-            </div>
+            </a>
             @endforeach
+        </div>
+
+
+        <!-- ============================================= -->
+        <!-- AREA PETA BESAR (POSISI DIBAWAH) -->
+        <!-- ============================================= -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-12 border border-gray-200">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-logo-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-1.447-.894L15 7m0 13V7"></path></svg>
+                    Peta Persebaran Wilayah
+                </h2>
+            </div>
+            
+            <div class="w-full h-[600px] relative bg-gray-200">
+                <!-- 
+                   Google My Maps Embed
+                -->
+                <iframe 
+                    src="https://www.google.com/maps/d/u/0/embed?mid=1qL9-zchgfJVcgRiEtkLojOYuuQzdpYg&ehbc=2E312F" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
         </div>
 
     </div>
