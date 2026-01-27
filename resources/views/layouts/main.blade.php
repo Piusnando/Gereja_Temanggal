@@ -15,20 +15,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- KONFIGURASI WARNA TAILWIND (AGAR KONSISTEN DI SEMUA HALAMAN) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'logo-blue': '#003399',
+                        'logo-red': '#DC2626',
+                        'logo-yellow': '#FFCC00',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* WARNA KONSISTEN (BRANDING) */
-        .text-logo-blue { color: #003399; }
-        .bg-logo-blue { background-color: #003399; }
-        
-        .text-logo-red { color: #DC2626; }
-        .bg-logo-red { background-color: #DC2626; }
-        .border-logo-red { border-color: #DC2626; }
-        
-        .text-logo-yellow { color: #FFCC00; }
-        
+        /* Fix Dropdown agar tidak tertutup elemen lain */
         .nav-dropdown { z-index: 9999 !important; }
+        
+        /* Transisi Halus */
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
@@ -127,36 +136,30 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- MOBILE MENU DROPDOWN (FULL IMPLEMENTATION) -->
+        <!-- MOBILE MENU DROPDOWN (RESPONSIVE) -->
         <!-- ============================================== -->
         <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out">
             <div class="py-2 pb-6 space-y-1">
                 
-                <!-- MENU 1: BERANDA -->
                 <a href="/" class="block px-6 py-3 border-l-4 {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">
                     Beranda
                 </a>
                 
-                <!-- MENU 2: SEJARAH -->
                 <a href="/sejarah" class="block px-6 py-3 border-l-4 {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">
                     Sejarah
                 </a>
 
-                <!-- MENU 3: PENGUMUMAN -->
                 <a href="/pengumuman" class="block px-6 py-3 border-l-4 {{ request()->is('pengumuman*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">
                     Pengumuman
                 </a>
 
-                <!-- MENU 4: TERITORIAL (ACCORDION) -->
-                <!-- Cek jika URL aktif untuk otomatis expand -->
+                <!-- Mobile Teritorial -->
                 <div x-data="{ expanded: {{ request()->is('teritorial*') ? 'true' : 'false' }} }">
                     <button @click="expanded = !expanded" 
                             class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('teritorial*') ? 'text-logo-blue' : '' }}">
                         <span>Teritorial</span>
-                        <!-- Icon Chevron Rotate -->
                         <svg class="w-4 h-4 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <!-- Submenu Content -->
                     <div x-show="expanded" class="bg-gray-50 py-2">
                         @if(isset($globalTerritories))
                             @foreach($globalTerritories as $wilayah)
@@ -171,7 +174,7 @@
                     </div>
                 </div>
 
-                <!-- MENU 5: ORGANISASI (ACCORDION) -->
+                <!-- Mobile Organisasi -->
                 <div x-data="{ expanded: {{ request()->is('organisasi*') ? 'true' : 'false' }} }">
                     <button @click="expanded = !expanded" 
                             class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('organisasi*') ? 'text-logo-blue' : '' }}">
@@ -187,7 +190,7 @@
                     </div>
                 </div>
 
-                <!-- MENU 6: PETUGAS LITURGI (ACCORDION) -->
+                <!-- Mobile Petugas Liturgi -->
                 <div x-data="{ expanded: {{ request()->is('petugas*') || request()->is('jadwal-petugas') ? 'true' : 'false' }} }">
                     <button @click="expanded = !expanded" 
                             class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('petugas*') ? 'text-logo-blue' : '' }}">
@@ -225,7 +228,8 @@
         @yield('content')
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (WARNA KONSISTEN) -->
+    <!-- Menggunakan bg-logo-blue yang sudah didefinisikan di config -->
     <footer class="bg-logo-blue text-white mt-auto border-t-4 border-logo-red relative z-10">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -241,11 +245,47 @@
                 <div>
                     <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="/" class="hover:text-logo-yellow transition">Beranda</a></li>
-                        <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Pengumuman</a></li>
-                        <li><a href="/teritorial" class="hover:text-logo-yellow transition">Pembagian Wilayah</a></li>
-                        <li><a href="https://gerejakalasan.org/" class="hover:text-logo-yellow transition">Paroki Maria Marganingsih Kalasan</a></li>
+                        
+                        <!-- 1. BERANDA -->
+                        <li>
+                            <a href="/" 
+                            class="transition duration-300 {{ request()->is('/') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">
+                                Beranda
+                            </a>
+                        </li>
+
+                        <!-- 2. SEJARAH -->
+                        <li>
+                            <a href="/sejarah" 
+                            class="transition duration-300 {{ request()->is('sejarah*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">
+                                Sejarah Gereja
+                            </a>
+                        </li>
+
+                        <!-- 3. PENGUMUMAN -->
+                        <li>
+                            <a href="/pengumuman" 
+                            class="transition duration-300 {{ request()->is('pengumuman*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">
+                                Pengumuman
+                            </a>
+                        </li>
+
+                        <!-- 4. TERITORIAL -->
+                        <li>
+                            <a href="/teritorial" 
+                            class="transition duration-300 {{ request()->is('teritorial*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">
+                                Pembagian Wilayah
+                            </a>
+                        </li>
+
+                        <!-- 5. PAROKI INDUK (Link Luar) -->
+                        <li>
+                            <a href="https://gerejakalasan.org/" target="_blank" class="text-gray-100 hover:text-logo-yellow transition duration-300 flex items-center">
+                                Paroki Maria Marganingsih Kalasan
+                                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                        </li>
+
                     </ul>
                 </div>
                 <!-- Kritik Saran -->
