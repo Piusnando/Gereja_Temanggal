@@ -42,7 +42,7 @@ class PageController extends Controller
         if ($request->has('category') && $request->category != '') {
             $query->where('category', $request->category);
         }
-        $announcements = $query->orderBy('event_date', 'desc')->paginate(9);
+        $announcements = $query->orderBy('event_date', 'desc')->paginate(6);
 
         return view('pages.pengumuman', [
             'announcements' => $announcements,
