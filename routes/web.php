@@ -62,8 +62,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
         Route::post('/settings/logo', [SettingController::class, 'updateLogo'])->name('admin.settings.logo');
         Route::post('/banners', [SettingController::class, 'storeBanner'])->name('admin.banners.store');
+        Route::put('/banners/update-all', [SettingController::class, 'updateAllBanners'])->name('admin.banners.update_all');
         Route::delete('/banners/{id}', [SettingController::class, 'destroyBanner'])->name('admin.banners.destroy');
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class, ['as' => 'admin']);
+        
     });
 
 

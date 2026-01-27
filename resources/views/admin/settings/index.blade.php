@@ -107,57 +107,98 @@
     </div>
 </div>
 
-<!-- CARD 3: DAFTAR BANNER -->
-<div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+<!-- CARD 3: LIST BANNER -->
+<div class="bg-white p-6 rounded-lg shadow-lg mt-8 relative">
+    
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold text-gray-800 flex items-center">
-            <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            Daftar Banner Aktif
-        </h2>
-        <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full">
-            {{ isset($banners) ? count($banners) : 0 }} Slide
-        </span>
+        <h2 class="text-xl font-bold text-gray-800">Daftar Banner Slider</h2>
+        
+        <!-- TOMBOL SIMPAN UTAMA -->
+        <!-- Tombol ini akan men-submit form dengan ID 'bulkUpdateForm' -->
+        <button type="submit" form="bulkUpdateForm" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+            Simpan Semua Perubahan
+        </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @forelse($banners as $banner)
-        <div class="group relative bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-            <!-- Gambar -->
-            <div class="aspect-w-16 aspect-h-9 h-48 bg-gray-100 relative">
-                <img src="{{ asset('storage/' . $banner->image_path) }}" alt="Banner" class="w-full h-full object-cover">
-                <!-- Overlay gradient -->
-                <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-            </div>
-            
-            <!-- Info -->
-            <div class="p-4">
-                <p class="font-bold text-gray-800 truncate text-lg" title="{{ $banner->title }}">
-                    {{ $banner->title ?: 'Tanpa Judul' }}
-                </p>
-                <div class="flex items-center mt-2 text-xs text-gray-500">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ $banner->created_at->diffForHumans() }}
-                </div>
-            </div>
+    <!-- 
+        FORM UTAMA (Invisible Wrapper) 
+        Diletakkan di sini, nanti input di dalam tabel akan "numpang" ke form ini via atribut form="bulkUpdateForm"
+    -->
+    <form id="bulkUpdateForm" action="{{ route('admin.banners.update_all') }}" method="POST">
+        @csrf
+        @method('PUT')
+    </form>
 
-            <!-- Tombol Hapus (Muncul saat hover) -->
-            <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition duration-300">
-                <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus banner ini?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-white hover:bg-red-600 text-red-600 hover:text-white p-2 rounded-full shadow-lg transition duration-200 transform hover:scale-110" title="Hapus Banner">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
-                </form>
-            </div>
-        </div>
-        @empty
-        <div class="col-span-1 md:col-span-3 text-center py-16 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl">
-            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <p class="text-gray-500 text-lg font-medium">Belum ada banner yang diupload.</p>
-            <p class="text-gray-400 text-sm">Upload gambar di atas untuk menampilkannya di halaman depan.</p>
-        </div>
-        @endforelse
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 border border-gray-100 rounded-lg overflow-hidden">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 w-32">Gambar</th>
+                    <th class="px-4 py-3">Judul & Urutan</th>
+                    <th class="px-4 py-3 w-40">Status</th>
+                    <th class="px-4 py-3 w-24 text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @foreach($banners as $banner)
+                <tr class="bg-white hover:bg-blue-50 transition duration-150">
+                    
+                    <!-- Kolom Gambar -->
+                    <td class="px-4 py-4 align-top">
+                        <img src="{{ asset('storage/' . $banner->image_path) }}" class="h-16 w-28 object-cover rounded-md border border-gray-200 shadow-sm">
+                    </td>
+
+                    <!-- Kolom Judul & Urutan -->
+                    <td class="px-4 py-4 align-top">
+                        <div class="mb-3">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Judul</label>
+                            <!-- Perhatikan name="banners[ID][title]" dan atribut form="bulkUpdateForm" -->
+                            <input type="text" 
+                                   form="bulkUpdateForm"
+                                   name="banners[{{ $banner->id }}][title]" 
+                                   value="{{ $banner->title }}" 
+                                   class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" 
+                                   placeholder="Judul Banner">
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Urutan</label>
+                                <input type="number" 
+                                       form="bulkUpdateForm"
+                                       name="banners[{{ $banner->id }}][order]" 
+                                       value="{{ $banner->order }}" 
+                                       class="w-20 border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-center">
+                            </div>
+                            <span class="text-xs text-gray-400 mt-4 italic">*Urutan kecil tampil duluan</span>
+                        </div>
+                    </td>
+
+                    <!-- Kolom Status -->
+                    <td class="px-4 py-4 align-middle">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Visibilitas</label>
+                        <select name="banners[{{ $banner->id }}][is_active]" 
+                                form="bulkUpdateForm"
+                                class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer {{ $banner->is_active ? 'text-green-700 bg-green-50' : 'text-gray-500 bg-gray-50' }}">
+                            <option value="1" {{ $banner->is_active ? 'selected' : '' }}>Aktif</option>
+                            <option value="0" {{ !$banner->is_active ? 'selected' : '' }}>Non-Aktif</option>
+                        </select>
+                    </td>
+
+                    <!-- Kolom Aksi (Hapus Tetap Sendiri) -->
+                    <td class="px-4 py-4 align-middle text-center">
+                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" onsubmit="return confirm('Yakin hapus banner ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-700 hover:border-red-300 p-2 rounded-lg transition shadow-sm tooltip" title="Hapus Banner">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection

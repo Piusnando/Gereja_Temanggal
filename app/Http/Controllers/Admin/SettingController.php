@@ -47,6 +47,25 @@ class SettingController extends Controller
         return back()->with('success', 'Banner berhasil ditambahkan!');
     }
 
+    public function updateBanner(Request $request, $id)
+    {
+        $banner = Banner::findOrFail($id);
+
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'order' => 'required|integer',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $banner->update([
+            'title' => $request->title,
+            'order' => $request->order,
+            'is_active' => $request->is_active
+        ]);
+
+        return back()->with('success', 'Data banner berhasil diperbarui!');
+    }
+
     public function destroyBanner($id)
     {
         $banner = Banner::findOrFail($id);
@@ -58,5 +77,28 @@ class SettingController extends Controller
         
         $banner->delete();
         return back()->with('success', 'Banner dihapus!');
+    }
+
+    public function updateAllBanners(Request $request)
+    {
+        $request->validate([
+            'banners' => 'required|array',
+            'banners.*.title' => 'nullable|string|max:255',
+            'banners.*.order' => 'required|integer',
+            'banners.*.is_active' => 'required|boolean',
+        ]);
+
+        $banners = $request->input('banners');
+
+        foreach ($banners as $id => $data) {
+            // Update tiap baris berdasarkan ID
+            Banner::where('id', $id)->update([
+                'title' => $data['title'],
+                'order' => $data['order'],
+                'is_active' => $data['is_active'],
+            ]);
+        }
+
+        return back()->with('success', 'Semua perubahan berhasil disimpan!');
     }
 }

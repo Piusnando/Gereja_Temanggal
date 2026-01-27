@@ -9,15 +9,18 @@ class PageController extends Controller
 {
     public function home()
     {
-        $banners = \App\Models\Banner::where('is_active', true)->latest()->get();
+        // LOGIKA: Ambil yang 'is_active' = true
+        // Urutkan berdasarkan kolom 'order' (terkecil ke terbesar)
+        // Jika order sama, ambil yang terbaru
+        $banners = \App\Models\Banner::where('is_active', true)
+                    ->orderBy('order', 'asc') 
+                    ->latest()
+                    ->get();
         
-        // Pengumuman terbaru
         $announcements = \App\Models\Announcement::orderBy('event_date', 'desc')
                             ->take(3)
                             ->get();
 
-        // TAMBAHAN: Ambil data Wilayah untuk ditampilkan di box teritorial
-        // Kita ambil semua wilayah (karena cuma ada 4)
         $territories = \App\Models\Territory::all();
 
         return view('home', compact('banners', 'announcements', 'territories'));
