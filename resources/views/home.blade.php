@@ -16,30 +16,21 @@
             loop() { 
                 this.activeSlide = this.activeSlide === this.slides.length ? 1 : this.activeSlide + 1 
             },
-            next() {
-                this.activeSlide = this.activeSlide === this.slides.length ? 1 : this.activeSlide + 1;
-                this.resetTimer();
-            },
-            prev() {
-                this.activeSlide = this.activeSlide === 1 ? this.slides.length : this.activeSlide - 1;
-                this.resetTimer();
-            },
-            resetTimer() {
-                clearInterval(this.interval);
-                this.interval = setInterval(() => this.loop(), 5000);
-            },
-            interval: null
+            timer: null
         }" 
-        x-init="resetTimer()"
-        class="relative w-full group mb-12"
-        style="height: calc(100vh - 6rem);"> <!-- FIX: Menggunakan kalkulasi tinggi layar dikurangi header -->
+        x-init="timer = setInterval(() => { loop() }, 5000)"
+        class="relative w-full group mb-12 mt-0" 
+        style="height: calc(100vh - 6rem);"> 
         
-        <!-- Wrapper Rounded di bawah -->
-        <div class="absolute inset-0 rounded-b-[3rem] overflow-hidden shadow-2xl border-b-8 border-logo-red">
+        <!-- 
+            PERUBAHAN DISINI:
+            1. Saya menghapus 'rounded-b-[3rem]' -> Agar tidak melengkung (jadi kotak).
+            2. Saya tetap membiarkan 'border-b-8 border-logo-red' -> Agar tetap ada garis merah lurus di bawah.
+        -->
+        <div class="absolute inset-0 overflow-hidden shadow-2xl border-b-8 border-logo-red bg-gray-900">
             
-            <!-- Jika tidak ada banner -->
             @if($banners->isEmpty())
-                <div class="absolute inset-0 bg-gray-800 flex items-center justify-center text-gray-500">
+                <div class="absolute inset-0 flex items-center justify-center text-gray-500">
                     Belum ada banner yang diupload.
                 </div>
             @endif
@@ -47,38 +38,46 @@
             <!-- Loop Images -->
             <template x-for="(slide, index) in slides" :key="index">
                 <div x-show="activeSlide === index + 1"
-                     class="absolute inset-0 bg-cover bg-center w-full h-full transition-opacity duration-1000 ease-in-out"
+                     class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out"
                      x-transition:enter="opacity-0"
                      x-transition:enter-end="opacity-100"
                      x-transition:leave="opacity-100"
                      x-transition:leave-end="opacity-0"
+                     
+                     {{-- Posisi Gambar disesuaikan agar kepala patung terlihat (20% dari atas) --}}
+                     :class="'bg-cover bg-position-[center_20%]'"
+                     
                      :style="`background-image: url('${slide}')`">
-                     <!-- Overlay Gelap agar tulisan terbaca -->
+                     
+                     <!-- Overlay Gelap -->
                      <div class="absolute inset-0 bg-black/40"></div>
                 </div>
             </template>
 
             <!-- Teks Tengah -->
             <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-10 pointer-events-none">
-                <div class="max-w-4xl drop-shadow-lg pointer-events-auto">
-                    <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-2 text-logo-yellow animate-bounce">Selamat Datang di Website Resmi</h2>
-                    <h1 class="text-4xl md:text-7xl font-extrabold leading-tight mb-6 text-white drop-shadow-md">
+                <div class="max-w-4xl drop-shadow-lg pointer-events-auto mt-10">
+                    <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-4 text-logo-yellow animate-bounce">
+                        Selamat Datang di Website Resmi
+                    </h2>
+                    <h1 class="text-4xl md:text-7xl font-extrabold leading-tight mb-6 text-white drop-shadow-xl">
                         Gereja St. Ignatius<br>
                         <span class="text-red-500">Kalasan Tengah</span>
                     </h1>
-                    <p class="text-lg md:text-2xl font-medium text-gray-100 mt-2 bg-black/30 inline-block px-6 py-2 rounded-full backdrop-blur-sm border border-white/20">
+                    <p class="text-lg md:text-2xl font-medium text-gray-100 mt-2 bg-black/30 inline-block px-8 py-3 rounded-full backdrop-blur-sm border border-white/20">
                         Paroki Maria Marganingsih Kalasan
                     </p>
-                    <div class="mt-10">
-                        <a href="#jadwal" class="bg-logo-red hover:bg-red-700 text-white text-lg font-bold py-4 px-10 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300">
-                            Lihat Jadwal Misa
-                        </a>
-                    </div>
+                    <div class="mt-12">
+                    <a href="#jadwal-misa" class="bg-logo-red hover:bg-red-800 text-white text-lg font-bold py-4 px-10 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300 inline-flex items-center">
+                        Lihat Jadwal Misa
+                        <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                    </a>
+                </div>
                 </div>
             </div>
+            
         </div>
     </div>
-
 
     {{-- SECTION 2: PENGUMUMAN TERBARU --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
@@ -213,7 +212,7 @@
                     
                     <!-- Box Jadwal Misa -->
                     <!-- PERUBAHAN: border-logo-red -->
-                    <div class="bg-white rounded-2xl shadow-xl p-8 border-t-8 border-logo-red relative overflow-hidden group">
+                    <div id="jadwal-misa" class="scroll-mt-32 bg-white rounded-2xl shadow-xl p-8 border-t-8 border-logo-red relative overflow-hidden group">
                         <!-- Decorative Background -->
                         <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-red-50 rounded-full opacity-50 transition group-hover:scale-110"></div>
                         
@@ -241,7 +240,7 @@
                         
                         <div class="mt-6 flex items-center text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
                             <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Umat dimohon hadir 15 menit sebelum misa dimulai.
+                            Umat dimohon hadir 30 menit sebelum misa dimulai.
                         </div>
                     </div>
 
