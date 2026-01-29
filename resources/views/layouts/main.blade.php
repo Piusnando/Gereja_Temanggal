@@ -309,22 +309,23 @@
         </div>
     </footer>
     <!-- ========================================== -->
-    <!-- CUSTOM POPUP UI (DESAIN MODERN) -->
+    <!-- CUSTOM POPUP UI (FIXED TAMPILAN) -->
     <!-- ========================================== -->
     
-    <!-- 1. Style untuk Animasi -->
     <style>
+        /* Animasi Fade In/Out */
         .popup-overlay {
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease-in-out;
+            z-index: 9999 !important; /* WAJIB TINGGI AGAR TIDAK TERTUTUP */
         }
         .popup-overlay.active {
             opacity: 1;
             visibility: visible;
         }
         .popup-content {
-            transform: scale(0.9);
+            transform: scale(0.95);
             opacity: 0;
             transition: all 0.3s ease-out;
         }
@@ -334,13 +335,18 @@
         }
     </style>
 
-    <!-- 2. HTML Modal -->
-    <div id="development-popup" class="popup-overlay fixed inset-0 z-100 flex items-center justify-center px-4 bg-gray-900/60 backdrop-blur-sm">
+    <!-- HTML Modal -->
+    <div id="development-popup" class="popup-overlay fixed inset-0 flex items-center justify-center px-4">
         
-        <div class="popup-content bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-100">
+        <!-- Backdrop Hitam (Pemisah) -->
+        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm"></div>
+
+        <!-- Konten Putih -->
+        <!-- Tambahkan style background-color manual agar pasti putih solid -->
+        <div class="popup-content relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-200" style="background-color: #ffffff;">
             
-            <!-- Header dengan Warna Logo -->
-            <div class="bg-logo-blue p-6 text-center relative overflow-hidden">
+            <!-- Header Biru -->
+            <div class="bg-logo-blue p-6 text-center relative overflow-hidden" style="background-color: #003399;">
                 <!-- Hiasan Background -->
                 <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                 
@@ -354,7 +360,7 @@
             </div>
 
             <!-- Body Content -->
-            <div class="p-8 text-center">
+            <div class="p-8 text-center bg-white" style="background-color: #ffffff;">
                 <p class="text-gray-600 text-base leading-relaxed mb-6">
                     Selamat datang di website resmi <strong>Gereja St. Ignatius Loyola Temanggal</strong>.
                     <br><br>
@@ -369,7 +375,8 @@
 
                 <!-- Tombol Aksi -->
                 <button onclick="closePopup()" 
-                        class="w-full bg-logo-red hover:bg-red-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition duration-200">
+                        class="w-full bg-logo-red hover:bg-red-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition duration-200"
+                        style="background-color: #DC2626;"> <!-- Paksa warna merah -->
                     Saya Mengerti, Lanjutkan
                 </button>
             </div>
@@ -377,25 +384,27 @@
         </div>
     </div>
 
-    <!-- 3. Javascript Logic -->
+    <!-- Javascript Logic -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Cek apakah user sudah pernah menutup popup
             if (!localStorage.getItem('seen_development_popup')) {
                 // Tampilkan popup (tambah class active)
-                // Beri jeda sedikit agar animasi smooth saat load
                 setTimeout(() => {
-                    document.getElementById('development-popup').classList.add('active');
+                    const popup = document.getElementById('development-popup');
+                    if(popup) popup.classList.add('active');
                 }, 500);
             }
         });
 
         function closePopup() {
-            // 1. Hilangkan class active (animasi keluar)
-            document.getElementById('development-popup').classList.remove('active');
-            
-            // 2. Simpan ke memori browser agar tidak muncul lagi
-            localStorage.setItem('seen_development_popup', 'true');
+            const popup = document.getElementById('development-popup');
+            if(popup) {
+                // 1. Hilangkan class active (animasi keluar)
+                popup.classList.remove('active');
+                // 2. Simpan ke memori browser agar tidak muncul lagi
+                localStorage.setItem('seen_development_popup', 'true');
+            }
         }
     </script>
 
