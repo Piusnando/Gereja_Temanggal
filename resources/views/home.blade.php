@@ -1,7 +1,6 @@
 @extends('layouts.main')
 
 @section('title', 'Beranda - Gereja St. Ignatius Loyola Temanggal')
-@section('header', '')
 
 @section('content')
 
@@ -19,7 +18,7 @@
             timer: null
         }" 
         x-init="timer = setInterval(() => { loop() }, 5000)"
-        class="relative w-full group mb-12 mt-0" 
+       class="relative w-full group mb-12 -mt-px" 
         style="height: calc(100vh - 6rem);"> 
         
         <!-- 

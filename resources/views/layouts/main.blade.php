@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
@@ -5,63 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- =============================================== -->
-    <!-- SEO UTAMA (TITLE & META DESCRIPTION)            -->
-    <!-- =============================================== -->
-    <title>@yield('title', 'Gereja St. Ignatius Loyola Kalasan Tengah - Temanggal')</title>
-    
-    <meta name="description" content="@yield('meta_description', 'Website resmi Gereja Santo Ignatius Loyola Kalasan Tengah, Temanggal. Informasi jadwal misa, pengumuman terkini, profil wilayah, dan kegiatan umat Paroki Maria Marganingsih Kalasan.')">
-    
-    <meta name="keywords" content="Gereja St. Ignatius Loyola, Kalasan Tengah, Temanggal, Gereja Katolik Kalasan, Paroki Maria Marganingsih, Jadwal Misa Kalasan  Tengah, Gereja Katolik Sleman, Yogyakarta">
-    <meta name="author" content="Komsos St. Ignatius Loyola">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url()->current() }}">
-
-    <!-- =============================================== -->
-    <!-- OPEN GRAPH (TAMPILAN SAAT SHARE WA/FB)          -->
-    <!-- =============================================== -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title', 'Gereja St. Ignatius Loyola Kalasan Tengah')">
-    <meta property="og:description" content="@yield('meta_description', 'Pusat informasi dan pelayanan pastoral Gereja Santo Ignatius Loyola Temanggal, Kalasan.')">
-    <!-- Gambar default saat share link (Pastikan ada file logo.png atau banner.jpg di public/images) -->
-    <meta property="og:image" content="{{ asset('images/logo-default.png') }}">
-
-    <!-- =============================================== -->
-    <!-- SCHEMA MARKUP (AGAR TERDETEKSI SEBAGAI LOKASI)  -->
-    <!-- =============================================== -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CatholicChurch",
-      "name": "Gereja Santo Ignatius Loyola Kalasan Tengah",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Jl. Temanggal Raya, Temanggal II Rt 006 Rw 002",
-        "addressLocality": "Purwomartani, Kalasan",
-        "addressRegion": "Sleman, DI Yogyakarta",
-        "postalCode": "55571",
-        "addressCountry": "ID"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -7.748685, 
-        "longitude": 110.453982
-      },
-      "url": "{{ url('/') }}",
-      "telephone": "+62274xxxxxxx" 
-    }
-    </script>
+    <title>@yield('title', 'Gereja St. Ignatius Loyola')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- KONFIGURASI WARNA TAILWIND -->
+    <!-- KONFIGURASI WARNA TAILWIND (AGAR KONSISTEN DI SEMUA HALAMAN) -->
     <script>
         tailwind.config = {
             theme: {
@@ -78,13 +33,12 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Fix Dropdown agar tidak tertutup elemen lain */
         .nav-dropdown { z-index: 9999 !important; }
+        
+        /* Transisi Halus */
         [x-cloak] { display: none !important; }
-        /* Animasi Pop-up */
-        .popup-overlay { opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; z-index: 9999 !important; }
-        .popup-overlay.active { opacity: 1; visibility: visible; }
-        .popup-content { transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; }
-        .popup-overlay.active .popup-content { transform: scale(1); opacity: 1; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
@@ -93,7 +47,7 @@
     <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-24"> 
-                
+
                 <!-- HEADER KIRI: Logo & Nama -->
                 <div class="flex items-center gap-4">
                     <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
@@ -112,7 +66,7 @@
 
                 <!-- HEADER KANAN: Menu Desktop -->
                 <div class="hidden lg:flex lg:items-center lg:gap-x-8">
-                    
+
                     <!-- 1. BERANDA -->
                     <a href="/" class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">Beranda</a>
 
@@ -187,11 +141,11 @@
         <!-- ============================================== -->
         <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out">
             <div class="py-2 pb-6 space-y-1">
-                
+
                 <a href="/" class="block px-6 py-3 border-l-4 {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">
                     Beranda
                 </a>
-                
+
                 <a href="/sejarah" class="block px-6 py-3 border-l-4 {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">
                     Sejarah
                 </a>
@@ -292,7 +246,7 @@
                 <div>
                     <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
-                        
+
                         <!-- 1. BERANDA -->
                         <li>
                             <a href="/" 
@@ -358,7 +312,8 @@
     <!-- ========================================== -->
     <!-- CUSTOM POPUP UI (FIXED TAMPILAN) -->
     <!-- ========================================== -->
-    
+
+
     <style>
         /* Animasi Fade In/Out */
         .popup-overlay {
@@ -384,19 +339,19 @@
 
     <!-- HTML Modal -->
     <div id="development-popup" class="popup-overlay fixed inset-0 flex items-center justify-center px-4">
-        
+
         <!-- Backdrop Hitam (Pemisah) -->
         <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm"></div>
 
         <!-- Konten Putih -->
         <!-- Tambahkan style background-color manual agar pasti putih solid -->
         <div class="popup-content relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-200" style="background-color: #ffffff;">
-            
+
             <!-- Header Biru -->
             <div class="bg-logo-blue p-6 text-center relative overflow-hidden" style="background-color: #003399;">
                 <!-- Hiasan Background -->
                 <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                
+
                 <!-- Icon Info -->
                 <div class="mx-auto w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-3 backdrop-blur-md border border-white/30">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -414,7 +369,7 @@
                     Saat ini website masih dalam tahap uji coba dan penyempurnaan data. 
                     Jika Anda menemukan kesalahan atau memiliki saran, mohon sampaikan melalui kolom:
                 </p>
-                
+
                 <div class="inline-flex items-center justify-center px-4 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-lg text-sm font-bold mb-8">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                     Kritik & Saran (di bagian Footer)
@@ -437,6 +392,7 @@
             // Cek apakah user sudah pernah menutup popup
             if (!localStorage.getItem('seen_development_popup')) {
                 // Tampilkan popup (tambah class active)
+
                 setTimeout(() => {
                     const popup = document.getElementById('development-popup');
                     if(popup) popup.classList.add('active');
@@ -458,4 +414,3 @@
 
     @stack('scripts')
 </body>
-</html>
