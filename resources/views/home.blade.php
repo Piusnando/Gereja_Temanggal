@@ -4,7 +4,7 @@
 
 @section('content')
 
-    {{-- SECTION 1: HERO BANNER (SLIDER) --}}
+    {{-- SECTION 1: HERO BANNER (FIXED COMPOSITION) --}}
     <div x-data="{ 
             activeSlide: 1, 
             slides: [
@@ -18,7 +18,7 @@
             timer: null
         }" 
         x-init="timer = setInterval(() => { loop() }, 5000)"
-       class="relative w-full group mb-12 -mt-px" 
+        class="relative w-full group mb-12 -mt-px" 
         style="height: calc(100vh - 6rem);"> 
         
         <div class="absolute inset-0 overflow-hidden shadow-2xl border-b-8 border-logo-red bg-gray-900">
@@ -39,22 +39,31 @@
                      x-transition:leave-end="opacity-0"
                      
                      {{-- 
-                        PERUBAHAN DISINI:
-                        - 'bg-center': Posisi default untuk mobile.
-                        - 'md:bg-[center_20%]': Posisi digeser ke atas hanya pada layar medium (desktop) ke atas.
+                        ============================================
+                        PERBAIKAN UTAMA: Gunakan 'bg-top'
+                        Ini akan "mengunci" gambar di bagian atasnya,
+                        memastikan kepala patung tidak pernah terpotong.
+                        ============================================
                      --}}
-                     :class="'bg-cover bg-center md:bg-position-[center_20%]'"
+                     :class="'bg-cover bg-top'"
                      
                      :style="`background-image: url('${slide}')`">
                      
-                     <!-- Overlay Gelap -->
+                     <!-- Overlay Gelap (Gradasi dari Bawah) -->
                      <div class="absolute inset-0 bg-black/40"></div>
                 </div>
             </template>
 
-            <!-- Teks Tengah -->
-            <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-10 pointer-events-none">
-                <div class="max-w-4xl drop-shadow-lg pointer-events-auto mt-10">
+            <!-- Teks Tengah (Digeser ke Bawah) -->
+            {{-- 
+                ============================================
+                PERBAIKAN UTAMA: Gunakan 'items-end pb-20'
+                Ini akan mendorong semua teks ke bagian bawah banner,
+                memberi ruang visual untuk patung di bagian atas.
+                ============================================
+            --}}
+            <div class="absolute inset-0 flex items-end justify-center text-center px-4 z-10 pb-20 md:pb-24">
+                <div class="max-w-4xl drop-shadow-lg pointer-events-auto">
                     <h2 class="text-sm md:text-xl font-bold uppercase tracking-[0.2em] mb-4 text-logo-yellow animate-bounce">
                         Selamat Datang di Website Resmi
                     </h2>
@@ -66,11 +75,11 @@
                         Paroki Maria Marganingsih Kalasan
                     </p>
                     <div class="mt-12">
-                    <a href="#jadwal-misa" class="bg-logo-red hover:bg-red-800 text-white text-lg font-bold py-4 px-10 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300 inline-flex items-center">
-                        Lihat Jadwal Misa
-                        <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                    </a>
-                </div>
+                        <a href="#jadwal-misa" class="bg-logo-red hover:bg-red-800 text-white text-lg font-bold py-4 px-10 rounded-full transition shadow-lg border-2 border-transparent hover:border-white hover:scale-105 transform duration-300 inline-flex items-center">
+                            Lihat Jadwal Misa
+                            <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
             
