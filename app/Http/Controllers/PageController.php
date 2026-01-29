@@ -27,8 +27,16 @@ class PageController extends Controller
     }
 
     // Fungsi halaman lain
-    public function sejarah() {
-        return view('pages.sejarah');
+    public function sejarah() 
+    { 
+        // KODE ASLI (Disimpan/Komentar dulu)
+        // return view('pages.sejarah'); 
+
+        // KODE SEMENTARA (Tampilkan Coming Soon)
+        return view('pages.coming-soon', [
+            'title' => 'Sejarah - Segera Hadir',
+            'pageName' => 'Sejarah Gereja'
+        ]);
     }
     public function pengumuman(Request $request)
     {
@@ -115,25 +123,28 @@ class PageController extends Controller
         return view('pages.organisasi', compact('groupedMembers', 'categoriesOrder'));
     }
 
-    public function jadwalPetugas() {
-        $schedules = \App\Models\LiturgySchedule::query()
-                        // Gunakan whereDate agar membandingkan TANGGAL saja, bukan Jam/Detik.
-                        // Jadi Misa tadi pagi masih tetap muncul hari ini.
-                        ->whereDate('event_at', '>=', now()) 
-                        
-                        // ATAU: Jika ingin melihat SEMUA jadwal (termasuk masa lalu) untuk tes, 
-                        // Hapus baris whereDate di atas.
-                        
+    public function jadwalPetugas() 
+    {
+        // KODE ASLI (Disimpan/Komentar dulu)
+        /*
+        $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
                         ->with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])
-                        ->orderBy('event_at', 'asc') // Urutkan dari yang terdekat
+                        ->orderBy('event_at', 'asc')
                         ->get();
-
         return view('pages.jadwal-petugas', compact('schedules'));
+        */
+
+        // KODE SEMENTARA
+        return view('pages.coming-soon', [
+            'title' => 'Jadwal Petugas - Segera Hadir',
+            'pageName' => 'Jadwal Petugas Liturgi'
+        ]);
     }
 
     public function showPetugasRole($role)
     {
-        // Ambil jadwal MASA DEPAN yang memiliki petugas dengan peran tersebut
+        // KODE ASLI (Disimpan/Komentar dulu)
+        /*
         $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
             ->whereHas('assignments', function($q) use ($role) {
                 $q->where('role', $role);
@@ -145,6 +156,13 @@ class PageController extends Controller
             ->get();
 
         return view('pages.petugas-role', compact('schedules', 'role'));
+        */
+
+        // KODE SEMENTARA
+        return view('pages.coming-soon', [
+            'title' => "Jadwal $role - Segera Hadir",
+            'pageName' => "Jadwal $role"
+        ]);
     }
 
     public function showOrganization($category)

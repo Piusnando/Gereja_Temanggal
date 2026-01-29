@@ -308,6 +308,97 @@
             </div>
         </div>
     </footer>
+    <!-- ========================================== -->
+    <!-- CUSTOM POPUP UI (DESAIN MODERN) -->
+    <!-- ========================================== -->
+    
+    <!-- 1. Style untuk Animasi -->
+    <style>
+        .popup-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .popup-content {
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+        .popup-overlay.active .popup-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+    </style>
+
+    <!-- 2. HTML Modal -->
+    <div id="development-popup" class="popup-overlay fixed inset-0 z-100 flex items-center justify-center px-4 bg-gray-900/60 backdrop-blur-sm">
+        
+        <div class="popup-content bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-100">
+            
+            <!-- Header dengan Warna Logo -->
+            <div class="bg-logo-blue p-6 text-center relative overflow-hidden">
+                <!-- Hiasan Background -->
+                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                
+                <!-- Icon Info -->
+                <div class="mx-auto w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-3 backdrop-blur-md border border-white/30">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-white tracking-wide relative z-10">Website Dalam Pengembangan</h3>
+            </div>
+
+            <!-- Body Content -->
+            <div class="p-8 text-center">
+                <p class="text-gray-600 text-base leading-relaxed mb-6">
+                    Selamat datang di website resmi <strong>Gereja St. Ignatius Loyola Temanggal</strong>.
+                    <br><br>
+                    Saat ini website masih dalam tahap uji coba dan penyempurnaan data. 
+                    Jika Anda menemukan kesalahan atau memiliki saran, mohon sampaikan melalui kolom:
+                </p>
+                
+                <div class="inline-flex items-center justify-center px-4 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-lg text-sm font-bold mb-8">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    Kritik & Saran (di bagian Footer)
+                </div>
+
+                <!-- Tombol Aksi -->
+                <button onclick="closePopup()" 
+                        class="w-full bg-logo-red hover:bg-red-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition duration-200">
+                    Saya Mengerti, Lanjutkan
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. Javascript Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Cek apakah user sudah pernah menutup popup
+            if (!localStorage.getItem('seen_development_popup')) {
+                // Tampilkan popup (tambah class active)
+                // Beri jeda sedikit agar animasi smooth saat load
+                setTimeout(() => {
+                    document.getElementById('development-popup').classList.add('active');
+                }, 500);
+            }
+        });
+
+        function closePopup() {
+            // 1. Hilangkan class active (animasi keluar)
+            document.getElementById('development-popup').classList.remove('active');
+            
+            // 2. Simpan ke memori browser agar tidak muncul lagi
+            localStorage.setItem('seen_development_popup', 'true');
+        }
+    </script>
+
 
     @stack('scripts')
 </body>
