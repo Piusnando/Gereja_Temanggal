@@ -307,10 +307,11 @@
     <!-- Javascript Logic -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Cek apakah user sudah pernah menutup popup
-            if (!localStorage.getItem('seen_development_popup')) {
-                // Tampilkan popup (tambah class active)
-
+            // 1. Cek menggunakan sessionStorage
+            // Data ini akan hilang otomatis jika pengunjung menutup TAB atau BROWSER
+            if (!sessionStorage.getItem('seen_development_popup')) {
+                
+                // Munculkan popup dengan jeda 0.5 detik
                 setTimeout(() => {
                     const popup = document.getElementById('development-popup');
                     if(popup) popup.classList.add('active');
@@ -321,10 +322,13 @@
         function closePopup() {
             const popup = document.getElementById('development-popup');
             if(popup) {
-                // 1. Hilangkan class active (animasi keluar)
+                // 2. Hilangkan class active (animasi keluar)
                 popup.classList.remove('active');
-                // 2. Simpan ke memori browser agar tidak muncul lagi
-                localStorage.setItem('seen_development_popup', 'true');
+                
+                // 3. Simpan tanda di sessionStorage
+                // Selama user masih berpindah-pindah halaman di web ini (Tab tidak ditutup), 
+                // popup tidak akan muncul lagi.
+                sessionStorage.setItem('seen_development_popup', 'true');
             }
         }
     </script>
