@@ -209,7 +209,10 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="hover:text-logo-yellow transition">Beranda</a></li>
                         <li><a href="/sejarah" class="hover:text-logo-yellow transition">Sejarah Gereja</a></li>
-                        <li><a href="https://gerejakalasan.org/" target="_blank" class="hover:text-logo-yellow transition">Paroki Kalasan</a></li>
+                        <li><a href="/pengumuman" class="hover:text-logo-yellow transition">Pengumuman</a></li>
+                        <li><a href="/teritorial" class="hover:text-logo-yellow transition">Teritorial Gereja</a></li>
+                        <li><a href="/jadwal-petugas" class="hover:text-logo-yellow transition">Jadwal Petugas Liturgi</a></li>
+                        <li><a href="https://gerejakalasan.org/" target="_blank" class="hover:text-logo-yellow transition">Paroki Maria Marganingsih Kalasan</a></li>
                     </ul>
                 </div>
                 <div>
