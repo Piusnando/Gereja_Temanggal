@@ -5,7 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Gereja St. Ignatius Loyola')</title>
+    <!-- =============================================== -->
+    <!-- SEO UTAMA (TITLE & META DESCRIPTION)            -->
+    <!-- =============================================== -->
+    <title>@yield('title', 'Gereja St. Ignatius Loyola Kalasan Tengah - Temanggal')</title>
+    
+    <meta name="description" content="@yield('meta_description', 'Website resmi Gereja Santo Ignatius Loyola Kalasan Tengah, Temanggal. Informasi jadwal misa, pengumuman terkini, profil wilayah, dan kegiatan umat Paroki Maria Marganingsih Kalasan.')">
+    
+    <meta name="keywords" content="Gereja St. Ignatius Loyola, Kalasan Tengah, Temanggal, Gereja Katolik Kalasan, Paroki Maria Marganingsih, Jadwal Misa Kalasan  Tengah, Gereja Katolik Sleman, Yogyakarta">
+    <meta name="author" content="Komsos St. Ignatius Loyola">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- =============================================== -->
+    <!-- OPEN GRAPH (TAMPILAN SAAT SHARE WA/FB)          -->
+    <!-- =============================================== -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('title', 'Gereja St. Ignatius Loyola Kalasan Tengah')">
+    <meta property="og:description" content="@yield('meta_description', 'Pusat informasi dan pelayanan pastoral Gereja Santo Ignatius Loyola Temanggal, Kalasan.')">
+    <!-- Gambar default saat share link (Pastikan ada file logo.png atau banner.jpg di public/images) -->
+    <meta property="og:image" content="{{ asset('images/logo-default.png') }}">
+
+    <!-- =============================================== -->
+    <!-- SCHEMA MARKUP (AGAR TERDETEKSI SEBAGAI LOKASI)  -->
+    <!-- =============================================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CatholicChurch",
+      "name": "Gereja Santo Ignatius Loyola Kalasan Tengah",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Jl. Temanggal Raya, Temanggal II Rt 006 Rw 002",
+        "addressLocality": "Purwomartani, Kalasan",
+        "addressRegion": "Sleman, DI Yogyakarta",
+        "postalCode": "55571",
+        "addressCountry": "ID"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -7.748685, 
+        "longitude": 110.453982
+      },
+      "url": "{{ url('/') }}",
+      "telephone": "+62274xxxxxxx" 
+    }
+    </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +61,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- KONFIGURASI WARNA TAILWIND (AGAR KONSISTEN DI SEMUA HALAMAN) -->
+    <!-- KONFIGURASI WARNA TAILWIND -->
     <script>
         tailwind.config = {
             theme: {
@@ -32,12 +78,13 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-        
-        /* Fix Dropdown agar tidak tertutup elemen lain */
         .nav-dropdown { z-index: 9999 !important; }
-        
-        /* Transisi Halus */
         [x-cloak] { display: none !important; }
+        /* Animasi Pop-up */
+        .popup-overlay { opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; z-index: 9999 !important; }
+        .popup-overlay.active { opacity: 1; visibility: visible; }
+        .popup-content { transform: scale(0.95); opacity: 0; transition: all 0.3s ease-out; }
+        .popup-overlay.active .popup-content { transform: scale(1); opacity: 1; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
