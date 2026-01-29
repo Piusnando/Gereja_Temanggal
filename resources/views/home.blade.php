@@ -21,11 +21,6 @@
        class="relative w-full group mb-12 -mt-px" 
         style="height: calc(100vh - 6rem);"> 
         
-        <!-- 
-            PERUBAHAN DISINI:
-            1. Saya menghapus 'rounded-b-[3rem]' -> Agar tidak melengkung (jadi kotak).
-            2. Saya tetap membiarkan 'border-b-8 border-logo-red' -> Agar tetap ada garis merah lurus di bawah.
-        -->
         <div class="absolute inset-0 overflow-hidden shadow-2xl border-b-8 border-logo-red bg-gray-900">
             
             @if($banners->isEmpty())
@@ -43,8 +38,12 @@
                      x-transition:leave="opacity-100"
                      x-transition:leave-end="opacity-0"
                      
-                     {{-- Posisi Gambar disesuaikan agar kepala patung terlihat (20% dari atas) --}}
-                     :class="'bg-cover bg-position-[center_20%]'"
+                     {{-- 
+                        PERUBAHAN DISINI:
+                        - 'bg-center': Posisi default untuk mobile.
+                        - 'md:bg-[center_20%]': Posisi digeser ke atas hanya pada layar medium (desktop) ke atas.
+                     --}}
+                     :class="'bg-cover bg-center md:bg-position-[center_20%]'"
                      
                      :style="`background-image: url('${slide}')`">
                      
@@ -96,12 +95,8 @@
         <!-- Grid Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @forelse($announcements as $item)
-                <!-- UPDATE: Ganti DIV menjadi A, tambahkan 'block' dan 'href' di sini -->
                     <a href="{{ route('pengumuman.detail', $item->id) }}" class="block bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100 flex-col h-full group relative">
                         
-                        <!-- HAPUS LINK ABSOLUTE YANG LAMA (SUDAH TIDAK PERLU) -->
-                        <!-- <a href="..." class="absolute inset-0 z-10"></a> -->
-
                         <!-- BAGIAN GAMBAR -->
                         <div class="h-64 w-full bg-gray-50 relative overflow-hidden flex items-center justify-center">
                             
@@ -145,7 +140,6 @@
                                 {{ Str::limit($item->content, 120) }}
                             </p>
                             
-                            <!-- Tombol Visual (Pakai span/div saja karena pembungkus utama sudah <a>) -->
                             <div class="mt-auto pt-4 border-t border-gray-100">
                                 <span class="text-sm font-bold text-logo-red group-hover:text-red-800 flex items-center transition">
                                     Baca Selengkapnya
@@ -164,18 +158,16 @@
                     @endforelse
                 </div>
         </div>
-    </div>
 
 
-    {{-- SECTION 3: LOKASI & JADWAL (Fixed Layout) --}}
-    <div id="jadwal" class="py-16 bg-linear-to-b from-gray-50 to-white border-t border-gray-200">
+    {{-- SECTION 3: LOKASI & JADWAL --}}
+    <div class="py-16 bg-linear-to-b from-gray-50 to-white border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 
-                <!-- KOLOM KIRI: Peta Google Maps -->
+                <!-- KOLOM KIRI: Peta -->
                 <div class="flex flex-col h-full">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                        <!-- PERUBAHAN: text-logo-red -->
                         <span class="bg-red-100 text-logo-red p-2 rounded-lg mr-3">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
                         </span>
@@ -185,13 +177,8 @@
                     <div class="bg-white p-2 rounded-2xl shadow-lg border border-gray-200 grow min-h-[400px]">
                         <iframe 
                             src="https://maps.google.com/maps?q=Gereja+Katolik+Santo+Ignatius+Loyola+Temanggal+Sleman+Yogyakarta&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-                            width="100%" 
-                            height="100%" 
-                            style="border:0; border-radius: 1rem;" 
-                            allowfullscreen="" 
-                            loading="lazy"
-                            class="shadow-inner"
-                            title="Peta Lokasi Gereja">
+                            width="100%" height="100%" style="border:0; border-radius: 1rem;" allowfullscreen="" loading="lazy"
+                            class="shadow-inner" title="Peta Lokasi Gereja">
                         </iframe>
                     </div>
                     
@@ -210,24 +197,20 @@
                 <div class="flex flex-col space-y-8">
                     
                     <!-- Box Jadwal Misa -->
-                    <!-- PERUBAHAN: border-logo-red -->
                     <div id="jadwal-misa" class="scroll-mt-32 bg-white rounded-2xl shadow-xl p-8 border-t-8 border-logo-red relative overflow-hidden group">
-                        <!-- Decorative Background -->
                         <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-red-50 rounded-full opacity-50 transition group-hover:scale-110"></div>
                         
                         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center relative z-10">
-                            <!-- PERUBAHAN: text-logo-red -->
                             <span class="bg-red-100 text-logo-red p-2 rounded-lg mr-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </span>
                             Jadwal Misa
                         </h2>
                         
-                        <div class="space-y-4 relative z-10">
+                        <div class="relative z-10">
                             <div class="flex items-center justify-between bg-linear-to-r from-red-50 to-white rounded-xl p-5 border border-red-100 hover:border-red-200 transition">
                                 <div>
                                     <h3 class="font-bold text-gray-900 text-lg">Misa Mingguan (Sabtu)</h3>
-                                    <!-- PERUBAHAN: text-logo-red -->
                                     <p class="text-logo-red text-sm font-medium">Gereja St. Ignatius Loyola</p>
                                 </div>
                                 <div class="text-right">
@@ -245,7 +228,6 @@
 
                     <!-- Box Teritorial -->
                     <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-logo-blue grow relative overflow-hidden flex flex-col h-full">
-                        <!-- ... (Konten teritorial tetap sama) ... -->
                         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                             <span class="bg-blue-100 text-logo-blue p-2 rounded-lg mr-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
