@@ -30,7 +30,7 @@ class LoginController extends Controller
             // Pastikan ini mengarah ke /admin/liturgy/schedules atau /admin/profile
             // Jangan ke /admin/users karena itu dibatasi middleware super_admin
             // Paling aman ke dashboard umum atau jadwal:
-            return redirect()->route('admin.liturgy.schedules'); 
+            return redirect()->route('dashboard'); 
         }
 
         // Jika gagal, kembalikan dengan error
