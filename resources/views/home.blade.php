@@ -177,12 +177,14 @@
         </div>
 
 
-    {{-- SECTION 3: LOKASI & JADWAL --}}
+    {{-- ======================================== --}}
+    {{-- SECTION 3: LOKASI & JADWAL MISA --}}
+    {{-- ======================================== --}}
     <div class="py-16 bg-linear-to-b from-gray-50 to-white border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 
-                <!-- KOLOM KIRI: Peta -->
+                <!-- KOLOM KIRI: Peta Google Maps (KEMBALI NORMAL) -->
                 <div class="flex flex-col h-full">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                         <span class="bg-red-100 text-logo-red p-2 rounded-lg mr-3">
@@ -210,7 +212,7 @@
                     </div>
                 </div>
 
-                <!-- KOLOM KANAN: Jadwal & Info -->
+                <!-- KOLOM KANAN: Jadwal & Teritorial -->
                 <div class="flex flex-col space-y-8">
                     
                     <!-- Box Jadwal Misa -->
@@ -276,6 +278,81 @@
                             </a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{-- ======================================== --}}
+    {{-- SECTION 4: KALENDER LITURGI --}}
+    {{-- ======================================== --}}
+    <div class="py-20 bg-gray-50 border-t border-gray-200 overflow-hidden relative">
+        <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    
+                    <!-- Kiri: Info Tanggal Hari Ini -->
+                    <div class="p-10 md:p-16 flex flex-col justify-center bg-logo-blue text-white relative">
+                        
+                        <!-- UPDATE: BACKGROUND ALKITAB/BUKU -->
+                        <svg class="absolute right-0 top-0 h-full text-blue-800 opacity-20 transform translate-x-1/4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 2H5C3.9 2 3 2.9 3 4v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 4h2v5l-1-.75L9 9V4zm11 15H4V4h4v8l3-2.25L14 12V4h5v15z"></path>
+                        </svg>
+                        
+                        <div class="relative z-10">
+                            <span class="inline-block bg-logo-yellow text-blue-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4">
+                                Liturgi Hari Ini
+                            </span>
+                            <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                                {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
+                            </h2>
+                            <p class="text-blue-100 text-lg leading-relaxed mb-8">
+                                Persiapkan hati untuk merayakan misteri iman. Kalender liturgi resmi dari Iman Katolik.
+                            </p>
+                            
+                            <a href="https://www.imankatolik.or.id/" target="_blank" class="inline-flex items-center px-6 py-3 bg-white text-logo-blue font-bold rounded-lg shadow-md hover:bg-logo-yellow hover:text-blue-900 transition-all duration-300">
+                                Buka Kalender Lengkap
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Kanan: Embed Iframe (POSISI DISESUAIKAN) -->
+                    <div class="p-6 md:p-10 flex items-center justify-center bg-white min-h-[400px]">
+                        
+                        <div class="w-full h-[450px] border-4 border-gray-100 rounded-2xl overflow-hidden shadow-inner relative">
+                            
+                            <!-- 
+                                UPDATE POSISI:
+                                - margin-top: -70px -> Sedikit diturunkan agar header hari (Senin, Selasa, dst) terlihat
+                                - scale(0.65) -> Sedikit diperbesar agar tulisan lebih mudah dibaca
+                            -->
+                            <iframe 
+                                src="https://www.imankatolik.or.id/kalender.php" 
+                                style="
+                                    width: 170%; 
+                                    height: 170%; 
+                                    border: 0; 
+                                    transform: scale(0.65); 
+                                    transform-origin: 0 0;
+                                    margin-top: -70px; 
+                                    margin-left: -5px; 
+                                " 
+                                scrolling="no"
+                                loading="lazy"
+                                title="Kalender Liturgi">
+                            </iframe>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
                 </div>
             </div>

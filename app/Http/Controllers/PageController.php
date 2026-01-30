@@ -4,23 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use Illuminate\Http\Request;
+use App\Services\LiturgiService;
 
 class PageController extends Controller
 {
-    public function home()
+    public function home() // Inject Service
     {
         $banners = \App\Models\Banner::where('is_active', true)->orderBy('order', 'asc')->latest()->get();
+        $announcements = \App\Models\Announcement::orderBy('is_pinned', 'desc')->take(3)->get();
         $territories = \App\Models\Territory::all();
 
-        // UPDATE QUERY PENGUMUMAN
-        // 1. Prioritas is_pinned (descending: 1 dulu baru 0)
-        // 2. Kemudian baru event_date (terbaru dulu)
-        $announcements = \App\Models\Announcement::orderBy('is_pinned', 'desc')
-                            ->orderBy('event_date', 'desc')
-                            ->take(3) // Ambil 3 (Pin akan masuk hitungan ini)
-                            ->get();
 
-        return view('home', compact('banners', 'announcements', 'territories'));
+         return view('home', compact('banners', 'announcements', 'territories'));
     }
 
     // Fungsi halaman lain
