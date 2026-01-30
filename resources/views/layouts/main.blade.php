@@ -8,7 +8,9 @@
     <!-- ================= SEO TAGS ================= -->
     <title>@yield('title', 'Gereja St. Ignatius Loyola Kalasan Tengah')</title>
     <meta name="description" content="@yield('meta_description', 'Website resmi Gereja St. Ignatius Loyola Kalasan Tengah - Paroki Maria Marganingsih Kalasan. Informasi jadwal misa, pengumuman, dan teritorial wilayah.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'Gereja St. Ignatius Loyola, Kalasan Tengah, Gereja Temanggal, Paroki Kalasan, Gereja Katolik')">
+    <meta name="keywords" content="@yield('meta_keywords', 'Gereja St. Ignatius Loyola, Kalasan Tengah, Gereja Temanggal, Paroki Kalasan, Gereja Katolik, gereja di Sleman, Jadwal Misa, Pengumuman Gereja, Teritorial Wilayah, Organisasi Gereja, Petugas Liturgi, OMK, Misdinar, Lektor, Mazmur, Paduan Suara, Parkir Gereja, kalasan tengah, gereja yogyakarta, 
+    gereja sleman, gereja di kalasan, paroki maria marganingsih kalasan, Gereja St. Ignatius Loyola Temanggal, Gereja Katolik di Kalasan, Jadwal Misa Kalasan, Pengumuman Gereja Kalasan, Teritorial Wilayah Kalasan, Organisasi Gereja Kalasan, Petugas Liturgi Kalasan, OMK Kalasan, Misdinar Kalasan, Lektor Kalasan, Mazmur Kalasan, Paduan Suara Kalasan, Parkir Gereja Kalasan,
+    gereja temanggal, gereja di temanggal, paroki kalasan, Gereja St. Ignatius Loyola Kalasan Tengah Temanggal ')">
     <meta name="author" content="Gereja St. Ignatius Loyola">
     <meta name="robots" content="index, follow">
     
@@ -287,7 +289,7 @@
                 <p class="text-gray-600 text-base leading-relaxed mb-6">
                     Selamat datang di website resmi <strong>Gereja St. Ignatius Loyola Temanggal</strong>.
                     <br><br>
-                    Saat ini website masih dalam tahap uji coba dan penyempurnaan data. 
+                    Saat ini website masih dalam pengembangan dan penyempurnaan data. 
                     Jika Anda menemukan kesalahan atau memiliki saran, mohon sampaikan melalui kolom:
                 </p>
                 <div class="inline-flex items-center justify-center px-4 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-lg text-sm font-bold mb-8">
