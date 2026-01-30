@@ -84,19 +84,19 @@ class AnnouncementController extends Controller
 
     public function store(Request $request)
     {
-        // Ambil kategori yang valid untuk user ini
-        $allowedCategories = $this->getAllowedCategories();
-
         $request->validate([
             'title' => 'required',
             'content' => 'required',
             'image' => 'nullable|image|max:2048',
-            // Validasi: Kategori yang dipilih WAJIB ada di daftar yang diizinkan
-            'category' => ['required', \Illuminate\Validation\Rule::in($allowedCategories)],
+            'category' => 'required',
             'event_date' => 'required|date',
+            // is_pinned tidak perlu required, karena opsional
         ]);
 
         $data = $request->all();
+
+        // Handle Checkbox: Jika dicentang bernilai 1, jika tidak 0
+        $data['is_pinned'] = $request->has('is_pinned');
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('uploads/announcements', 'public');
@@ -120,22 +120,23 @@ class AnnouncementController extends Controller
     public function update(Request $request, $id)
     {
         $announcement = Announcement::findOrFail($id);
-        $allowedCategories = $this->getAllowedCategories();
-
+        
         $request->validate([
             'title' => 'required',
             'content' => 'required',
             'image' => 'nullable|image|max:2048',
-            // Validasi kategori lagi saat update
-            'category' => ['required', \Illuminate\Validation\Rule::in($allowedCategories)],
+            'category' => 'required',
             'event_date' => 'required|date',
         ]);
 
         $data = $request->all();
+        
+        // Handle Checkbox Update
+        $data['is_pinned'] = $request->has('is_pinned');
 
         if ($request->hasFile('image')) {
             if ($announcement->image_path) {
-                Storage::disk('public')->delete($announcement->image_path);
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($announcement->image_path);
             }
             $data['image_path'] = $request->file('image')->store('uploads/announcements', 'public');
         }

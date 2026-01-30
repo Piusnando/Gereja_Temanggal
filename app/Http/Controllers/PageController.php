@@ -9,19 +9,16 @@ class PageController extends Controller
 {
     public function home()
     {
-        // LOGIKA: Ambil yang 'is_active' = true
-        // Urutkan berdasarkan kolom 'order' (terkecil ke terbesar)
-        // Jika order sama, ambil yang terbaru
-        $banners = \App\Models\Banner::where('is_active', true)
-                    ->orderBy('order', 'asc') 
-                    ->latest()
-                    ->get();
-        
-        $announcements = \App\Models\Announcement::orderBy('event_date', 'desc')
-                            ->take(3)
-                            ->get();
-
+        $banners = \App\Models\Banner::where('is_active', true)->orderBy('order', 'asc')->latest()->get();
         $territories = \App\Models\Territory::all();
+
+        // UPDATE QUERY PENGUMUMAN
+        // 1. Prioritas is_pinned (descending: 1 dulu baru 0)
+        // 2. Kemudian baru event_date (terbaru dulu)
+        $announcements = \App\Models\Announcement::orderBy('is_pinned', 'desc')
+                            ->orderBy('event_date', 'desc')
+                            ->take(3) // Ambil 3 (Pin akan masuk hitungan ini)
+                            ->get();
 
         return view('home', compact('banners', 'announcements', 'territories'));
     }
@@ -40,20 +37,21 @@ class PageController extends Controller
     }
     public function pengumuman(Request $request)
     {
-        // Mulai Query
-        $query = Announcement::query();
+        $query = \App\Models\Announcement::query();
 
-        // 1. Logika Pencarian (Search)
         if ($request->has('search') && $request->search != '') {
             $query->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('content', 'like', '%' . $request->search . '%');
+                  ->orWhere('content', 'like', '%' . $request->search . '%');
         }
 
-        // 2. Logika Filter Kategori
         if ($request->has('category') && $request->category != '') {
             $query->where('category', $request->category);
         }
-        $announcements = $query->orderBy('event_date', 'desc')->paginate(6);
+
+        // UPDATE QUERY DISINI JUGA
+        $announcements = $query->orderBy('is_pinned', 'desc')
+                               ->orderBy('event_date', 'desc')
+                               ->paginate(6);
 
         return view('pages.pengumuman', [
             'announcements' => $announcements,

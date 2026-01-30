@@ -12,7 +12,8 @@ class Announcement extends Model
         'content', 
         'image_path', 
         'category', 
-        'event_date'
+        'event_date',
+        'is_pinned'
     ];
 
     protected $casts = [

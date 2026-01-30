@@ -132,6 +132,14 @@
                             <div class="absolute top-4 left-4 {{ $badgeColor }} text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-md tracking-wider z-20">
                                 {{ $item->category }}
                             </div>
+
+                            <!-- ICON PIN (BARU) -->
+                            @if($item->is_pinned)
+                                <div class="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-md z-20 flex items-center" title="Disematkan / Penting">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                                    PIN
+                                </div>
+                            @endif
                         </div>
 
                         <!-- CONTENT -->

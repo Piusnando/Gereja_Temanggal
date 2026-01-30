@@ -48,6 +48,16 @@
             @error('category') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
         </div>
 
+        <div class="mb-4 bg-yellow-50 p-3 rounded border border-yellow-200">
+            <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="is_pinned" value="1" class="form-checkbox h-5 w-5 text-yellow-600 rounded">
+                <span class="ml-2 text-gray-700 font-bold">
+                    <span class="mr-1">📌</span> Pin Pengumuman Ini?
+                </span>
+            </label>
+            <p class="text-xs text-gray-500 mt-1 ml-7">Pengumuman yang di-pin akan selalu muncul di urutan paling atas halaman depan.</p>
+        </div>
+
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Isi Pengumuman</label>
             <textarea name="content" rows="4" class="w-full border rounded p-2" required></textarea>
