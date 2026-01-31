@@ -138,5 +138,39 @@
         </a>
     </div>
 
+    <!-- Load Library SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script untuk menampilkan Pop-up -->
+    <script>
+        // Jalankan script saat halaman selesai dimuat
+        document.addEventListener("DOMContentLoaded", function() {
+            // Cek sessionStorage: Apakah pesan ini sudah pernah ditampilkan di sesi ini?
+            if (!sessionStorage.getItem('admin_dev_alert_shown')) {
+                
+                // Beri jeda 1 detik agar tidak terlalu kaget
+                setTimeout(() => {
+                    // Tampilkan Pop-up
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Admin Panel - Tahap Pengembangan',
+                        html: `
+                            <p class="text-gray-600 leading-relaxed text-sm">
+                                Selamat datang di panel admin. Saat ini beberapa fitur masih dalam tahap uji coba dan penyempurnaan.
+                                <br><br>
+                                Jika Anda menemukan masalah, bug, atau memiliki saran fitur, silakan hubungi tim <strong>KOMSOS</strong>.
+                            </p>
+                        `,
+                        confirmButtonText: 'Saya Mengerti',
+                        confirmButtonColor: '#003399', // Warna Logo Blue
+                    });
+
+                    // Tandai bahwa pesan sudah ditampilkan di sesi ini
+                    sessionStorage.setItem('admin_dev_alert_shown', 'true');
+                }, 1000);
+            }
+        });
+    </script>
+
 </div>
 @endsection
