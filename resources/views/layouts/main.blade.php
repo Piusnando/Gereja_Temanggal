@@ -300,8 +300,9 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="transition duration-300 {{ request()->is('/') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Beranda</a></li>
                         <li><a href="/sejarah" class="transition duration-300 {{ request()->is('sejarah*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="transition duration-300 {{ request()->is('pengumuman*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Pengumuman</a></li>
-                        <li><a href="/teritorial" class="transition duration-300 {{ request()->is('teritorial*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Pembagian Wilayah</a></li>
+                        <li><a href="/pengumuman" class="transition duration-300 {{ request()->is('pengumuman*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Pengumuman Gereja Ignatius Temanggal</a></li>
+                        <li><a href="/kegiatan" class="transition duration-300 {{ request()->is('kegiatan*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Kegiatan Umat Ignatius Temanggal</a></li>
+                        <li><a href="/teritorial" class="transition duration-300 {{ request()->is('teritorial*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Pembagian Wilayah Ignatius Temanggal</a></li>
                         <li><a href="https://gerejakalasan.org/" class="transition duration-300 text-gray-100 hover:text-logo-yellow flex items-center">Paroki Maria Marganingsih Kalasan <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></li>
                     </ul>
                 </div>

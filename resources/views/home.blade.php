@@ -69,7 +69,7 @@
                     </h2>
                     <h1 class="text-4xl md:text-7xl font-extrabold leading-tight mb-6 text-white drop-shadow-xl">
                         Gereja St. Ignatius<br>
-                        <span class="text-red-500">Kalasan Tengah</span>
+                        <span class="text-red-500">Temanggal</span>
                     </h1>
                     <p class="text-lg md:text-2xl font-medium text-gray-100 mt-2 bg-black/30 inline-block px-8 py-3 rounded-full backdrop-blur-sm border border-white/20">
                         Paroki Maria Marganingsih Kalasan
@@ -93,7 +93,7 @@
         <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-gray-200 pb-4">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800">Pengumuman Terbaru</h2>
-                <p class="text-gray-500 mt-1">Informasi kegiatan, liturgi, dan berita paroki.</p>
+                <p class="text-gray-500 mt-1">Informasi kegiatan, liturgi, dan berita gereja.</p>
             </div>
             <a href="/pengumuman" class="mt-4 md:mt-0 inline-flex items-center text-logo-blue hover:text-blue-800 font-bold transition">
                 Lihat Arsip
@@ -184,7 +184,7 @@
             <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-100 pb-4">
                 <div class="text-left">
                     <span class="text-logo-blue font-bold tracking-widest uppercase text-sm">Dokumentasi & Laporan</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Berita Kegiatan Paroki</h2>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Berita Kegiatan Ignatius Temanggal</h2>
                 </div>
                 <!-- UPDATE LINK LIHAT SEMUA -->
                 <a href="{{ route('kegiatan.index') }}" class="mt-4 md:mt-0 text-logo-blue font-bold hover:text-logo-red transition flex items-center">
