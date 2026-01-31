@@ -83,7 +83,25 @@
                 <div class="hidden lg:flex lg:items-center lg:gap-x-8">
                     <a href="/" class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 {{ request()->path() === '/' ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">Beranda</a>
                     <a href="/sejarah" class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 {{ request()->is('sejarah*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">Sejarah</a>
-                    <a href="/pengumuman" class="h-24 flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 {{ request()->is('pengumuman*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">Pengumuman</a>
+
+                    <!-- GANTI DENGAN INI (DROPDOWN BARU): -->
+                    <div class="relative h-24 flex items-center group" x-data="{ infoOpen: false }" @click.away="infoOpen = false">
+                        <button @click="infoOpen = ! infoOpen" class="h-full flex items-center text-sm font-bold uppercase border-b-4 transition-all duration-300 focus:outline-none {{ request()->is('pengumuman*') || request()->is('kegiatan*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue' }}">
+                            Info Kegiatan
+                            <svg class="w-4 h-4 ml-1 transform transition-transform" :class="{'rotate-180': infoOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="infoOpen" x-transition class="nav-dropdown absolute top-[85%] left-0 w-64 bg-white shadow-xl rounded-xl border border-gray-100 py-2" style="display: none;">
+                            <a href="/pengumuman" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 border-b border-gray-50">
+                                Arsip Pengumuman
+                            </a>
+                            <a href="{{ route('kegiatan.index') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 border-b border-gray-50 transition">
+                                Kegiatan
+                            </a>
+                            <a href="{{ route('jadwal.gedung') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 border-b border-gray-50 transition">
+                                Jadwal Pemakaian Gedung
+                            </a>
+                        </div>
+                    </div>
 
                     <!-- Dropdown Teritorial -->
                     <div class="relative h-24 flex items-center group" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
@@ -161,7 +179,38 @@
             <div class="py-2 pb-6 space-y-1">
                 <a href="/" class="block px-6 py-3 border-l-4 {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">Beranda</a>
                 <a href="/sejarah" class="block px-6 py-3 border-l-4 {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">Sejarah</a>
-                <a href="/pengumuman" class="block px-6 py-3 border-l-4 {{ request()->is('pengumuman*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">Pengumuman</a>
+
+                <!-- Mobile Info Kegiatan (Pengumuman, Kegiatan, Jadwal Gedung) -->
+                <div x-data="{ expanded: {{ request()->is('pengumuman*') || request()->is('kegiatan*') || request()->routeIs('jadwal.gedung') ? 'true' : 'false' }} }">
+                    <button @click="expanded = !expanded" 
+                            class="w-full flex justify-between items-center px-6 py-3 border-l-4 font-bold uppercase transition focus:outline-none 
+                            {{ request()->is('pengumuman*') || request()->is('kegiatan*') || request()->routeIs('jadwal.gedung') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50' }}">
+                        <span>Info Kegiatan</span>
+                        <svg class="w-4 h-4 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <div x-show="expanded" x-transition class="bg-gray-50 py-2">
+                        <!-- 1. Arsip Pengumuman -->
+                        <a href="/pengumuman" 
+                            class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->is('pengumuman*') ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
+                            Arsip Pengumuman
+                        </a>
+
+                        <!-- 2. Kegiatan (Jika belum ada route khusus, pakai # atau arahkan ke section di home) -->
+                        <a href="{{ route('kegiatan.index') }}" 
+                            class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->routeIs('kegiatan.*') ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
+                            Kegiatan
+                        </a>
+
+                        <!-- 3. Jadwal Pemakaian Gedung -->
+                        <a href="{{ route('jadwal.gedung') }}" 
+                            class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->routeIs('jadwal.gedung') ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
+                            Jadwal Pemakaian Gedung
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Mobile Teritorial -->
                 <div x-data="{ expanded: {{ request()->is('teritorial*') ? 'true' : 'false' }} }">

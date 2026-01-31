@@ -175,7 +175,70 @@
                     @endforelse
                 </div>
         </div>
+        
+    {{-- ======================================== --}}
+    {{-- SECTION BARU: BERITA KEGIATAN (POST-EVENT) --}}
+    {{-- ======================================== --}}
+    <div class="bg-white py-16 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-100 pb-4">
+                <div class="text-left">
+                    <span class="text-logo-blue font-bold tracking-widest uppercase text-sm">Dokumentasi & Laporan</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Berita Kegiatan Paroki</h2>
+                </div>
+                <!-- UPDATE LINK LIHAT SEMUA -->
+                <a href="{{ route('kegiatan.index') }}" class="mt-4 md:mt-0 text-logo-blue font-bold hover:text-logo-red transition flex items-center">
+                    Lihat Semua Kegiatan <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @forelse($activityNews as $news)
+                <!-- UPDATE: Tambahkan pembungkus <a> ke detail agar seluruh kartu bisa diklik -->
+                <a href="{{ route('kegiatan.detail', $news->id) }}" class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full">
+                    
+                    <!-- Foto Kegiatan -->
+                    <div class="h-48 overflow-hidden relative bg-gray-100">
+                        <img src="{{ $news->image_path ? asset('storage/' . $news->image_path) : 'https://placehold.co/600x400?text=Kegiatan' }}" 
+                             alt="{{ $news->title }}" 
+                             class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                        <div class="absolute bottom-0 left-0 bg-linear-to-t from-black/80 to-transparent w-full p-4 pt-10">
+                            <span class="text-white text-[10px] font-bold uppercase tracking-wider bg-logo-red px-2 py-1 rounded shadow-sm">
+                                {{ $news->organizer }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Isi Berita -->
+                    <div class="p-6 flex flex-col grow">
+                        <div class="flex items-center text-xs text-gray-500 mb-3">
+                            <svg class="w-4 h-4 mr-1 text-logo-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            {{ $news->start_time->translatedFormat('d F Y') }}
+                        </div>
+                        
+                        <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-logo-blue transition line-clamp-2">
+                            {{ $news->title }}
+                        </h3>
+                        
+                        <p class="text-gray-600 text-sm line-clamp-3 mb-4 grow">
+                            {{ Str::limit(strip_tags($news->description), 100) }}
+                        </p>
+                        
+                        <div class="mt-auto pt-4 border-t border-gray-100 flex items-center text-logo-blue font-bold text-sm">
+                            Baca Selengkapnya
+                            <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                @empty
+                <div class="col-span-3 text-center py-12 bg-gray-50 rounded-xl border-dashed border-2 border-gray-200">
+                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    <p class="text-gray-500 italic">Belum ada berita kegiatan terbaru.</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
 
     {{-- ======================================== --}}
     {{-- SECTION 3: LOKASI & JADWAL MISA --}}

@@ -84,28 +84,31 @@
     </div>
 
     <!-- CARD 2: TAMBAH BANNER -->
-    <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-green-600">
-        <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Tambah Banner Baru
-        </h2>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-bold mb-4 text-blue-800">Tambah Banner Baru</h2>
         <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Judul (Opsional)</label>
-                <input type="text" name="title" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200 focus:ring-opacity-50 p-2 border" placeholder="Contoh: Selamat Datang">
+            <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700">Judul (Opsional)</label>
+                <input type="text" name="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Foto Banner</label>
-                <input type="file" name="image" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg cursor-pointer bg-white">
-                <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG. Disarankan rasio landscape (16:9).</p>
+                <label class="block text-sm font-medium text-gray-700">Foto Banner</label>
+                <input type="file" name="image" required class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 p-2">
+                <p class="text-xs text-gray-500 mt-1">Saran ukuran 1920x1080 px.</p>
             </div>
-            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200 shadow-md transform hover:-translate-y-0.5">
+            
+            <!-- Peringatan Ukuran -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 p-3 text-sm rounded mb-4">
+                <p class="font-bold">Penting:</p>
+                <p>Pastikan ukuran file foto tidak lebih dari **2 MB** agar website tetap cepat.</p>
+            </div>
+
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">
                 Upload Banner
             </button>
         </form>
     </div>
-</div>
 
 <!-- CARD 3: LIST BANNER -->
 <div class="bg-white p-6 rounded-lg shadow-lg mt-8 relative">

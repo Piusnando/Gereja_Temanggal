@@ -2,20 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
+use App\Models\Activity;
+use App\Models\Territory;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
-use App\Services\LiturgiService;
+use App\Models\FacilityBooking;
+use App\Service\LiturgiService;
 
 class PageController extends Controller
 {
-    public function home() // Inject Service
+    public function home(LiturgiService $liturgiService)
     {
-        $banners = \App\Models\Banner::where('is_active', true)->orderBy('order', 'asc')->latest()->get();
-        $announcements = \App\Models\Announcement::orderBy('is_pinned', 'desc')->take(3)->get();
-        $territories = \App\Models\Territory::all();
+        $banners = Banner::where('is_active', true)->orderBy('order', 'asc')->latest()->get();
+        
+        $announcements = Announcement::orderBy('is_pinned', 'desc')
+                            ->orderBy('event_date', 'desc')
+                            ->take(3)
+                            ->get();
 
+        $territories = Territory::all();
+        
+        $liturgi = $liturgiService->getLiturgiHariIni();
+        if (!$liturgi) {
+             $liturgi = ['tanggal' => now()->locale('id')->translatedFormat('l, d F Y'), 'warna' => 'Hijau', 'perayaan' => 'Data tidak tersedia', 'bacaan_1' => '-', 'mazmur' => '-', 'injil' => '-'];
+        }
 
-         return view('home', compact('banners', 'announcements', 'territories'));
+        // BERITA KEGIATAN (Tetap ada di Home)
+        $activityNews = Activity::latest()->take(3)->get();
+
+        // HAPUS BAGIAN $facilityBookings DARI SINI
+
+        return view('home', compact('banners', 'announcements', 'territories', 'liturgi', 'activityNews'));
     }
 
     // Fungsi halaman lain
@@ -71,6 +89,51 @@ class PageController extends Controller
         return view('pages.detail-pengumuman', compact('announcement', 'others'));
     }
 
+    public function kegiatan(Request $request)
+    {
+        $query = \App\Models\Activity::query();
+
+        // Fitur Search
+        if ($request->has('search') && $request->search != '') {
+            $query->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%')
+                  ->orWhere('organizer', 'like', '%' . $request->search . '%');
+        }
+
+        // Urutkan dari yang paling baru (start_time descending)
+        $activities = $query->orderBy('start_time', 'desc')->paginate(9);
+
+        return view('pages.kegiatan', [
+            'activities' => $activities,
+            'currentSearch' => $request->search
+        ]);
+    }
+
+    // FUNGSI HALAMAN DETAIL KEGIATAN
+    public function detailKegiatan($id)
+    {
+        $activity = \App\Models\Activity::findOrFail($id);
+
+        // Ambil kegiatan lain (selain ini) untuk sidebar/rekomendasi
+        $others = \App\Models\Activity::where('id', '!=', $id)
+                    ->latest()
+                    ->take(4)
+                    ->get();
+
+        return view('pages.detail-kegiatan', compact('activity', 'others'));
+    }
+
+    public function jadwalGedung()
+    {
+        // Ambil jadwal yang akan datang, paginate 15 per halaman
+        $bookings = FacilityBooking::where('start_time', '>=', now())
+                        ->orderBy('start_time', 'asc')
+                        ->paginate(15);
+
+        return view('pages.jadwal-gedung', compact('bookings'));
+    }
+
+    
 
     public function teritorial()
     {

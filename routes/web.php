@@ -8,9 +8,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\LiturgyController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\FeedbackController; // Public
+use App\Http\Controllers\Admin\FacilityBookingController;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController; // Admin
 
 /*
@@ -22,6 +24,9 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/sejarah', [PageController::class, 'sejarah']);
 Route::get('/pengumuman', [PageController::class, 'pengumuman']);
 Route::get('/pengumuman/{id}', [PageController::class, 'detailPengumuman'])->name('pengumuman.detail');
+Route::get('/kegiatan', [PageController::class, 'kegiatan'])->name('kegiatan.index');
+Route::get('/kegiatan/{id}', [PageController::class, 'detailKegiatan'])->name('kegiatan.detail');
+Route::get('/jadwal-pemakaian-gedung', [PageController::class, 'jadwalGedung'])->name('jadwal.gedung');
 Route::get('/teritorial', [PageController::class, 'teritorial'])->name('teritorial.index');
 Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->name('teritorial.show');
 Route::get('/organisasi', [PageController::class, 'organisasi'])->name('organisasi.index');
@@ -72,6 +77,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::middleware(['role:admin,pengurus_gereja'])->group(function () {
         Route::get('/feedback', [App\Http\Controllers\Admin\FeedbackController::class, 'index'])->name('admin.feedback.index');
         Route::delete('/feedback/{id}', [App\Http\Controllers\Admin\FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
+        Route::resource('facility-bookings', FacilityBookingController::class, ['as' => 'admin']);
     });
 
 
@@ -127,6 +133,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         // 1. Route Pengumuman (PINDAHKAN KE SINI)
         Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir'])->group(function () {
             Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
+            Route::resource('activities', ActivityController::class, ['as' => 'admin']);
         });
         
         // 2. Route Organisasi
