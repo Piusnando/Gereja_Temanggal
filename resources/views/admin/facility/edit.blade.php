@@ -4,14 +4,29 @@
 <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md border border-gray-100">
     <h2 class="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Jadwal Gedung</h2>
     
-    <form action="{{ route('admin.facility-bookings.update', $booking->id) }}" method="POST">
+    {{-- 
+        LOGIKA PHP: 
+        Hanya masukkan Wilayah dan Lingkungan ke array pengecekan.
+        Jika di database tersimpan "OMK", dia tidak akan ketemu di array ini,
+        sehingga isManualDefault akan menjadi TRUE (Input text muncul).
+    --}}
+    @php
+        $existingValues = [];
+        // Loop organisasi DIHAPUS
+        foreach($wilayahs as $w) $existingValues[] = "Wilayah " . $w->name;
+        foreach($lingkungans as $l) $existingValues[] = "Lingkungan " . $l->name;
+        
+        $isManualDefault = !in_array($booking->booked_by, $existingValues);
+    @endphp
+
+    <form action="{{ route('admin.facility-bookings.update', $booking->id) }}" method="POST" x-data="{ isManual: {{ $isManualDefault ? 'true' : 'false' }} }">
         @csrf
-        @method('PUT') <!-- Wajib untuk Update -->
+        @method('PUT')
         
         <div class="mb-4">
             <label class="block text-sm font-bold text-gray-700 mb-1">Fasilitas</label>
-            <select name="facility_name" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-green-500">
-                @foreach(['Gereja Utama', 'Aula Paroki', 'Ruang Rapat', 'Halaman Parkir'] as $facility)
+            <select name="facility_name" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-green-500 bg-white">
+                @foreach(['Gedung Gereja', 'Teras Barat', 'Teras Timur', 'Lapangan Parkir'] as $facility)
                     <option value="{{ $facility }}" {{ $booking->facility_name == $facility ? 'selected' : '' }}>
                         {{ $facility }}
                     </option>
@@ -21,7 +36,46 @@
 
         <div class="mb-4">
             <label class="block text-sm font-bold text-gray-700 mb-1">Peminjam (Lingkungan/Kelompok)</label>
-            <input type="text" name="booked_by" value="{{ old('booked_by', $booking->booked_by) }}" class="w-full border rounded p-2.5" required>
+            
+            <!-- Dropdown -->
+            <select name="booked_by" 
+                    class="w-full border rounded p-2.5 bg-white mb-2"
+                    x-show="!isManual"
+                    @change="if($event.target.value === 'manual') isManual = true">
+                
+                <option value="" disabled>-- Pilih Peminjam --</option>
+
+                <!-- GROUP ORGANISASI DIHAPUS -->
+
+                <optgroup label="Wilayah">
+                    @foreach($wilayahs as $wil)
+                        @php $val = "Wilayah " . $wil->name; @endphp
+                        <option value="{{ $val }}" {{ $booking->booked_by == $val ? 'selected' : '' }}>{{ $val }}</option>
+                    @endforeach
+                </optgroup>
+
+                <optgroup label="Lingkungan">
+                    @foreach($lingkungans as $ling)
+                        @php $val = "Lingkungan " . $ling->name; @endphp
+                        <option value="{{ $val }}" {{ $booking->booked_by == $val ? 'selected' : '' }}>{{ $val }}</option>
+                    @endforeach
+                </optgroup>
+
+                <option value="manual" class="font-bold text-blue-600">+ Lainnya / Ketik Manual</option>
+            </select>
+
+            <!-- Input Manual -->
+            <div x-show="isManual" class="flex gap-2">
+                <input type="text" name="booked_by_text" 
+                       value="{{ $isManualDefault ? $booking->booked_by : '' }}"
+                       class="w-full border rounded p-2.5 focus:ring-2 focus:ring-green-500" 
+                       placeholder="Contoh: OMK, Misdinar..."
+                       :required="isManual">
+                
+                <button type="button" @click="isManual = false" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 rounded font-bold text-sm">
+                    Batal
+                </button>
+            </div>
         </div>
 
         <div class="mb-4">
@@ -32,7 +86,6 @@
         <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Mulai</label>
-                <!-- Format Tanggal untuk HTML5 datetime-local: Y-m-d\TH:i -->
                 <input type="datetime-local" name="start_time" 
                        value="{{ $booking->start_time->format('Y-m-d\TH:i') }}" 
                        class="w-full border rounded p-2.5" required>

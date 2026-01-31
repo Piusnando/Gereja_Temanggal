@@ -14,6 +14,7 @@
 
 <div class="bg-white rounded-lg shadow overflow-hidden border border-gray-100">
     <table class="min-w-full leading-normal">
+        <!-- BAGIAN HEADER (DIPERBAIKI: Berisi Judul Kolom) -->
         <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
             <tr>
                 <th class="px-5 py-3 text-left">Waktu Penggunaan</th>
@@ -22,25 +23,43 @@
                 <th class="px-5 py-3 text-center">Aksi</th>
             </tr>
         </thead>
+        
         <tbody class="text-gray-700 text-sm">
             @forelse($bookings as $item)
             <tr class="border-b hover:bg-gray-50 transition">
+                
+                <!-- Kolom Waktu -->
                 <td class="px-5 py-4 whitespace-nowrap">
                     <div class="font-bold text-gray-800">{{ $item->start_time->format('d M Y') }}</div>
                     <div class="text-xs text-gray-500">
                         {{ $item->start_time->format('H:i') }} - {{ $item->end_time->format('H:i') }} WIB
                     </div>
                 </td>
+
+                <!-- Kolom Fasilitas (Logika Warna Dipindah Kesini) -->
                 <td class="px-5 py-4">
-                    <span class="inline-block px-3 py-1 text-xs font-bold rounded-full 
-                        {{ $item->facility_name == 'Gereja Utama' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700' }}">
+                    @php
+                        // Logika warna dipindahkan ke dalam loop agar $item terbaca
+                        $badgeClass = match($item->facility_name) {
+                            'Gedung Gereja' => 'bg-blue-100 text-blue-700',
+                            'Teras Barat'   => 'bg-orange-100 text-orange-700',
+                            'Teras Timur'   => 'bg-purple-100 text-purple-700',
+                            'Lapangan Parkir' => 'bg-green-100 text-green-700',
+                            default         => 'bg-gray-100 text-gray-700'
+                        };
+                    @endphp
+                    <span class="inline-block px-3 py-1 text-xs font-bold rounded-full {{ $badgeClass }}">
                         {{ $item->facility_name }}
                     </span>
                 </td>
+
+                <!-- Kolom Peminjam -->
                 <td class="px-5 py-4">
                     <div class="font-semibold">{{ $item->purpose }}</div>
                     <div class="text-xs text-gray-500">Oleh: {{ $item->booked_by }}</div>
                 </td>
+
+                <!-- Kolom Aksi -->
                 <td class="px-5 py-4 text-center">
                     <div class="flex items-center justify-center gap-2">
                         <!-- Tombol Edit -->
@@ -66,6 +85,8 @@
             @endforelse
         </tbody>
     </table>
+    
+    <!-- Pagination -->
     <div class="p-4">{{ $bookings->links() }}</div>
 </div>
 @endsection

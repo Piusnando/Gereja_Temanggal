@@ -17,7 +17,7 @@
                 Jadwal Pemakaian Fasilitas
             </h1>
             <p class="text-blue-100 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
-                Informasi ketersediaan dan agenda penggunaan Gereja, Aula, dan Ruang Rapat Gereja.
+                Informasi ketersediaan dan agenda penggunaan fasilitas gereja.
             </p>
         </div>
     </div>
@@ -27,12 +27,12 @@
         
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
             
-            <!-- Legend / Keterangan Warna -->
+            <!-- Legend / Keterangan Warna (DISESUAIKAN DENGAN ADMIN) -->
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-wrap gap-4 text-xs font-bold text-gray-600 uppercase tracking-wide">
-                <div class="flex items-center"><span class="w-3 h-3 bg-blue-100 border border-blue-300 rounded-full mr-2"></span> Gereja Utama</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-purple-100 border border-purple-300 rounded-full mr-2"></span> Aula</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-green-100 border border-green-300 rounded-full mr-2"></span> Ruang Rapat</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded-full mr-2"></span> Lainnya</div>
+                <div class="flex items-center"><span class="w-3 h-3 bg-blue-100 border border-blue-300 rounded-full mr-2"></span> Gedung Gereja</div>
+                <div class="flex items-center"><span class="w-3 h-3 bg-orange-100 border border-orange-300 rounded-full mr-2"></span> Teras Barat</div>
+                <div class="flex items-center"><span class="w-3 h-3 bg-purple-100 border border-purple-300 rounded-full mr-2"></span> Teras Timur</div>
+                <div class="flex items-center"><span class="w-3 h-3 bg-green-100 border border-green-300 rounded-full mr-2"></span> Lapangan Parkir</div>
             </div>
 
             <!-- Tabel Jadwal -->
@@ -67,14 +67,15 @@
                                 </div>
                             </td>
 
-                            <!-- Lokasi (Badge Warna) -->
+                            <!-- Lokasi (Badge Warna - DISESUAIKAN DENGAN ADMIN) -->
                             <td class="p-5 align-middle">
                                 @php
                                     $badge = match($booking->facility_name) {
-                                        'Gereja Utama' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                        'Aula Paroki' => 'bg-purple-100 text-purple-800 border-purple-200',
-                                        'Ruang Rapat' => 'bg-green-100 text-green-800 border-green-200',
-                                        default => 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                                        'Gedung Gereja'   => 'bg-blue-100 text-blue-800 border-blue-200',
+                                        'Teras Barat'     => 'bg-orange-100 text-orange-800 border-orange-200',
+                                        'Teras Timur'     => 'bg-purple-100 text-purple-800 border-purple-200',
+                                        'Lapangan Parkir' => 'bg-green-100 text-green-800 border-green-200',
+                                        default           => 'bg-gray-100 text-gray-800 border-gray-200'
                                     };
                                 @endphp
                                 <span class="px-3 py-1 rounded-full text-xs font-bold uppercase border {{ $badge }}">
