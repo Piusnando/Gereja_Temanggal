@@ -373,49 +373,71 @@
                                 {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
                             </h2>
                             <p class="text-blue-100 text-lg leading-relaxed mb-8">
-                                Persiapkan hati untuk merayakan misteri iman. Kalender liturgi resmi dari Iman Katolik.
+                                Persiapkan hati untuk merayakan misteri iman. Informasi kalender liturgi harian.
                             </p>
-                            
-                            <a href="https://www.imankatolik.or.id/" target="_blank" class="inline-flex items-center px-6 py-3 bg-white text-logo-blue font-bold rounded-lg shadow-md hover:bg-logo-yellow hover:text-blue-900 transition-all duration-300">
-                                Buka Kalender Lengkap
+                            <a href="http://calapi.inadiutorium.cz/" target="_blank" class="inline-flex items-center px-6 py-3 bg-white text-logo-blue font-bold rounded-lg shadow-md hover:bg-logo-yellow hover:text-blue-900 transition-all duration-300">
+                                Lihat Sumber Data
                                 <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             </a>
                         </div>
                     </div>
 
-                    <!-- Kanan: Embed Iframe (POSISI DISESUAIKAN) -->
-                    <div class="p-6 md:p-10 flex items-center justify-center bg-white min-h-[400px]">
+                    <!-- Kanan: Komponen Liturgi Dinamis dari API -->
+                    <div class="p-6 md:p-10 flex items-center justify-center bg-white">
                         
-                        <div class="w-full h-[450px] border-4 border-gray-100 rounded-2xl overflow-hidden shadow-inner relative">
+                        <!-- Kartu Informasi Liturgi -->
+                        <div class="w-full bg-gray-50 rounded-2xl p-8 shadow-inner border border-gray-200 space-y-6">
                             
-                            <!-- 
-                                UPDATE POSISI:
-                                - margin-top: -70px -> Sedikit diturunkan agar header hari (Senin, Selasa, dst) terlihat
-                                - scale(0.65) -> Sedikit diperbesar agar tulisan lebih mudah dibaca
-                            -->
-                            <iframe 
-                                src="https://www.imankatolik.or.id/kalender.php" 
-                                style="
-                                    width: 170%; 
-                                    height: 170%; 
-                                    border: 0; 
-                                    transform: scale(0.65); 
-                                    transform-origin: 0 0;
-                                    margin-top: -70px; 
-                                    margin-left: -5px; 
-                                " 
-                                scrolling="no"
-                                loading="lazy"
-                                title="Kalender Liturgi">
-                            </iframe>
+                            <!-- Bagian Judul dan Warna -->
+                            <div class="text-center">
+                                @php
+                                    // Logika untuk menentukan warna badge berdasarkan data dari API
+                                    $warna = $liturgi['warna'] ?? 'Hijau';
+                                    $badgeClass = match (strtolower($warna)) {
+                                        'putih' => 'bg-gray-200 text-gray-800 border-2 border-gray-300',
+                                        'merah' => 'bg-red-600 text-white',
+                                        'ungu' => 'bg-purple-600 text-white',
+                                        'merah muda' => 'bg-pink-400 text-white',
+                                        default => 'bg-green-600 text-white', // Hijau dan default
+                                    };
+                                @endphp
+                                
+                                <div class="flex justify-center items-center gap-3 mb-3">
+                                    <h3 class="font-bold text-gray-500 text-sm uppercase tracking-wider">Warna Liturgi:</h3>
+                                    <span class="px-4 py-1 rounded-full text-sm font-bold shadow-sm {{ $badgeClass }}">
+                                        {{ $warna }}
+                                    </span>
+                                </div>
+                                
+                                <h2 class="text-2xl font-extrabold text-gray-800 leading-tight">
+                                    {{ $liturgi['perayaan'] ?? 'Informasi Tidak Tersedia' }}
+                                </h2>
+                            </div>
 
+                            <!-- Garis Pemisah -->
+                            <div class="border-t border-gray-200"></div>
+
+                            <!-- Bagian Bacaan -->
+                            <div>
+                                <h4 class="font-bold text-gray-600 mb-3 text-center">Bacaan Harian</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li class="flex justify-between items-center bg-white p-3 rounded-lg border">
+                                        <span class="font-semibold text-gray-500">Bacaan I:</span>
+                                        <span class="font-mono text-gray-800">{{ $liturgi['bacaan_1'] ?? '-' }}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center bg-white p-3 rounded-lg border">
+                                        <span class="font-semibold text-gray-500">Mazmur:</span>
+                                        <span class="font-mono text-gray-800">{{ $liturgi['mazmur'] ?? '-' }}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center bg-white p-3 rounded-lg border">
+                                        <span class="font-semibold text-gray-500">Injil:</span>
+                                        <span class="font-mono text-gray-800">{{ $liturgi['injil'] ?? '-' }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
                         </div>
                     </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
                 </div>
             </div>

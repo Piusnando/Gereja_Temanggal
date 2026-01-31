@@ -4,72 +4,117 @@ namespace App\Service;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\DomCrawler\Crawler;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class LiturgiService
 {
-    /**
-     * Mengambil data liturgi hari ini.
-     * Data di-cache selama 24 jam agar tidak membebani server imankatolik.
-     */
     public function getLiturgiHariIni()
     {
-        return Cache::remember('liturgi_hari_ini', 60 * 24, function () {
+        // Ganti versi cache ke 'v7' (PENTING!)
+        return Cache::remember('liturgi_hari_ini_hybrid_v7', 60 * 24, function () {
+            
+            // 1. DATA DEFAULT
+            $liturgiData = [
+                'tanggal' => Carbon::now()->locale('id')->translatedFormat('l, d F Y'),
+                'perayaan' => 'Hari Biasa',
+                'warna' => 'Hijau',
+                'bacaan_1' => '-',
+                'mazmur' => '-',
+                'injil' => '-',
+            ];
+
+            // 2. API WARNA (CalAPI)
             try {
-                // 1. Kunjungi Website
-                $response = Http::get('https://www.imankatolik.or.id/');
-                $html = $response->body();
-
-                // 2. Baca HTML
-                $crawler = new Crawler($html);
-
-                // 3. Cari Elemen (Ini harus disesuaikan dengan struktur HTML imankatolik saat ini)
-                // Biasanya ada di dalam div tertentu. Ini contoh logika pencariannya:
-                
-                $data = [
-                    'tanggal' => now()->locale('id')->translatedFormat('l, d F Y'),
-                    'warna' => 'Hijau', // Default
-                    'bacaan_1' => '-',
-                    'mazmur' => '-',
-                    'injil' => '-',
-                    'perayaan' => 'Hari Biasa',
-                ];
-
-                // *Contoh Logika Scraping (Perlu disesuaikan jika web sumber update)*
-                // Cari teks warna liturgi (biasanya ada di teks pojok kanan atau css class)
-                $warnaNode = $crawler->filter('div.kiri_atas'); 
-                if ($warnaNode->count() > 0) {
-                    $text = $warnaNode->text();
-                    if (stripos($text, 'Putih') !== false) $data['warna'] = 'Putih';
-                    elseif (stripos($text, 'Merah') !== false) $data['warna'] = 'Merah';
-                    elseif (stripos($text, 'Ungu') !== false) $data['warna'] = 'Ungu';
-                    elseif (stripos($text, 'Hijau') !== false) $data['warna'] = 'Hijau';
+                $responseApi = Http::timeout(5)->get('https://calapi.inadiutorium.cz/api/v0/id/calendars/general-roman/today');
+                if ($responseApi->successful()) {
+                    $apiData = $responseApi->json();
+                    $celebration = $apiData['celebrations'][0] ?? null;
+                    if ($celebration) {
+                        $liturgiData['perayaan'] = $celebration['title'];
+                        $liturgiData['warna'] = match (strtolower($celebration['colour'] ?? '')) {
+                            'white' => 'Putih', 'red' => 'Merah', 'green' => 'Hijau', 'violet' => 'Ungu', 'rose' => 'Merah Muda', default => 'Hijau',
+                        };
+                    }
                 }
-
-                // Cari Bacaan (Biasanya ada link ke alkitab)
-                // Ini teknik kasar: ambil semua link yang mengarah ke alkitab sabda
-                $links = $crawler->filter('a[href*="alkitab.sabda.org"]')->each(function (Crawler $node) {
-                    return $node->text();
-                });
-
-                if (!empty($links)) {
-                    $data['bacaan_1'] = $links[0] ?? '-';
-                    $data['mazmur'] = $links[1] ?? '-';
-                    $data['injil'] = end($links) ?? '-';
-                }
-
-                // Cari Nama Perayaan (Biasanya heading h2 atau h3)
-                $perayaan = $crawler->filter('td.content_tengah h3');
-                if($perayaan->count() > 0) {
-                    $data['perayaan'] = $perayaan->text();
-                }
-
-                return $data;
-
             } catch (\Exception $e) {
-                // Jika error/web sumber down, kembalikan data default/kosong
-                return null;
+                // Silent fail untuk API
             }
+
+            // 3. SCRAPING BACAAN (METODE TEKS MURNI)
+            try {
+                // Ambil halaman kalender karena lebih bersih isinya
+                $responseScraper = Http::withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
+                ])
+                ->withoutVerifying()
+                ->get('https://www.imankatolik.or.id/kalender.php');
+
+                if ($responseScraper->successful()) {
+                    // LANGKAH PENTING: Hapus semua tag HTML, sisakan teks saja
+                    $plainText = strip_tags($responseScraper->body());
+                    
+                    // Regex yang sangat fleksibel:
+                    // Mencari [Huruf][Titik/Spasi][Angka][Titik Dua][Angka]
+                    // Contoh yang ditangkap: "Kej 1:1", "Mat. 5:3", "Mzm 23:1-5"
+                    preg_match_all('/([1-3]?[A-Za-z]{2,5}\.?\s*\d+\s*:\s*\d+(?:[-\d,a-z]*))/i', $plainText, $matches);
+
+                    // Ambil hasil yang unik dan bersihkan
+                    $candidates = array_unique($matches[0] ?? []);
+                    $cleanLinks = [];
+
+                    // Filter manual untuk membuang yang bukan kitab suci (misal jam "18:00")
+                    foreach ($candidates as $txt) {
+                        $txt = trim($txt);
+                        // Pastikan diawali huruf (bukan jam) dan panjangnya masuk akal
+                        if (preg_match('/^[A-Za-z]/', $txt) && strlen($txt) > 4) {
+                            $cleanLinks[] = $txt;
+                        }
+                    }
+
+                    // Reset index array
+                    $cleanLinks = array_values($cleanLinks);
+
+                    if (!empty($cleanLinks)) {
+                        // Logika Penempatan
+                        $liturgiData['bacaan_1'] = $cleanLinks[0]; // Biasanya urutan pertama di teks
+
+                        // Cari yang mengandung "Mzm" untuk Mazmur
+                        $mazmurFound = false;
+                        foreach ($cleanLinks as $link) {
+                            if (stripos($link, 'Mzm') !== false || stripos($link, 'Mazmur') !== false) {
+                                $liturgiData['mazmur'] = $link;
+                                $mazmurFound = true;
+                                break;
+                            }
+                        }
+                        // Jika tidak ada label "Mzm", asumsikan urutan kedua adalah Mazmur (jika ada 3 bacaan)
+                        if (!$mazmurFound && count($cleanLinks) >= 3) {
+                            $liturgiData['mazmur'] = $cleanLinks[1];
+                        }
+
+                        // Cari Injil (Mat, Mrk, Luk, Yoh)
+                        $injilFound = false;
+                        foreach ($cleanLinks as $link) {
+                            if (preg_match('/(Mat|Mrk|Luk|Yoh)/i', $link)) {
+                                // Pastikan bukan bacaan 1 (kadang bacaan 1 dari injil surat)
+                                if ($link !== $liturgiData['bacaan_1']) {
+                                    $liturgiData['injil'] = $link;
+                                    $injilFound = true;
+                                }
+                            }
+                        }
+                        // Fallback: Ambil yang terakhir
+                        if (!$injilFound) {
+                            $liturgiData['injil'] = end($cleanLinks);
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('Scraping Error: ' . $e->getMessage());
+            }
+
+            return $liturgiData;
         });
     }
 }
