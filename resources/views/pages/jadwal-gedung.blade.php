@@ -13,7 +13,7 @@
                 Jadwal Pemakaian Fasilitas
             </h1>
             <p class="text-blue-100 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
-                Informasi ketersediaan dan agenda penggunaan Gereja, Aula, dan Ruang Rapat Paroki.
+                Informasi ketersediaan dan agenda penggunaan Gereja, Aula, dan Ruang Rapat Gereja.
             </p>
         </div>
     </div>
@@ -26,7 +26,7 @@
             <!-- Legend / Keterangan Warna -->
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-wrap gap-4 text-xs font-bold text-gray-600 uppercase tracking-wide">
                 <div class="flex items-center"><span class="w-3 h-3 bg-blue-100 border border-blue-300 rounded-full mr-2"></span> Gereja Utama</div>
-                <div class="flex items-center"><span class="w-3 h-3 bg-purple-100 border border-purple-300 rounded-full mr-2"></span> Aula Paroki</div>
+                <div class="flex items-center"><span class="w-3 h-3 bg-purple-100 border border-purple-300 rounded-full mr-2"></span> Aula</div>
                 <div class="flex items-center"><span class="w-3 h-3 bg-green-100 border border-green-300 rounded-full mr-2"></span> Ruang Rapat</div>
                 <div class="flex items-center"><span class="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded-full mr-2"></span> Lainnya</div>
             </div>

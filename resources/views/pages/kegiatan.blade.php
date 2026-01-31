@@ -14,7 +14,7 @@
                 Info & Berita Kegiatan
             </h1>
             <p class="text-blue-100 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
-                Dokumentasi, warta, dan agenda kegiatan umat Paroki Maria Marganingsih Kalasan.
+                Dokumentasi, warta, dan agenda kegiatan umat Ignatius Temanggal.
             </p>
         </div>
     </div>
