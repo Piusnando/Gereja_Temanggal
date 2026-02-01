@@ -65,13 +65,19 @@ class AppServiceProvider extends ServiceProvider
             ];
 
             // 2. Ambil data Bidang beserta Sub Bidangnya
-            $dbData = OrganizationMember::select('bidang', 'sub_bidang')
+            $query = OrganizationMember::select('bidang', 'sub_bidang')
                     ->whereNotNull('bidang')
                     ->where('bidang', '!=', '')
-                    ->whereNotNull('sub_bidang')
-                    ->where('tampil_di_menu', true) // <--- HANYA AMBIL YANG DICENTANG
-                    ->distinct()
-                    ->get();
+                    ->whereNotNull('sub_bidang');
+
+        // CEK DULU: Apakah kolom 'tampil_di_menu' sudah ada di database?
+        // Jika ada, baru kita filter. Jika belum (saat migrasi), lewati filter ini.
+        if (Schema::hasColumn('organization_members', 'tampil_di_menu')) {
+            $query->where('tampil_di_menu', true);
+        }
+
+        // Eksekusi Query
+        $dbData = $query->distinct()->get();
 
             // 3. Susun Array Menu
             $organizationMenu = [];
