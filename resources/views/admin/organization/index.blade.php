@@ -33,7 +33,7 @@
     </div>
 </div>
 
-{{-- NOTIFIKASI --}}
+{{-- NOTIFICATION --}}
 @if(session('success'))
 <div x-data="{ show: true }" x-show="show" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-r shadow-sm flex justify-between">
     <span>{{ session('success') }}</span><button @click="show = false">&times;</button>
@@ -41,7 +41,7 @@
 @endif
 <div id="reorder-alert" class="hidden fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50">Urutan diperbarui!</div>
 
-{{-- LOGIKA TAMPILAN BERTINGKAT --}}
+{{-- CONTENT --}}
 @php
     $showList = $currentBidang ? [$currentBidang] : $bidangList;
 @endphp
@@ -49,56 +49,58 @@
 <div class="space-y-12 pb-10">
     @foreach($showList as $namaBidang)
         @php
-            // 1. Ambil anggota bidang ini
             $allMembersInBidang = $members->where('bidang', $namaBidang);
-            
-            // 2. Kelompokkan berdasarkan Sub-Bidang (Tim)
-            // Menggunakan sortKeys() agar nama tim urut abjad
-            $groupedBySub = $allMembersInBidang->groupBy('sub_bidang')->sortKeys();
+            // The grouping will naturally follow the query order (sub_bidang_order)
+            $groupedBySub = $allMembersInBidang->groupBy('sub_bidang'); 
         @endphp
 
-        {{-- Hanya render jika ada datanya --}}
         @if($allMembersInBidang->count() > 0)
         
         <div class="border-l-4 border-pink-500 pl-4">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ $namaBidang }}</h2>
             
-            <div class="space-y-6">
-                {{-- Loop Sub Bidang (Tim) --}}
+            {{-- SORTABLE TEAMS CONTAINER (This div allows reordering of the blocks inside it) --}}
+            <div class="space-y-6 sortable-teams" data-bidang="{{ $namaBidang }}">
+                
                 @foreach($groupedBySub as $subName => $teamMembers)
                 
-                <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-                    <!-- Header Sub Tim -->
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                        <h3 class="text-md font-bold text-pink-700 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            {{ $subName }}
-                        </h3>
+                {{-- TEAM ITEM BLOCK --}}
+                <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden team-item" data-team-name="{{ $subName }}">
+                    
+                    <!-- Team Header (DRAG HANDLE FOR TEAM) -->
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center cursor-move team-handle hover:bg-gray-100 transition">
+                        <div class="flex items-center gap-3">
+                            <!-- Drag Icon -->
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+                            <h3 class="text-md font-bold text-pink-700">
+                                {{ $subName }}
+                            </h3>
+                        </div>
                         <span class="text-xs bg-white border border-gray-200 px-2 py-1 rounded text-gray-500 font-mono">
                             {{ $teamMembers->count() }} Org
                         </span>
                     </div>
 
-                    <!-- Tabel Anggota -->
+                    <!-- Members Table (Sortable Members) -->
                     <div class="overflow-x-auto">
                         <table class="min-w-full leading-normal">
-                            <tbody class="sortable-list divide-y divide-gray-100" data-sub="{{ $subName }}">
+                            <tbody class="sortable-members divide-y divide-gray-100" data-sub="{{ $subName }}">
                                 @foreach($teamMembers as $member)
                                 <tr data-id="{{ $member->id }}" class="hover:bg-pink-50 transition bg-white group cursor-move">
-                                    <!-- Drag Handle -->
+                                    <!-- Member Drag Handle -->
                                     <td class="w-10 px-4 py-3 text-center align-middle">
                                         <svg class="w-4 h-4 text-gray-300 group-hover:text-pink-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                     </td>
 
-                                    <!-- Foto & Nama -->
+                                    <!-- Photo & Name -->
                                     <td class="px-4 py-3 align-middle">
                                         <div class="flex items-center gap-3">
                                             <div class="shrink-0 h-10 w-10 rounded-full overflow-hidden border border-gray-200">
                                                 @if($member->image)
                                                     <img src="{{ asset('storage/' . $member->image) }}" class="h-full w-full object-cover">
                                                 @else
+                                                    <!-- Default Image (Link Online) -->
                                                     <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" 
-                                                        alt="Default Avatar" 
                                                         class="h-full w-full object-cover">
                                                 @endif
                                             </div>
@@ -114,7 +116,7 @@
                                         {{ $member->lingkungan->name ?? '-' }}
                                     </td>
 
-                                    <!-- Aksi -->
+                                    <!-- Actions -->
                                     <td class="px-4 py-3 text-center align-middle w-24">
                                         <div class="flex justify-center items-center gap-2">
                                             <a href="{{ route('admin.organization.edit', $member->id) }}" class="text-blue-500 hover:text-blue-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></a>
@@ -139,30 +141,57 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.sortable-list').forEach(table => {
+        
+        // 1. Sortable for MEMBERS (Inside the tables)
+        document.querySelectorAll('.sortable-members').forEach(table => {
             new Sortable(table, {
                 animation: 150,
                 ghostClass: 'bg-pink-50',
-                handle: 'tr',
+                handle: 'tr', // Drag whole row
                 onEnd: function (evt) {
                     let itemIds = Array.from(table.querySelectorAll('tr')).map(row => row.getAttribute('data-id'));
-                    updateOrder(itemIds);
+                    updateMemberOrder(itemIds);
                 }
             });
         });
 
-        function updateOrder(ids) {
+        // 2. Sortable for TEAMS (The blocks themselves)
+        document.querySelectorAll('.sortable-teams').forEach(container => {
+            new Sortable(container, {
+                animation: 150,
+                ghostClass: 'opacity-50',
+                handle: '.team-handle', // Only drag via the gray header
+                onEnd: function (evt) {
+                    // Get list of team names in new order
+                    let teamNames = Array.from(container.querySelectorAll('.team-item')).map(item => item.getAttribute('data-team-name'));
+                    let bidang = container.getAttribute('data-bidang');
+                    updateTeamOrder(teamNames, bidang);
+                }
+            });
+        });
+
+        // AJAX: Reorder Members
+        function updateMemberOrder(ids) {
             fetch("{{ route('admin.organization.reorder') }}", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                 body: JSON.stringify({ ids: ids })
-            })
-            .then(res => res.json())
-            .then(data => {
-                let alert = document.getElementById('reorder-alert');
-                alert.classList.remove('hidden');
-                setTimeout(() => alert.classList.add('hidden'), 2000);
-            });
+            }).then(() => showNotification());
+        }
+
+        // AJAX: Reorder Teams (Sub-Bidang)
+        function updateTeamOrder(teamNames, bidang) {
+            fetch("{{ route('admin.organization.reorder_teams') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ teams: teamNames, bidang: bidang })
+            }).then(() => showNotification());
+        }
+
+        function showNotification() {
+            let alert = document.getElementById('reorder-alert');
+            alert.classList.remove('hidden');
+            setTimeout(() => alert.classList.add('hidden'), 2000);
         }
     });
 </script>

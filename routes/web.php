@@ -32,6 +32,7 @@ Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->nam
 Route::get('/organisasi', [PageController::class, 'organisasi'])->name('organisasi.index');
 Route::get('/organisasi/{category}', [PageController::class, 'showOrganization'])->name('organisasi.show');
 Route::get('/organisasi/{category}/{sub_category}', [PageController::class, 'showSubOrganization'])->name('organisasi.sub');
+Route::post('/organization/reorder-teams', [OrganizationController::class, 'reorderTeams'])->name('admin.organization.reorder_teams');
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
 Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
 

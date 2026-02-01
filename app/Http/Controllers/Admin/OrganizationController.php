@@ -22,26 +22,26 @@ class OrganizationController extends Controller
 
     public function index(Request $request)
     {
-        $bidang = $request->query('bidang'); 
+        $bidangList = $this->fixedBidang;
+        $currentBidang = $request->query('bidang'); 
 
-        $query = OrganizationMember::query();
+        $query = \App\Models\OrganizationMember::query();
 
-        if ($bidang) {
-            $query->where('bidang', $bidang);
+        if ($currentBidang) {
+            $query->where('bidang', $currentBidang);
         }
 
-        // Urutkan berdasarkan Bidang -> Sub Bidang -> Custom Order
+        // ORDERING LOGIC:
+        // 1. Group Order (sub_bidang_order)
+        // 2. Group Name (fallback if order is same)
+        // 3. Member Order (sort_order)
         $members = $query->orderBy('bidang')
-                         ->orderBy('sub_bidang')
+                         ->orderBy('sub_bidang_order', 'asc') 
+                         ->orderBy('sub_bidang', 'asc') 
                          ->orderBy('sort_order', 'asc')
                          ->get();
         
-        // Kirim daftar bidang untuk filter di view index
-        return view('admin.organization.index', [
-            'members' => $members,
-            'bidangList' => $this->fixedBidang,
-            'currentBidang' => $bidang
-        ]);
+        return view('admin.organization.index', compact('members', 'bidangList', 'currentBidang'));
     }
 
     public function create()
@@ -161,6 +161,25 @@ class OrganizationController extends Controller
         foreach ($request->ids as $index => $id) {
             OrganizationMember::where('id', $id)->update(['sort_order' => $index + 1]);
         }
+        return response()->json(['status' => 'success']);
+    }
+
+    public function reorderTeams(Request $request)
+    {
+        // Expects: 
+        // teams: ['Koordinator', 'Koor', 'Koster'] (Ordered array of names)
+        // bidang: 'Tim Pelayanan Bidang Liturgi'
+        
+        $bidang = $request->bidang;
+        $teams = $request->teams;
+
+        foreach ($teams as $index => $subName) {
+            // Update ALL members belonging to this sub-team with the new index
+            \App\Models\OrganizationMember::where('bidang', $bidang)
+                ->where('sub_bidang', $subName)
+                ->update(['sub_bidang_order' => $index + 1]);
+        }
+
         return response()->json(['status' => 'success']);
     }
 
