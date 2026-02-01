@@ -11,65 +11,73 @@ use Illuminate\Support\Facades\Auth;
 
 class OrganizationController extends Controller
 {
-    // Helper: Menentukan kategori yang boleh diakses user
-    private function getAllowedCategories()
-    {
-        $role = Auth::user()->role;
-
-        // Admin & Pengurus boleh semua
-        if (in_array($role, ['admin', 'pengurus_gereja'])) {
-            return ['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor', 'Paduan Suara'];
-        }
-
-        // Role Spesifik
-        if ($role == 'omk') return ['OMK'];
-        if ($role == 'misdinar') return ['Misdinar'];
-        if ($role == 'lektor') return ['Lektor'];
-        if ($role == 'pia_pir') return ['PIA & PIR'];
-        if ($role == 'direktur_musik') return ['Mazmur', 'Organis', 'Paduan Suara']; // Musik pegang 3 ini
-
-        return []; // Default kosong
-    }
+    // Daftar Bidang Tetap (Sesuai Request)
+    private $fixedBidang = [
+        'Pengurus Harian',
+        'Tim Pelayanan Bidang Liturgi',
+        'Tim Pelayanan Bidang Sarana dan Prasarana',
+        'Tim Pelayanan Bidang Umum',
+        'Tim Pelayanan Bidang Pewartaan dan Pelayanan'
+    ];
 
     public function index(Request $request)
     {
-        $allowed = $this->getAllowedCategories();
-        $category = $request->query('category'); 
+        $bidang = $request->query('bidang'); 
 
-        $query = OrganizationMember::whereIn('category', $allowed);
+        $query = OrganizationMember::query();
 
-        if ($category && $category != '') {
-            $query->where('category', $category);
+        if ($bidang) {
+            $query->where('bidang', $bidang);
         }
 
-        // UBAH DISINI: Urutkan berdasarkan sort_order, lalu get() semua
-        $members = $query->orderBy('sort_order', 'asc')->get();
+        // Urutkan berdasarkan Bidang -> Sub Bidang -> Custom Order
+        $members = $query->orderBy('bidang')
+                         ->orderBy('sub_bidang')
+                         ->orderBy('sort_order', 'asc')
+                         ->get();
         
-        return view('admin.organization.index', compact('members', 'allowed', 'category'));
+        // Kirim daftar bidang untuk filter di view index
+        return view('admin.organization.index', [
+            'members' => $members,
+            'bidangList' => $this->fixedBidang,
+            'currentBidang' => $bidang
+        ]);
     }
 
     public function create()
     {
-        $allowed = $this->getAllowedCategories();
         $lingkungans = \App\Models\Lingkungan::all();
         
-        // PERBAIKAN:
-        // Gunakan compact('allowed') karena view create.blade.php meminta variabel $allowed
-        return view('admin.organization.create', compact('lingkungans', 'allowed'));
+        // AMBIL DATA HISTORY SUB BIDANG (Untuk Autocomplete)
+        // Kita ambil semua kombinasi bidang & sub_bidang yang unik
+        $existingSubBidang = \App\Models\OrganizationMember::select('bidang', 'sub_bidang')
+                                ->whereNotNull('sub_bidang')
+                                ->distinct()
+                                ->get()
+                                ->groupBy('bidang'); // Dikelompokkan per bidang
+
+        return view('admin.organization.create', [
+            'lingkungans' => $lingkungans,
+            'bidangList' => $this->fixedBidang,
+            'existingSubBidang' => $existingSubBidang // <-- Kirim variabel ini
+        ]);
     }
 
     public function store(Request $request)
     {
-        $allowed = $this->getAllowedCategories();
-
         $request->validate([
             'name' => 'required',
             'position' => 'required',
-            'category' => 'required|in:' . implode(',', $allowed), // Validasi: Hanya boleh input kategori haknya
+            'bidang' => 'required', 
+            'sub_bidang' => 'required', 
             'image' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->all();
+
+        // --- PANGGIL FUNGSI NORMALISASI DI SINI ---
+        $data['sub_bidang'] = $this->normalizeSubBidang($request->sub_bidang);
+        // ------------------------------------------
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('uploads/organization', 'public');
@@ -82,42 +90,41 @@ class OrganizationController extends Controller
 
     public function edit($id)
     {
-        $member = OrganizationMember::findOrFail($id);
-        $allowed = $this->getAllowedCategories();
+        $member = \App\Models\OrganizationMember::findOrFail($id);
+        $lingkungans = \App\Models\Lingkungan::all();
+        
+        // Sama seperti create, ambil history
+        $existingSubBidang = \App\Models\OrganizationMember::select('bidang', 'sub_bidang')
+                                ->whereNotNull('sub_bidang')
+                                ->distinct()
+                                ->get()
+                                ->groupBy('bidang');
 
-        // Cek Hak Akses
-        if (!in_array($member->category, $allowed)) {
-            abort(403, 'Anda tidak memiliki hak untuk mengedit kategori ini.');
-        }
-
-        $lingkungans = Lingkungan::all();
-
-        // UBAH DI SINI: Kirim $allowed sebagai 'categories'
         return view('admin.organization.edit', [
             'member' => $member,
             'lingkungans' => $lingkungans,
-            'categories' => $allowed // <--- INI SOLUSINYA
+            'bidangList' => $this->fixedBidang,
+            'existingSubBidang' => $existingSubBidang
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $member = OrganizationMember::findOrFail($id);
-        $allowed = $this->getAllowedCategories();
-
-        // Cek Hak Akses
-        if (!in_array($member->category, $allowed)) {
-            abort(403, 'Akses ditolak.');
-        }
 
         $request->validate([
             'name' => 'required',
             'position' => 'required',
-            'category' => 'required|in:' . implode(',', $allowed),
+            'bidang' => 'required',
+            'sub_bidang' => 'required',
             'image' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->all();
+
+        // --- PANGGIL FUNGSI NORMALISASI DI SINI JUGA ---
+        $data['sub_bidang'] = $this->normalizeSubBidang($request->sub_bidang);
+        // -----------------------------------------------
 
         if ($request->hasFile('image')) {
             if ($member->image) Storage::disk('public')->delete($member->image);
@@ -132,30 +139,44 @@ class OrganizationController extends Controller
     public function destroy($id)
     {
         $member = OrganizationMember::findOrFail($id);
-        $allowed = $this->getAllowedCategories();
-
-        if (!in_array($member->category, $allowed)) {
-            abort(403, 'Anda tidak berhak menghapus data ini.');
-        }
-
         if ($member->image) Storage::disk('public')->delete($member->image);
         $member->delete();
-
         return back()->with('success', 'Anggota dihapus');
     }
-
+    
     public function reorder(Request $request)
     {
-        $request->validate([
-            'ids' => 'required|array',
-            'ids.*' => 'exists:organization_members,id',
-        ]);
-
         foreach ($request->ids as $index => $id) {
-            // Update urutan berdasarkan posisi array (index + 1)
             OrganizationMember::where('id', $id)->update(['sort_order' => $index + 1]);
         }
-
         return response()->json(['status' => 'success']);
+    }
+
+    private function normalizeSubBidang($text)
+    {
+        if (empty($text)) return null;
+
+        // 1. Ubah ke format Title Case (Contoh: "tata laksana" -> "Tata Laksana")
+        // Ini berlaku untuk SEMUA input.
+        $normalized = ucwords(strtolower($text));
+
+        // 2. (Opsional) Daftar Singkatan yang wajib Huruf Besar Semua
+        // Anda bisa menambah daftar ini sesuka hati (misal: PSE, KPHB, dll)
+        $acronyms = ['Omk', 'Pia', 'Pir', 'Komsos', 'Pse', 'Kphb', 'App'];
+
+        // Cek apakah hasil normalisasi ada di daftar singkatan
+        // Jika "Omk", paksa jadi "OMK". Jika "Tata Laksana", biarkan tetap.
+        if (in_array($normalized, $acronyms)) {
+            return strtoupper($normalized);
+        }
+        
+        // Handle kasus gabungan seperti "PIA & PIR" atau "Pendamping OMK"
+        // Kita replace kata per kata
+        foreach ($acronyms as $acro) {
+            // Ganti "Omk" menjadi "OMK" jika ada di dalam kalimat
+            $normalized = str_replace($acro, strtoupper($acro), $normalized);
+        }
+
+        return $normalized;
     }
 }

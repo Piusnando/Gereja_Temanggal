@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Ignatius Temanggal</title>
+
+    <link rel="icon" href="{{ $globalLogo ?? asset('favicon.ico') }}" type="image/x-icon">
     
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>

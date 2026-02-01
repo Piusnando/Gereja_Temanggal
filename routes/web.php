@@ -31,7 +31,7 @@ Route::get('/teritorial', [PageController::class, 'teritorial'])->name('teritori
 Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->name('teritorial.show');
 Route::get('/organisasi', [PageController::class, 'organisasi'])->name('organisasi.index');
 Route::get('/organisasi/{category}', [PageController::class, 'showOrganization'])->name('organisasi.show');
-Route::get('/organisasi', function() { return redirect('/organisasi/Pengurus Gereja'); });
+Route::get('/organisasi/{category}/{sub_category}', [PageController::class, 'showSubOrganization'])->name('organisasi.sub');
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
 Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
 

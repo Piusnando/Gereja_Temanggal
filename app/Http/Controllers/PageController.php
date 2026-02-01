@@ -9,6 +9,7 @@ use App\Models\Announcement;
 use Illuminate\Http\Request;
 use App\Models\FacilityBooking;
 use App\Service\LiturgiService;
+use App\Models\OrganizationMember;
 
 class PageController extends Controller
 {
@@ -154,28 +155,22 @@ class PageController extends Controller
     }
     public function organisasi()
     {
-        // 1. Ambil semua anggota, urutkan berdasarkan sort_order (Drag & Drop Admin)
-        $members = \App\Models\OrganizationMember::with('lingkungan')
+        $members = OrganizationMember::with('lingkungan')
                     ->orderBy('sort_order', 'asc')
                     ->get();
 
-        // 2. Kelompokkan data berdasarkan kategori
-        $groupedMembers = $members->groupBy('category');
+        // Group by 'bidang' (Kolom Baru)
+        $groupedMembers = $members->groupBy('bidang');
 
-        // 3. Definisi Urutan Kategori (Agar urutannya rapi, bukan acak)
+        // Urutan Tampilan
         $categoriesOrder = [
-            'Pengurus Gereja', 
-            'OMK', 
-            'Misdinar', 
-            'KOMSOS', 
-            'PIA & PIR', 
-            'Mazmur', 
-            'Lektor', 
-            'Paduan Suara', 
-            'Organis'
+            'Pengurus Harian', 
+            'Tim Pelayanan Bidang Liturgi', 
+            'Tim Pelayanan Bidang Sarana dan Prasarana', 
+            'Tim Pelayanan Bidang Umum', 
+            'Tim Pelayanan Bidang Pewartaan dan Pelayanan'
         ];
 
-        // 4. Kirim kedua variabel ke View (PENTING: Jangan lupa compact)
         return view('pages.organisasi', compact('groupedMembers', 'categoriesOrder'));
     }
 
@@ -221,25 +216,38 @@ class PageController extends Controller
         ]);
     }
 
-    public function showOrganization($category)
+    public function showOrganization($category) 
     {
-        // 1. Ambil anggota HANYA untuk kategori yang diminta
-        // Gunakan urldecode untuk menangani spasi (misal: Pengurus%20Gereja)
-        $categoryName = urldecode($category);
+        $bidangName = urldecode($category);
 
-        $members = \App\Models\OrganizationMember::where('category', $categoryName)
+        $members = \App\Models\OrganizationMember::where('bidang', $bidangName)
+                    ->with('lingkungan')
+                    ->orderBy('sub_bidang', 'asc') // Urutkan nama tim A-Z
+                    ->orderBy('sort_order', 'asc') // Urutan manual
+                    ->get()
+                    ->groupBy('sub_bidang'); // <--- INI PENTING: KEMBALIKAN INI
+
+        return view('pages.organisasi', compact('members', 'bidangName'));
+    }
+    public function showSubOrganization($category, $sub_category)
+    {
+        // 1. Decode URL (menghilangkan %20 dsb)
+        $bidangName = urldecode($category);
+        $subName = urldecode($sub_category);
+
+        // 2. Ambil Anggota HANYA dari Bidang & Sub Bidang tersebut
+        $members = \App\Models\OrganizationMember::where('bidang', $bidangName)
+                    ->where('sub_bidang', $subName)
                     ->with('lingkungan')
                     ->orderBy('sort_order', 'asc')
                     ->get();
 
-        // 2. Tetap lakukan grouping agar format datanya sama dengan view 'pages.organisasi'
-        $groupedMembers = $members->groupBy('category');
+        // 3. Jika data tidak ditemukan (user ketik url ngawur), kembalikan ke halaman bidang
+        if ($members->isEmpty()) {
+            return redirect()->route('organisasi.show', ['category' => $bidangName]);
+        }
 
-        // 3. Buat array order yang isinya HANYA kategori tersebut
-        // Ini kuncinya agar tidak error "Undefined variable $categoriesOrder"
-        $categoriesOrder = [$categoryName];
-
-        // 4. Return ke view yang sama
-        return view('pages.organisasi', compact('groupedMembers', 'categoriesOrder'));
+        // 4. Return ke View Baru
+        return view('pages.detail-tim', compact('members', 'bidangName', 'subName'));
     }
 }

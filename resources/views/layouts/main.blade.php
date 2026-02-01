@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="icon" href="{{ $globalLogo ?? asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ $globalLogo ?? asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- ================= SEO TAGS ================= -->
     <title>@yield('title', 'Gereja St. Ignatius Loyola Kalasan Tengah')</title>
@@ -124,21 +128,63 @@
                         </div>
                     </div>
 
-                    <!-- Dropdown Organisasi (PERBAIKAN: Active State) -->
-                    <div class="relative h-24 flex items-center group" x-data="{ orgOpen: false }" @click.away="orgOpen = false">
+                    <!-- Dropdown Organisasi (DESKTOP - VERTICAL ACCORDION) -->
+                    <div class="relative h-24 flex items-center" x-data="{ orgOpen: false, activeSub: null }" @click.away="orgOpen = false; activeSub = null">
+                        
+                        <!-- Tombol Utama di Navbar -->
                         <button @click="orgOpen = ! orgOpen" class="h-full flex items-center text-sm font-bold tracking-wider uppercase border-b-4 transition-all duration-300 focus:outline-none {{ request()->is('organisasi*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue hover:border-blue-200' }}">
                             Organisasi <svg class="w-4 h-4 ml-1 transform transition-transform duration-200" :class="{'rotate-180': orgOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="orgOpen" x-transition x-cloak class="nav-dropdown absolute top-[80%] left-0 w-56 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
-                            <div class="py-2">
-                                @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
-                                <a href="{{ route('organisasi.show', ['category' => $org]) }}" 
-                                   class="block px-4 py-3 text-sm font-medium border-b border-gray-50 last:border-0 transition 
-                                   {{ request()->fullUrlIs(route('organisasi.show', ['category' => $org])) ? 'bg-blue-50 text-logo-blue font-bold' : 'text-gray-700 hover:bg-blue-50 hover:text-logo-blue' }}">
-                                    {{ $org }}
-                                </a>
+                        
+                        <!-- Kotak Dropdown (Putih) -->
+                        <!-- Max-height dan overflow-y-auto ditambahkan agar jika list panjang, bisa discroll -->
+                        <div x-show="orgOpen" x-transition x-cloak class="nav-dropdown absolute top-[80%] left-0 w-80 bg-white shadow-xl rounded-xl border border-gray-100 py-2 max-h-[80vh] overflow-y-auto">
+                            
+                            @if(isset($organizationMenu))
+                                @foreach($organizationMenu as $bidang => $subs)
+                                    
+                                    <div class="border-b border-gray-50 last:border-0">
+                                        <!-- Tombol Bidang (Parent) -->
+                                        <button 
+                                            @click="activeSub === '{{ $bidang }}' ? activeSub = null : activeSub = '{{ $bidang }}'"
+                                            class="flex justify-between items-center w-full text-left px-5 py-3 text-sm font-medium transition hover:bg-gray-50 focus:outline-none"
+                                            :class="activeSub === '{{ $bidang }}' ? 'text-logo-blue bg-blue-50' : 'text-gray-700'"
+                                        >
+                                            <!-- Teks Bidang (Wrap Text) -->
+                                            <span class="flex-1 whitespace-normal leading-snug pr-2">{{ $bidang }}</span>
+                                            
+                                            <!-- Panah (Berputar saat aktif) -->
+                                            @if(count($subs) > 0)
+                                                <svg class="w-4 h-4 shrink-0 transition-transform duration-200" :class="activeSub === '{{ $bidang }}' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            @endif
+                                        </button>
+
+                                        <!-- Sub Menu (Mekar ke Bawah) -->
+                                        @if(count($subs) > 0)
+                                            <div x-show="activeSub === '{{ $bidang }}'" x-collapse class="bg-gray-100 border-t border-gray-100">
+                                                
+                                                <!-- Link Halaman Utama Bidang -->
+                                                <a href="{{ route('organisasi.show', ['category' => $bidang]) }}" class="block px-8 py-2 text-xs font-bold text-logo-blue uppercase tracking-wide hover:bg-gray-200 border-b border-gray-200">
+                                                    Buka Laman Utama
+                                                </a>
+
+                                                <!-- List Sub Tim -->
+                                                @foreach($subs as $sub)
+                                                    <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" 
+                                                    class="px-8 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-gray-200 transition border-b border-gray-200 last:border-0 flex items-start">
+                                                        <span class="text-red-400 mr-2 mt-0.5">•</span>
+                                                        <span class="whitespace-normal leading-snug">{{ $sub }}</span>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <!-- Direct Link jika tidak ada sub -->
+                                            <div x-init="$watch('activeSub', value => { if(value === '{{ $bidang }}') window.location.href='{{ route('organisasi.show', ['category' => $bidang]) }}' })"></div>
+                                        @endif
+                                    </div>
+
                                 @endforeach
-                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -231,19 +277,54 @@
                     </div>
                 </div>
 
-                <!-- Mobile Organisasi (PERBAIKAN) -->
-                <div x-data="{ expanded: {{ request()->is('organisasi*') ? 'true' : 'false' }} }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('organisasi*') ? 'text-logo-blue' : '' }}">
+                <!-- Mobile Organisasi (ACCORDION STYLE) -->
+                <div x-data="{ 
+                    expanded: {{ request()->is('organisasi*') ? 'true' : 'false' }}, 
+                    activeSubMobile: null 
+                }">
+                    <!-- Level 1: Tombol Utama Organisasi -->
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('organisasi*') ? 'text-logo-blue border-logo-blue' : '' }}">
                         <span>Organisasi</span>
                         <svg class="w-4 h-4 transform transition-transform" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div x-show="expanded" class="bg-gray-50 py-2">
-                        @foreach(['Pengurus Gereja', 'OMK', 'Misdinar', 'KOMSOS', 'PIA & PIR', 'Mazmur', 'Lektor'] as $org)
-                        <a href="{{ route('organisasi.show', ['category' => $org]) }}" 
-                           class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->fullUrlIs(route('organisasi.show', ['category' => $org])) ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
-                            {{ $org }}
-                        </a>
-                        @endforeach
+
+                    <!-- Level 2: Daftar Bidang -->
+                    <div x-show="expanded" x-collapse class="bg-gray-50 border-t border-gray-100">
+                        @if(isset($organizationMenu))
+                            @foreach($organizationMenu as $bidang => $subs)
+                                <div>
+                                    <!-- Tombol Bidang -->
+                                    <button 
+                                        @click="activeSubMobile === '{{ $bidang }}' ? activeSubMobile = null : activeSubMobile = '{{ $bidang }}'"
+                                        class="w-full flex justify-between items-center pl-10 pr-6 py-3 text-sm font-medium text-gray-600 hover:text-logo-blue hover:bg-blue-50 transition border-b border-gray-100">
+                                        <span>{{ $bidang }}</span>
+                                        @if(count($subs) > 0)
+                                            <svg class="w-3 h-3 transition-transform" :class="activeSubMobile === '{{ $bidang }}' ? 'rotate-180 text-logo-blue' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        @endif
+                                    </button>
+
+                                    <!-- Level 3: Sub Bidang (Background Merah) -->
+                                    @if(count($subs) > 0)
+                                        <div x-show="activeSubMobile === '{{ $bidang }}'" x-collapse class="bg-red-50 border-l-4 border-red-500 ml-10">
+                                            <!-- Link Utama -->
+                                            <a href="{{ route('organisasi.show', ['category' => $bidang]) }}" class="block pl-4 py-2 text-xs font-bold text-red-700 uppercase tracking-wide border-b border-red-100 hover:bg-red-100">
+                                                Buka Halaman Utama
+                                            </a>
+                                            <!-- List Anak -->
+                                            @foreach($subs as $sub)
+                                                <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" 
+                                                class="block pl-4 py-2.5 text-sm text-gray-700 hover:text-red-700 hover:bg-red-100 transition">
+                                                    • {{ $sub }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <!-- Direct Link jika tidak ada sub -->
+                                        <div x-init="$watch('activeSubMobile', val => { if(val==='{{ $bidang }}') window.location.href='{{ route('organisasi.show', ['category' => $bidang]) }}' })"></div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
 
