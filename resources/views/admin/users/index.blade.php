@@ -55,11 +55,13 @@
                         <td class="px-4 py-4 align-middle">
                             <div class="flex items-center">
                                 <!-- Avatar Logic -->
-                                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-3 border border-blue-200 shrink-0 overflow-hidden">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200 shrink-0 overflow-hidden">
                                     @if($user->avatar)
-                                        <img src="{{ asset('storage/' . $user->avatar) }}" class="w-full h-full object-cover">
+                                        <img src="{{ asset('storage/' . $user->avatar) }}" 
+                                            class="w-full h-full object-cover">
                                     @else
-                                        {{ substr($user->name, 0, 1) }}
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" 
+                                            class="w-full h-full object-cover">
                                     @endif
                                 </div>
                                 <div class="overflow-hidden">

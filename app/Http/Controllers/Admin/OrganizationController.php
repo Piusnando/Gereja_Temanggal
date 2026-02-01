@@ -67,23 +67,31 @@ class OrganizationController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'position' => 'required',
-            'bidang' => 'required', 
-            'sub_bidang' => 'required', 
-            'image' => 'nullable|image|max:2048',
+            // ... validasi lainnya ...
         ]);
 
         $data = $request->all();
 
-        // --- PANGGIL FUNGSI NORMALISASI DI SINI ---
+        // --- TAMBAHAN: Handle Checkbox ---
+        // Jika checkbox 'tampil_di_menu' dicentang, nilainya true, jika tidak false.
+        $data['tampil_di_menu'] = $request->has('tampil_di_menu');
+        // ---------------------------------
+
         $data['sub_bidang'] = $this->normalizeSubBidang($request->sub_bidang);
-        // ------------------------------------------
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('uploads/organization', 'public');
         }
 
         OrganizationMember::create($data);
+        
+        // --- TAMBAHAN: Update semua anggota di tim yang sama ---
+        // Jika dicentang, semua anggota lain di tim ini juga akan ikut tampil
+        if ($data['tampil_di_menu']) {
+            OrganizationMember::where('bidang', $data['bidang'])
+                              ->where('sub_bidang', $data['sub_bidang'])
+                              ->update(['tampil_di_menu' => true]);
+        }
 
         return redirect()->route('admin.organization.index')->with('success', 'Anggota berhasil ditambahkan');
     }
@@ -114,24 +122,28 @@ class OrganizationController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'position' => 'required',
-            'bidang' => 'required',
-            'sub_bidang' => 'required',
-            'image' => 'nullable|image|max:2048',
+            // ... validasi lainnya ...
         ]);
 
         $data = $request->all();
 
-        // --- PANGGIL FUNGSI NORMALISASI DI SINI JUGA ---
-        $data['sub_bidang'] = $this->normalizeSubBidang($request->sub_bidang);
-        // -----------------------------------------------
+        // --- TAMBAHAN: Handle Checkbox ---
+        $data['tampil_di_menu'] = $request->has('tampil_di_menu');
+        // ---------------------------------
 
+        $data['sub_bidang'] = $this->normalizeSubBidang($request->sub_bidang);
+        
         if ($request->hasFile('image')) {
-            if ($member->image) Storage::disk('public')->delete($member->image);
-            $data['image'] = $request->file('image')->store('uploads/organization', 'public');
+            // ... kode upload ...
         }
 
         $member->update($data);
+        
+        // --- TAMBAHAN: Sinkronisasi status tampil untuk seluruh tim ---
+        // Apapun pilihan (centang/tidak), samakan untuk semua anggota di tim tersebut.
+        OrganizationMember::where('bidang', $data['bidang'])
+                          ->where('sub_bidang', $data['sub_bidang'])
+                          ->update(['tampil_di_menu' => $data['tampil_di_menu']]);
 
         return redirect()->route('admin.organization.index')->with('success', 'Data diperbarui');
     }

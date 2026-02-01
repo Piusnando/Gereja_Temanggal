@@ -40,6 +40,19 @@
         <!-- Hanya muncul jika Bidang dipilih DAN bukan Pengurus Harian -->
         <div class="mb-4" x-show="selectedBidang && selectedBidang !== 'Pengurus Harian'">
             <label class="block text-gray-700 text-sm font-bold mb-2">Nama Tim / Sub-Bidang</label>
+
+            <!-- CHECKBOX TAMPILKAN DI MENU -->
+        <div class="mb-4 p-4 border rounded bg-yellow-50 border-yellow-200" x-show="selectedBidang && selectedBidang !== 'Pengurus Harian'">
+            <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="tampil_di_menu" value="1" class="form-checkbox h-5 w-5 text-yellow-600 rounded">
+                <span class="ml-3 text-sm font-medium text-yellow-800">
+                    Tampilkan Tim "<span x-text="subBidangValue || '...'"></span>" di Dropdown Menu Utama?
+                </span>
+            </label>
+            <p class="text-xs text-yellow-600 mt-1 ml-8">
+                Centang ini untuk membuat halaman khusus tim ini dapat diakses langsung dari Navbar.
+            </p>
+        </div>
             
             <!-- Input Text dengan Datalist -->
             <input list="sub_bidang_history" 

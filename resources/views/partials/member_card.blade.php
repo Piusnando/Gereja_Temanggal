@@ -3,11 +3,14 @@
     <!-- FOTO -->
     <div class="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-gray-100 shadow-sm shrink-0 group-hover:border-logo-blue transition duration-300">
         @if($member->image)
-            <img src="{{ asset('storage/' . $member->image) }}" class="w-full h-full object-cover">
+            <!-- Jika ada foto upload -->
+            <img src="{{ asset('storage/' . $member->image) }}" 
+                alt="{{ $member->name }}" 
+                class="w-full h-full object-cover">
         @else
-            <div class="w-full h-full bg-gray-100 text-gray-500 flex items-center justify-center font-bold text-xl uppercase group-hover:bg-blue-50 group-hover:text-logo-blue transition">
-                {{ substr($member->name, 0, 1) }}
-            </div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" 
+                alt="Default Avatar" 
+                class="w-full h-full object-cover">
         @endif
     </div>
 

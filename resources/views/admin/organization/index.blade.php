@@ -97,7 +97,9 @@
                                                 @if($member->image)
                                                     <img src="{{ asset('storage/' . $member->image) }}" class="h-full w-full object-cover">
                                                 @else
-                                                    <div class="h-full w-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-bold">{{ substr($member->name, 0, 1) }}</div>
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" 
+                                                        alt="Default Avatar" 
+                                                        class="h-full w-full object-cover">
                                                 @endif
                                             </div>
                                             <div>

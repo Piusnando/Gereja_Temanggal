@@ -66,11 +66,12 @@ class AppServiceProvider extends ServiceProvider
 
             // 2. Ambil data Bidang beserta Sub Bidangnya
             $dbData = OrganizationMember::select('bidang', 'sub_bidang')
-                        ->whereNotNull('bidang')
-                        ->where('bidang', '!=', '')
-                        ->whereNotNull('sub_bidang')
-                        ->distinct()
-                        ->get();
+                    ->whereNotNull('bidang')
+                    ->where('bidang', '!=', '')
+                    ->whereNotNull('sub_bidang')
+                    ->where('tampil_di_menu', true) // <--- HANYA AMBIL YANG DICENTANG
+                    ->distinct()
+                    ->get();
 
             // 3. Susun Array Menu
             $organizationMenu = [];

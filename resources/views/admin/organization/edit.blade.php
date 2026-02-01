@@ -43,6 +43,20 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Nama Tim / Sub-Bidang</label>
             <input list="sub_bidang_history" type="text" name="sub_bidang" x-model="subBidangValue" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500" autocomplete="off">
             
+            <!-- CHECKBOX TAMPILKAN DI MENU -->
+            <div class="mb-4 p-4 border rounded bg-yellow-50 border-yellow-200" x-show="selectedBidang && selectedBidang !== 'Pengurus Harian'">
+                <label class="inline-flex items-center cursor-pointer">
+                    {{-- Tambahkan 'checked' jika nilainya true --}}
+                    <input type="checkbox" name="tampil_di_menu" value="1" 
+                        class="form-checkbox h-5 w-5 text-yellow-600 rounded"
+                        {{ $member->tampil_di_menu ? 'checked' : '' }}>
+                    
+                    <span class="ml-3 text-sm font-medium text-yellow-800">
+                        Tampilkan Tim "<span x-text="subBidangValue || '...'"></span>" di Dropdown Menu Utama?
+                    </span>
+                </label>
+            </div>
+
             <datalist id="sub_bidang_history">
                 @foreach($existingSubBidang as $parent => $subs)
                     <template x-if="selectedBidang === '{{ $parent }}'">

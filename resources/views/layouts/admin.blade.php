@@ -188,9 +188,8 @@
                     @if(Auth::user()->avatar)
                         <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
                     @else
-                        <div class="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold">
-                            {{ substr(Auth::user()->name, 0, 1) }}
-                        </div>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" 
+                            class="w-full h-full object-cover">
                     @endif
                 </div>
                 <div class="overflow-hidden">
