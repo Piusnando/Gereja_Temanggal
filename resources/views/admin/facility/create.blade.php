@@ -73,8 +73,10 @@
                 <input type="datetime-local" name="start_time" class="w-full border rounded p-2.5" required>
             </div>
             <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Selesai</label>
-                <input type="datetime-local" name="end_time" class="w-full border rounded p-2.5" required>
+                <!-- PERUBAHAN DI SINI: Tambahkan label opsional -->
+                <label class="block text-sm font-bold text-gray-700 mb-1">Selesai <span class="text-xs font-normal text-gray-500">(Opsional)</span></label>
+                <!-- PERUBAHAN DI SINI: Hapus 'required' -->
+                <input type="datetime-local" name="end_time" class="w-full border rounded p-2.5">
             </div>
         </div>
 

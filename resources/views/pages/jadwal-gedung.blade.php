@@ -62,8 +62,12 @@
                             <td class="p-5 align-middle">
                                 <div class="inline-flex flex-col bg-gray-100 px-3 py-1.5 rounded text-gray-700 font-mono text-xs text-center border border-gray-200">
                                     <span>{{ $booking->start_time->format('H:i') }}</span>
+                                    
+                                    {{-- PERUBAHAN DI SINI: Tampilkan hanya jika ada end_time --}}
+                                    @if($booking->end_time)
                                     <span class="text-gray-400 text-[10px]">s/d</span>
                                     <span>{{ $booking->end_time->format('H:i') }}</span>
+                                    @endif
                                 </div>
                             </td>
 

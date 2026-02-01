@@ -91,10 +91,13 @@
                        class="w-full border rounded p-2.5" required>
             </div>
             <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Selesai</label>
+                <!-- PERUBAHAN DI SINI: Tambahkan label opsional -->
+                <label class="block text-sm font-bold text-gray-700 mb-1">Selesai <span class="text-xs font-normal text-gray-500">(Opsional)</span></label>
+                
+                <!-- PERUBAHAN DI SINI: Hapus 'required' dan tambahkan logic untuk nilai kosong -->
                 <input type="datetime-local" name="end_time" 
-                       value="{{ $booking->end_time->format('Y-m-d\TH:i') }}" 
-                       class="w-full border rounded p-2.5" required>
+                       value="{{ $booking->end_time ? $booking->end_time->format('Y-m-d\TH:i') : '' }}" 
+                       class="w-full border rounded p-2.5">
             </div>
         </div>
 

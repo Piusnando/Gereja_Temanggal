@@ -19,14 +19,8 @@ class FacilityBookingController extends Controller
 
     public function create()
     {
-        // 1. Ambil Data Wilayah
         $wilayahs = Territory::orderBy('name')->get();
-        
-        // 2. Ambil Data Lingkungan
         $lingkungans = Lingkungan::with('territory')->orderBy('name')->get();
-
-        // BAGIAN ORGANISASI DIHAPUS agar tidak muncul di dropdown
-        
         return view('admin.facility.create', compact('wilayahs', 'lingkungans'));
     }
 
@@ -37,14 +31,23 @@ class FacilityBookingController extends Controller
             'booked_by' => 'required_without:booked_by_text', 
             'purpose' => 'required|string|max:255',
             'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+            // --- PERUBAHAN DI SINI ---
+            // 'required' diubah menjadi 'nullable'
+            // 'after' diubah menjadi 'after_or_equal' agar bisa sama (untuk acara singkat)
+            'end_time' => 'nullable|date|after_or_equal:start_time',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['facility_name', 'purpose', 'start_time', 'end_time']);
 
-        // Jika diketik manual (misal: OMK), pakai input text
         if ($request->filled('booked_by_text')) {
             $data['booked_by'] = $request->booked_by_text;
+        } else {
+            $data['booked_by'] = $request->booked_by;
+        }
+        
+        // Tambahan: Jika end_time tidak diisi, set nilainya jadi null
+        if (!$request->filled('end_time')) {
+            $data['end_time'] = null;
         }
 
         FacilityBooking::create($data);
@@ -72,13 +75,21 @@ class FacilityBookingController extends Controller
             'facility_name' => 'required',
             'purpose' => 'required|string|max:255',
             'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+            // --- PERUBAHAN DI SINI JUGA ---
+            'end_time' => 'nullable|date|after_or_equal:start_time',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['facility_name', 'purpose', 'start_time', 'end_time']);
 
         if ($request->filled('booked_by_text')) {
             $data['booked_by'] = $request->booked_by_text;
+        } else {
+            $data['booked_by'] = $request->booked_by;
+        }
+        
+        // Tambahan: Jika end_time dikosongkan saat edit, set jadi null
+        if (!$request->filled('end_time')) {
+            $data['end_time'] = null;
         }
 
         $booking->update($data);
