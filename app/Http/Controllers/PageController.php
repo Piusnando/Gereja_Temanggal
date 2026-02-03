@@ -222,10 +222,18 @@ class PageController extends Controller
 
         $members = \App\Models\OrganizationMember::where('bidang', $bidangName)
                     ->with('lingkungan')
-                    ->orderBy('sub_bidang', 'asc') // Urutkan nama tim A-Z
-                    ->orderBy('sort_order', 'asc') // Urutan manual
+                    
+                    // 1. Prioritaskan urutan Sub-Tim sesuai settingan Admin
+                    ->orderBy('sub_bidang_order', 'asc') 
+                    
+                    // 2. Jika urutan sama, baru urutkan Abjad (Fallback)
+                    ->orderBy('sub_bidang', 'asc') 
+                    
+                    // 3. Terakhir urutkan Anggotanya
+                    ->orderBy('sort_order', 'asc') 
+                    
                     ->get()
-                    ->groupBy('sub_bidang'); // <--- INI PENTING: KEMBALIKAN INI
+                    ->groupBy('sub_bidang');
 
         return view('pages.organisasi', compact('members', 'bidangName'));
     }
