@@ -30,7 +30,7 @@ class PageController extends Controller
         }
 
         // BERITA KEGIATAN (Tetap ada di Home)
-        $activityNews = Activity::latest()->take(3)->get();
+        $activityNews = Activity::orderBy('start_time', 'desc')->take(3)->get();
 
         // HAPUS BAGIAN $facilityBookings DARI SINI
 
