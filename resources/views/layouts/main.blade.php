@@ -67,28 +67,48 @@
     <!-- Navbar -->
     <nav class="bg-white border-b border-gray-200 relative z-50 shadow-sm" x-data="{ open: false }">
         
-        <!-- Container Full Width -->
+        <!-- CONTAINER: Kembali menggunakan max-w-7xl sesuai request -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-24"> 
+            <div class="flex justify-between h-20 lg:h-24"> 
 
                 <!-- 1. LOGO & NAMA GEREJA (KIRI) -->
-                <!-- Tambahkan 'shrink-0' agar logo tidak tergencet menu -->
-                <div class="flex items-center gap-3 shrink-0">
-                    <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" alt="Logo Gereja" class="h-12 w-auto object-contain">
+                <!-- shrink-0 agar logo tidak tergencet -->
+                <div class="flex items-center gap-2 sm:gap-4 shrink-0 overflow-hidden">
+                    
+                    <!-- LOGO: Ukuran h-10 di HP, h-14 di Desktop -->
+                    <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
+                         alt="Logo Gereja" 
+                         class="h-9 sm:h-10 lg:h-14 w-auto object-contain shrink-0">
+                    
                     <div class="flex flex-col justify-center">
-                        <a href="/" class="text-base md:text-lg xl:text-xl font-extrabold text-logo-blue leading-tight uppercase tracking-wide">
-                            Gereja St. Ignatius Loyola<br class="hidden md:block"> 
-                            <span class="text-logo-red">Kalasan Tengah</span>
+                        <!-- JUDUL: Ukuran text-xs di HP, text-lg di Desktop -->
+                        <a href="/" class="font-extrabold text-logo-blue leading-tight uppercase tracking-wide transition hover:opacity-80">
+                            <!-- Baris 1 -->
+                            <span class="text-xs sm:text-sm lg:text-xl block">
+                                Gereja St. Ignatius Loyola
+                            </span>
+                            <!-- Baris 2 -->
+                            <span class="text-logo-red text-xs sm:text-sm lg:text-xl block">
+                                Kalasan Tengah
+                            </span>
                         </a>
-                        <!-- Sub-judul disembunyikan di Laptop (lg), Muncul di Layar Besar (xl) agar hemat tempat -->
-                        <span class="hidden xl:block text-[10px] text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
+                        
+                        <!-- SUB-JUDUL: Sembunyikan di HP yang sangat kecil, Muncul di Tablet/Desktop -->
+                        <span class="hidden sm:block text-[8px] lg:text-[10px] text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
                             Paroki Maria Marganingsih Kalasan
                         </span>
                     </div>
                 </div>
 
-
-                <!-- MENU DESKTOP -->
+                <!-- 2. MENU DESKTOP (KANAN) -->
+                <!-- 
+                   PERBAIKAN DISINI:
+                   - lg:gap-x-4 : Jarak diperkecil di laptop agar muat
+                   - xl:gap-x-8 : Jarak lebar di monitor besar
+                   - lg:text-xs : Font kecil di laptop
+                   - xl:text-sm : Font normal di monitor besar
+                   - lg:ml-10   : Jarak Margin Kiri agar tidak nempel logo
+                -->
                 <div class="hidden lg:flex lg:items-center lg:gap-x-4 xl:gap-x-8 lg:text-xs xl:text-sm font-bold tracking-wider lg:ml-10">
                     
                     <!-- MENU: BERANDA -->
@@ -103,7 +123,6 @@
 
                     <!-- MENU DROPDOWN: INFO KEGIATAN -->
                     <div class="relative h-24 flex items-center group" x-data="{ infoOpen: false }" @click.away="infoOpen = false">
-                        <!-- whitespace-nowrap PENTING agar "INFO KEGIATAN" tidak turun baris -->
                         <button @click="infoOpen = ! infoOpen" class="whitespace-nowrap h-full flex items-center uppercase border-b-4 transition-all duration-300 focus:outline-none {{ request()->is('pengumuman*') || request()->is('kegiatan*') ? 'text-logo-red border-logo-red' : 'text-gray-600 border-transparent hover:text-logo-blue' }}">
                             Info Kegiatan
                             <svg class="w-4 h-4 ml-1 transform transition-transform" :class="{'rotate-180': infoOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
@@ -158,7 +177,7 @@
                                             <div x-show="activeSub === '{{ $bidang }}'" x-collapse class="bg-gray-100 border-t border-gray-100">
                                                 <a href="{{ route('organisasi.show', ['category' => $bidang]) }}" class="block px-8 py-2 text-xs font-bold text-logo-blue uppercase tracking-wide hover:bg-gray-200 border-b border-gray-200">Buka Laman Utama</a>
                                                 @foreach($subs as $sub)
-                                                    <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block px-8 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-gray-200 transition border-b border-gray-200 last:border-0 items-start">
+                                                    <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block px-8 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-gray-200 transition border-b border-gray-200 last:border-0 flex items-start">
                                                         <span class="text-red-400 mr-2 mt-0.5">•</span><span class="whitespace-normal leading-snug">{{ $sub }}</span>
                                                     </a>
                                                 @endforeach
@@ -189,9 +208,11 @@
 
                 </div>
 
-                <!-- Tombol Menu Mobile -->
+                <!-- 3. TOMBOL HAMBURGER (MOBILE MENU) -->
                 <div class="-mr-2 flex items-center lg:hidden">
-                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition">
+                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-logo-blue">
+                        <span class="sr-only">Buka menu utama</span>
+                        <!-- Icon Menu (Hamburger) -->
                         <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -204,67 +225,58 @@
         <!-- MOBILE MENU (RESPONSIVE) -->
         <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-xl absolute w-full left-0 z-50 overflow-y-auto max-h-[85vh]">
             <div class="py-2 pb-6 space-y-1">
-                <a href="/" class="block px-6 py-3 border-l-4 {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">Beranda</a>
-                <a href="/sejarah" class="block px-6 py-3 border-l-4 {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }} font-bold uppercase transition">Sejarah</a>
+                
+                <!-- 1. BERANDA -->
+                <a href="/" class="block px-6 py-3 border-l-4 text-sm font-bold uppercase transition {{ request()->path() === '/' ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Beranda
+                </a>
 
-                <!-- Mobile Info Kegiatan (Pengumuman, Kegiatan, Jadwal Gedung) -->
+                <!-- 2. SEJARAH -->
+                <a href="/sejarah" class="block px-6 py-3 border-l-4 text-sm font-bold uppercase transition {{ request()->is('sejarah*') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50 hover:text-logo-blue' }}">
+                    Sejarah
+                </a>
+
+                <!-- 3. INFO KEGIATAN (Dropdown) -->
                 <div x-data="{ expanded: {{ request()->is('pengumuman*') || request()->is('kegiatan*') || request()->routeIs('jadwal.gedung') ? 'true' : 'false' }} }">
                     <button @click="expanded = !expanded" 
-                            class="w-full flex justify-between items-center px-6 py-3 border-l-4 font-bold uppercase transition focus:outline-none 
+                            class="w-full flex justify-between items-center px-6 py-3 border-l-4 text-sm font-bold uppercase transition focus:outline-none 
                             {{ request()->is('pengumuman*') || request()->is('kegiatan*') || request()->routeIs('jadwal.gedung') ? 'bg-red-50 text-logo-red border-logo-red' : 'border-transparent text-gray-700 hover:bg-gray-50' }}">
                         <span>Info Kegiatan</span>
-                        <svg class="w-4 h-4 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
+                        <svg class="w-4 h-4 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     
-                    <div x-show="expanded" x-transition class="bg-gray-50 py-2">
-                        <!-- 1. Arsip Pengumuman -->
-                        <a href="/pengumuman" 
-                            class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->is('pengumuman*') ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
-                            Arsip Pengumuman
-                        </a>
-
-                        <!-- 2. Kegiatan (Jika belum ada route khusus, pakai # atau arahkan ke section di home) -->
-                        <a href="{{ route('kegiatan.index') }}" 
-                            class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->routeIs('kegiatan.*') ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
-                            Kegiatan
-                        </a>
-
-                        <!-- 3. Jadwal Pemakaian Gedung -->
-                        <a href="{{ route('jadwal.gedung') }}" 
-                            class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->routeIs('jadwal.gedung') ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
-                            Jadwal Pemakaian Gedung
-                        </a>
+                    <div x-show="expanded" x-collapse class="bg-gray-50 border-t border-gray-100">
+                        <a href="/pengumuman" class="block pl-10 pr-4 py-3 text-xs font-bold text-gray-600 hover:text-logo-blue border-b border-gray-200">Arsip Pengumuman</a>
+                        <a href="{{ route('kegiatan.index') }}" class="block pl-10 pr-4 py-3 text-xs font-bold text-gray-600 hover:text-logo-blue border-b border-gray-200">Kegiatan</a>
+                        <a href="{{ route('jadwal.gedung') }}" class="block pl-10 pr-4 py-3 text-xs font-bold text-gray-600 hover:text-logo-blue">Jadwal Gedung</a>
                     </div>
                 </div>
 
-                <!-- Mobile Teritorial -->
+                <!-- 4. TERITORIAL (Dropdown) -->
                 <div x-data="{ expanded: {{ request()->is('teritorial*') ? 'true' : 'false' }} }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('teritorial*') ? 'text-logo-blue' : '' }}">
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-sm font-bold uppercase text-gray-700 hover:bg-gray-50 focus:outline-none {{ request()->is('teritorial*') ? 'text-logo-blue' : '' }}">
                         <span>Teritorial</span>
                         <svg class="w-4 h-4 transform transition-transform" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div x-show="expanded" class="bg-gray-50 py-2">
+                    <div x-show="expanded" x-collapse class="bg-gray-50 border-t border-gray-100">
                         @if(isset($globalTerritories))
                             @foreach($globalTerritories as $wilayah)
-                            <a href="{{ route('teritorial.show', $wilayah->slug) }}" 
-                               class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->fullUrlIs(route('teritorial.show', $wilayah->slug)) ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
-                                Wilayah {{ $wilayah->name }}
+                            <a href="{{ route('teritorial.show', $wilayah->slug) }}" class="block pl-10 pr-4 py-3 text-xs font-bold text-gray-600 hover:text-logo-blue border-b border-gray-200">
+                                {{ $wilayah->name }}
                             </a>
                             @endforeach
                         @endif
-                        <a href="/teritorial" class="block pl-10 pr-4 py-2 text-sm text-logo-blue font-bold">Lihat Peta Besar →</a>
+                        <a href="/teritorial" class="block pl-10 pr-4 py-3 text-xs font-bold text-white bg-logo-blue text-center">LIHAT PETA BESAR</a>
                     </div>
                 </div>
 
-                <!-- Mobile Organisasi (ACCORDION STYLE) -->
+                <!-- 5. ORGANISASI (Nested Accordion - RAPID & BERTINGKAT) -->
                 <div x-data="{ 
                     expanded: {{ request()->is('organisasi*') ? 'true' : 'false' }}, 
                     activeSubMobile: null 
                 }">
-                    <!-- Level 1: Tombol Utama Organisasi -->
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('organisasi*') ? 'text-logo-blue border-logo-blue' : '' }}">
+                    <!-- Level 1: Tombol Utama -->
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-sm font-bold uppercase text-gray-700 hover:bg-gray-50 focus:outline-none {{ request()->is('organisasi*') ? 'text-logo-blue' : '' }}">
                         <span>Pengurus Gereja</span>
                         <svg class="w-4 h-4 transform transition-transform" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
@@ -273,29 +285,31 @@
                     <div x-show="expanded" x-collapse class="bg-gray-50 border-t border-gray-100">
                         @if(isset($organizationMenu))
                             @foreach($organizationMenu as $bidang => $subs)
-                                <div>
+                                <div class="border-b border-gray-200 last:border-0">
                                     <!-- Tombol Bidang -->
                                     <button 
                                         @click="activeSubMobile === '{{ $bidang }}' ? activeSubMobile = null : activeSubMobile = '{{ $bidang }}'"
-                                        class="w-full flex justify-between items-center pl-10 pr-6 py-3 text-sm font-medium text-gray-600 hover:text-logo-blue hover:bg-blue-50 transition border-b border-gray-100">
-                                        <span>{{ $bidang }}</span>
+                                        class="w-full flex justify-between items-center pl-8 pr-6 py-3 text-xs font-bold uppercase text-gray-600 hover:text-logo-blue hover:bg-blue-50 transition text-left"
+                                        :class="activeSubMobile === '{{ $bidang }}' ? 'bg-blue-50 text-logo-blue' : ''"
+                                    >
+                                        <span class="leading-tight">{{ $bidang }}</span>
                                         @if(count($subs) > 0)
-                                            <svg class="w-3 h-3 transition-transform" :class="activeSubMobile === '{{ $bidang }}' ? 'rotate-180 text-logo-blue' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            <svg class="w-3 h-3 shrink-0 ml-2 transition-transform" :class="activeSubMobile === '{{ $bidang }}' ? 'rotate-180' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         @endif
                                     </button>
 
-                                    <!-- Level 3: Sub Bidang (Background Merah) -->
+                                    <!-- Level 3: Sub Bidang (Background Merah Muda) -->
                                     @if(count($subs) > 0)
-                                        <div x-show="activeSubMobile === '{{ $bidang }}'" x-collapse class="bg-red-50 border-l-4 border-red-500 ml-10">
-                                            <!-- Link Utama -->
-                                            <a href="{{ route('organisasi.show', ['category' => $bidang]) }}" class="block pl-4 py-2 text-xs font-bold text-red-700 uppercase tracking-wide border-b border-red-100 hover:bg-red-100">
+                                        <div x-show="activeSubMobile === '{{ $bidang }}'" x-collapse class="bg-red-50 border-l-4 border-red-500 ml-8">
+                                            <!-- Link ke Utama Bidang -->
+                                            <a href="{{ route('organisasi.show', ['category' => $bidang]) }}" class="block pl-4 py-2 text-[10px] font-extrabold text-red-700 uppercase tracking-widest border-b border-red-100 hover:bg-red-100">
                                                 Buka Halaman Utama
                                             </a>
-                                            <!-- List Anak -->
+                                            <!-- List Sub Tim -->
                                             @foreach($subs as $sub)
-                                                <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" 
-                                                class="block pl-4 py-2.5 text-sm text-gray-700 hover:text-red-700 hover:bg-red-100 transition">
-                                                    • {{ $sub }}
+                                                <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block pl-4 py-2.5 text-xs font-bold text-gray-700 hover:text-red-700 hover:bg-red-100 transition flex items-center border-b border-red-100 last:border-0">
+                                                    <span class="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>
+                                                    {{ $sub }}
                                                 </a>
                                             @endforeach
                                         </div>
@@ -309,22 +323,22 @@
                     </div>
                 </div>
 
-                <!-- Mobile Petugas Liturgi (PERBAIKAN) -->
+                <!-- 6. PETUGAS LITURGI (Dropdown) -->
                 <div x-data="{ expanded: {{ request()->is('petugas*') || request()->is('jadwal-petugas') ? 'true' : 'false' }} }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-gray-700 font-bold uppercase hover:bg-gray-50 focus:outline-none {{ request()->is('petugas*') ? 'text-logo-blue' : '' }}">
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-6 py-3 border-l-4 border-transparent text-sm font-bold uppercase text-gray-700 hover:bg-gray-50 focus:outline-none {{ request()->is('petugas*') ? 'text-logo-blue' : '' }}">
                         <span>Petugas Liturgi</span>
                         <svg class="w-4 h-4 transform transition-transform" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div x-show="expanded" class="bg-gray-50 py-2">
+                    <div x-show="expanded" x-collapse class="bg-gray-50 border-t border-gray-100">
                         @foreach(['Misdinar', 'Lektor', 'Mazmur', 'Paduan Suara', 'Organis', 'Parkir'] as $tugas)
-                        <a href="{{ route('petugas.role', ['role' => $tugas]) }}" 
-                           class="block pl-10 pr-4 py-2 text-sm font-medium transition {{ request()->fullUrlIs(route('petugas.role', ['role' => $tugas])) ? 'text-logo-red font-bold' : 'text-gray-600 hover:text-logo-blue' }}">
+                        <a href="{{ route('petugas.role', ['role' => $tugas]) }}" class="block pl-10 pr-4 py-3 text-xs font-bold text-gray-600 hover:text-logo-blue border-b border-gray-200">
                             {{ $tugas }}
                         </a>
                         @endforeach
-                        <a href="/jadwal-petugas" class="block pl-10 pr-4 py-2 text-sm text-logo-blue font-bold">Lihat Semua Jadwal →</a>
+                        <a href="/jadwal-petugas" class="block pl-10 pr-4 py-3 text-xs font-bold text-white bg-logo-blue text-center">LIHAT SEMUA JADWAL</a>
                     </div>
                 </div>
+
             </div>
         </div>
     </nav>
