@@ -6,17 +6,21 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use GuzzleHttp\Client; // Import Guzzle
+use GuzzleHttp\Exception\RequestException;
 
 class LiturgiService
 {
     public function getLiturgiHariIni()
     {
-        // Ganti versi cache ke 'v7' (PENTING!)
-        return Cache::remember('liturgi_hari_ini_hybrid_v7', 60 * 24, function () {
+        $now = Carbon::now('Asia/Jakarta');
+        
+        // Cache Key V17 (Wajib ganti)
+        return Cache::remember('liturgi_data_v17_' . $now->format('Y-m-d'), 60 * 12, function () use ($now) {
             
-            // 1. DATA DEFAULT
+            // --- DATA DEFAULT ---
             $liturgiData = [
-                'tanggal' => Carbon::now()->locale('id')->translatedFormat('l, d F Y'),
+                'tanggal' => $now->locale('id')->translatedFormat('l, d F Y'),
                 'perayaan' => 'Hari Biasa',
                 'warna' => 'Hijau',
                 'bacaan_1' => '-',
@@ -24,9 +28,10 @@ class LiturgiService
                 'injil' => '-',
             ];
 
-            // 2. API WARNA (CalAPI)
+            // --- API WARNA (Tetap pakai Laravel HTTP) ---
             try {
-                $responseApi = Http::timeout(5)->get('https://calapi.inadiutorium.cz/api/v0/id/calendars/general-roman/today');
+                $apiUrl = "https://calapi.inadiutorium.cz/api/v0/id/calendars/general-roman/" . $now->format('Y/m/d');
+                $responseApi = Http::timeout(3)->get($apiUrl);
                 if ($responseApi->successful()) {
                     $apiData = $responseApi->json();
                     $celebration = $apiData['celebrations'][0] ?? null;
@@ -37,81 +42,78 @@ class LiturgiService
                         };
                     }
                 }
-            } catch (\Exception $e) {
-                // Silent fail untuk API
-            }
+            } catch (\Exception $e) { }
 
-            // 3. SCRAPING BACAAN (METODE TEKS MURNI)
+            // --- SCRAPING BACAAN (MENGGUNAKAN GUZZLE) ---
             try {
-                // Ambil halaman kalender karena lebih bersih isinya
-                $responseScraper = Http::withHeaders([
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
-                ])
-                ->withoutVerifying()
-                ->get('https://www.imankatolik.or.id/kalender.php');
+                // Manipulasi Tahun
+                $scrapeYear = $now->year;
+                if ($scrapeYear > Carbon::now()->year) {
+                    $scrapeYear = Carbon::now()->year; 
+                }
+                $urlTarget = "https://www.imankatolik.or.id/kalender.php?d=" . $now->day . "&m=" . $now->month . "&y=" . $scrapeYear;
+                
+                // Buat Guzzle Client
+                $client = new Client();
+                
+                // Kirim Request dengan Opsi Lengkap
+                $response = $client->request('GET', $urlTarget, [
+                    'headers' => [
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+                        'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                        'Accept-Language' => 'en-US,en;q=0.9',
+                    ],
+                    'verify' => false, // Abaikan SSL
+                    'timeout' => 15, // Waktu tunggu
+                    'connect_timeout' => 10, // Waktu tunggu koneksi
+                ]);
 
-                if ($responseScraper->successful()) {
-                    // LANGKAH PENTING: Hapus semua tag HTML, sisakan teks saja
-                    $plainText = strip_tags($responseScraper->body());
+                if ($response->getStatusCode() == 200) {
+                    $html = (string) $response->getBody();
                     
-                    // Regex yang sangat fleksibel:
-                    // Mencari [Huruf][Titik/Spasi][Angka][Titik Dua][Angka]
-                    // Contoh yang ditangkap: "Kej 1:1", "Mat. 5:3", "Mzm 23:1-5"
-                    preg_match_all('/([1-3]?[A-Za-z]{2,5}\.?\s*\d+\s*:\s*\d+(?:[-\d,a-z]*))/i', $plainText, $matches);
+                    if (strlen($html) < 500) {
+                        $liturgiData['bacaan_1'] = "HTML Kosong";
+                        return $liturgiData;
+                    }
 
-                    // Ambil hasil yang unik dan bersihkan
+                    $plainText = strip_tags($html);
+                    preg_match_all('/([1-3]?[A-Za-z]{2,5}\.?\s*\d+\s*:\s*\d+(?:[-\d,a-z]*))/i', $plainText, $matches);
+                    
                     $candidates = array_unique($matches[0] ?? []);
                     $cleanLinks = [];
-
-                    // Filter manual untuk membuang yang bukan kitab suci (misal jam "18:00")
                     foreach ($candidates as $txt) {
                         $txt = trim($txt);
-                        // Pastikan diawali huruf (bukan jam) dan panjangnya masuk akal
-                        if (preg_match('/^[A-Za-z]/', $txt) && strlen($txt) > 4) {
+                        if (preg_match('/^[A-Za-z]/', $txt) && strlen($txt) > 4 && !preg_match('/^\d+:\d+$/', $txt)) {
                             $cleanLinks[] = $txt;
                         }
                     }
-
-                    // Reset index array
                     $cleanLinks = array_values($cleanLinks);
 
                     if (!empty($cleanLinks)) {
-                        // Logika Penempatan
-                        $liturgiData['bacaan_1'] = $cleanLinks[0]; // Biasanya urutan pertama di teks
-
-                        // Cari yang mengandung "Mzm" untuk Mazmur
-                        $mazmurFound = false;
+                        $liturgiData['bacaan_1'] = $cleanLinks[0];
+                        // ... (logika mazmur & injil tetap sama) ...
+                        $mazmurFound = false; $injilFound = false;
                         foreach ($cleanLinks as $link) {
-                            if (stripos($link, 'Mzm') !== false || stripos($link, 'Mazmur') !== false) {
-                                $liturgiData['mazmur'] = $link;
-                                $mazmurFound = true;
-                                break;
-                            }
+                            if (stripos($link, 'Mzm') !== false || stripos($link, 'Mazmur') !== false) { $liturgiData['mazmur'] = $link; $mazmurFound = true; }
+                            if (preg_match('/(Mat|Mrk|Luk|Yoh)/i', $link) && $link !== $cleanLinks[0]) { $liturgiData['injil'] = $link; $injilFound = true; }
                         }
-                        // Jika tidak ada label "Mzm", asumsikan urutan kedua adalah Mazmur (jika ada 3 bacaan)
-                        if (!$mazmurFound && count($cleanLinks) >= 3) {
-                            $liturgiData['mazmur'] = $cleanLinks[1];
-                        }
-
-                        // Cari Injil (Mat, Mrk, Luk, Yoh)
-                        $injilFound = false;
-                        foreach ($cleanLinks as $link) {
-                            if (preg_match('/(Mat|Mrk|Luk|Yoh)/i', $link)) {
-                                // Pastikan bukan bacaan 1 (kadang bacaan 1 dari injil surat)
-                                if ($link !== $liturgiData['bacaan_1']) {
-                                    $liturgiData['injil'] = $link;
-                                    $injilFound = true;
-                                }
-                            }
-                        }
-                        // Fallback: Ambil yang terakhir
-                        if (!$injilFound) {
-                            $liturgiData['injil'] = end($cleanLinks);
-                        }
+                        if (!$mazmurFound && count($cleanLinks) >= 3) $liturgiData['mazmur'] = $cleanLinks[1];
+                        if (!$injilFound) $liturgiData['injil'] = end($cleanLinks);
+                    } else {
+                        $liturgiData['bacaan_1'] = "Data Kosong";
                     }
                 }
+            } catch (RequestException $e) {
+                // Tangkap error spesifik Guzzle
+                Log::error('Guzzle Error: ' . $e->getMessage());
+                if ($e->hasResponse()) {
+                    Log::error('Guzzle Status: ' . $e->getResponse()->getStatusCode());
+                }
+                $liturgiData['bacaan_1'] = "Error Koneksi (Guzzle)";
             } catch (\Exception $e) {
-                Log::error('Scraping Error: ' . $e->getMessage());
+                // Tangkap error umum lainnya
+                Log::error('General Scraping Error: ' . $e->getMessage());
+                $liturgiData['bacaan_1'] = "Error Umum";
             }
 
             return $liturgiData;
