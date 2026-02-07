@@ -373,7 +373,7 @@
                                 {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
                             </h2>
                             <p class="text-blue-100 text-lg leading-relaxed mb-8">
-                                Persiapkan hati untuk merayakan misteri iman. Informasi kalender liturgi Mingguan.
+                                Persiapkan hati untuk merayakan misteri iman. Informasi kalender liturgi Harian.
                             </p>
                             <a href="http://calapi.inadiutorium.cz/" target="_blank" class="inline-flex items-center px-6 py-3 bg-white text-logo-blue font-bold rounded-lg shadow-md hover:bg-logo-yellow hover:text-blue-900 transition-all duration-300">
                                 Lihat Sumber Data
@@ -419,7 +419,7 @@
 
                             <!-- Bagian Bacaan -->
                             <div>
-                                <h4 class="font-bold text-gray-600 mb-3 text-center">Bacaan Mingguan</h4>
+                                <h4 class="font-bold text-gray-600 mb-3 text-center">Bacaan Harian</h4>
                                 <ul class="space-y-2 text-sm">
                                     <li class="flex justify-between items-center bg-white p-3 rounded-lg border">
                                         <span class="font-semibold text-gray-500">Bacaan I:</span>
