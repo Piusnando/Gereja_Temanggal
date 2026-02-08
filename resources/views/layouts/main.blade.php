@@ -89,7 +89,7 @@
                             </span>
                             <!-- Baris 2 -->
                             <span class="text-logo-red text-xs sm:text-sm lg:text-xl block">
-                                Kalasan Tengah
+                                Temanggal
                             </span>
                         </a>
                         
