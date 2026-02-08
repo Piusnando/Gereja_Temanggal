@@ -258,4 +258,25 @@ class PageController extends Controller
         // 4. Return ke View Baru
         return view('pages.detail-tim', compact('members', 'bidangName', 'subName'));
     }
+
+    public function detailLingkungan($id)
+    {
+        $lingkungan = \App\Models\Lingkungan::with('territory')->findOrFail($id);
+        // 1. Ambil Data Lingkungan
+        $activities = \App\Models\Activity::where(function ($query) use ($id) {
+                            // 1. Ambil kegiatan spesifik lingkungan ini
+                            $query->where('lingkungan_id', $id)
+                                  // 2. DAN kegiatan itu diizinkan tampil
+                                  ->where('show_on_lingkungan_page', true);
+                        })
+                        // 3. ATAU ambil kegiatan GLOBAL (Paroki) yang juga diizinkan tampil
+                        ->orWhere(function ($query) {
+                            $query->whereNull('lingkungan_id')
+                                  ->where('show_on_lingkungan_page', true);
+                        })
+                        ->orderBy('start_time', 'desc')
+                        ->paginate(6);
+
+        return view('pages.detail-lingkungan', compact('lingkungan', 'activities'));
+    }
 }

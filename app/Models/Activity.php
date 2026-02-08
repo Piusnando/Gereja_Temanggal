@@ -11,4 +11,8 @@ class Activity extends \Illuminate\Database\Eloquent\Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
     ];
+
+    public function lingkungan() {
+        return $this->belongsTo(Lingkungan::class);
+    }
 }

@@ -38,6 +38,33 @@
                 <input type="datetime-local" name="end_time" value="{{ $activity->end_time ? $activity->end_time->format('Y-m-d\TH:i') : '' }}" class="w-full border border-gray-300 rounded p-2.5">
             </div>
         </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Target Lingkungan</label>
+            <select name="lingkungan_id" class="w-full border border-gray-300 rounded p-2.5 bg-white">
+                <option value="">-- Semua Lingkungan (Kegiatan Paroki) --</option>
+                @foreach($lingkungans as $ling)
+                    <option value="{{ $ling->id }}" {{ $activity->lingkungan_id == $ling->id ? 'selected' : '' }}>
+                        Lingkungan {{ $ling->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <label class="inline-flex items-center cursor-pointer">
+                {{-- Tambahkan logic 'checked' berdasarkan data dari database --}}
+                <input type="checkbox" name="show_on_lingkungan_page" value="1" 
+                       class="form-checkbox h-5 w-5 text-blue-600 rounded"
+                       {{ $activity->show_on_lingkungan_page ? 'checked' : '' }}>
+                <span class="ml-3 text-gray-700 font-medium">
+                    Tampilkan di Halaman Lingkungan?
+                </span>
+            </label>
+            <p class="text-xs text-gray-500 mt-2 ml-8">
+                Atur visibilitas kegiatan ini di halaman detail Lingkungan.
+            </p>
+        </div>
 
         <!-- EDITOR SUMMERNOTE -->
         <div class="mb-6">

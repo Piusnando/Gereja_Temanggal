@@ -35,6 +35,7 @@ Route::get('/organisasi/{category}/{sub_category}', [PageController::class, 'sho
 Route::post('/organization/reorder-teams', [OrganizationController::class, 'reorderTeams'])->name('admin.organization.reorder_teams');
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
 Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
+Route::get('/lingkungan/{id}', [PageController::class, 'detailLingkungan'])->name('lingkungan.detail');
 
 // Route untuk Menyimpan Data ke DB (POST) - INI YANG DIPAKAI FOOTER
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');

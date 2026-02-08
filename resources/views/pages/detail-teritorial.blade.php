@@ -39,37 +39,56 @@
             </div>
         </div>
 
-        <!-- GRID LINGKUNGAN -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach($territory->lingkungans as $lingkungan)
-            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 border border-gray-100 overflow-hidden group">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center group-hover:bg-blue-50 transition">
-                    <h3 class="text-lg font-bold text-gray-800 group-hover:text-logo-blue">
-                        {{ $lingkungan->name }}
-                    </h3>
-                    <svg class="w-5 h-5 text-gray-300 group-hover:text-logo-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        @foreach($territory->lingkungans as $lingkungan)
+        
+        {{-- BUNGKUS KARTU DENGAN TAG <a> --}}
+        <a href="{{ route('lingkungan.detail', $lingkungan->id) }}" class="block bg-white rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100 overflow-hidden group">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center group-hover:bg-blue-50 transition">
+                <h3 class="text-lg font-bold text-gray-800 group-hover:text-logo-blue">
+                    {{ $lingkungan->name }}
+                </h3>
+                
+                {{-- Tambahkan icon panah untuk indikasi bisa diklik --}}
+                <svg class="w-5 h-5 text-gray-300 group-hover:text-logo-blue transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3">
+                    
+                    {{-- Info Santo Pelindung --}}
+                    @if($lingkungan->patron_saint)
+                    <div class="flex items-start">
+                        <span class="text-xs font-bold text-gray-400 uppercase w-24 pt-1">Pelindung:</span>
+                        <p class="text-sm text-gray-800 font-semibold">{{ $lingkungan->patron_saint }}</p>
+                    </div>
+                    @endif
+                    
+                    {{-- Info Ketua --}}
+                    @if($lingkungan->chief_name)
+                    <div class="flex items-start">
+                        <span class="text-xs font-bold text-gray-400 uppercase w-24 pt-1">Ketua:</span>
+                        <p class="text-sm text-gray-600">{{ $lingkungan->chief_name }}</p>
+                    </div>
+                    @endif
+                    
+                    {{-- Info Tambahan --}}
+                    <div class="flex items-start">
+                        <span class="text-xs font-bold text-gray-400 uppercase w-24 pt-1">Info:</span>
+                        <p class="text-sm text-gray-600 leading-relaxed italic">
+                            "{{ $lingkungan->info ?? 'Belum ada informasi jadwal atau kegiatan spesifik untuk lingkungan ini.' }}"
+                        </p>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <div class="space-y-3">
-                        <!-- Info Ketua (Jika ada di database nanti) -->
-                        <div class="flex items-start">
-                            <span class="text-xs font-bold text-gray-400 uppercase w-24 pt-1">Informasi:</span>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                {{ $lingkungan->info ?? 'Belum ada informasi detail mengenai jadwal atau kegiatan spesifik untuk lingkungan ini.' }}
-                            </p>
-                        </div>
-                    </div>
 
-                    <!-- Tombol Aksi (Opsional) -->
-                    <div class="mt-6 pt-4 border-t border-gray-100">
-                        <span class="text-xs font-semibold text-logo-blue bg-blue-50 px-2 py-1 rounded">
-                            Lingkungan Aktif
-                        </span>
-                    </div>
+                <div class="mt-6 pt-4 border-t border-gray-100">
+                    <span class="text-xs font-semibold text-logo-blue bg-blue-50 px-2 py-1 rounded">
+                        Lihat Detail & Kegiatan →
+                    </span>
                 </div>
             </div>
-            @endforeach
-        </div>
+        </a>
+        @endforeach
+    </div>
 
         <div class="mt-12 text-center">
             <a href="/teritorial" class="text-gray-500 hover:text-logo-blue font-medium transition">

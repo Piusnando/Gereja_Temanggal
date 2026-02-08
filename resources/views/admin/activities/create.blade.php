@@ -37,6 +37,31 @@
             </div>
         </div>
 
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Target Lingkungan</label>
+            <select name="lingkungan_id" class="w-full border border-gray-300 rounded p-2.5 bg-white">
+                <option value="">-- Semua Lingkungan (Kegiatan Gereja) --</option>
+                @foreach($lingkungans as $ling)
+                    <option value="{{ $ling->id }}">Lingkungan {{ $ling->name }}</option>
+                @endforeach
+            </select>
+            <p class="text-xs text-gray-500 mt-1">Pilih "Semua Lingkungan" jika ini acara umum gereja. Pilih nama lingkungan jika ini acara spesifik.</p>
+        </div>
+
+        <div class="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="show_on_lingkungan_page" value="1" 
+                       class="form-checkbox h-5 w-5 text-blue-600 rounded" checked>
+                <span class="ml-3 text-gray-700 font-medium">
+                    Tampilkan di Halaman Lingkungan?
+                </span>
+            </label>
+            <p class="text-xs text-gray-500 mt-2 ml-8">
+                Jika dicentang, kegiatan ini akan muncul di halaman detail Lingkungan yang dipilih (atau di semua halaman Lingkungan jika "Semua Lingkungan" dipilih). <br>
+                Hilangkan centang jika ini berita/kegiatan yang hanya ingin tampil di halaman utama "Kegiatan".
+            </p>
+        </div>
+
         <!-- EDITOR SUMMERNOTE -->
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2">Deskripsi Lengkap & Foto Kegiatan</label>

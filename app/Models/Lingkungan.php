@@ -6,8 +6,12 @@ class Lingkungan extends Model
 {
     protected $guarded = [];
 
-    public function territory()
-    {
+    public function territory() {
         return $this->belongsTo(Territory::class);
+    }
+
+    // Relasi ke Kegiatan
+    public function activities() {
+        return $this->hasMany(Activity::class);
     }
 }

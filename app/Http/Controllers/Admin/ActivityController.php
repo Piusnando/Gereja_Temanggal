@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\Lingkungan;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class ActivityController extends Controller
@@ -24,7 +25,9 @@ class ActivityController extends Controller
      */
     public function create()
     {
-        return view('admin.activities.create');
+        // Ambil data lingkungan untuk dropdown
+        $lingkungans = Lingkungan::orderBy('name')->get();
+        return view('admin.activities.create', compact('lingkungans'));
     }
 
     /**
@@ -48,6 +51,10 @@ class ActivityController extends Controller
             'title', 'description', 'organizer', 'start_time', 'end_time', 'location'
         ]);
 
+        // Jika checkbox dicentang, nilainya akan '1'. Jika tidak, tidak ada nilainya.
+        // Kita set default-nya jadi 'false' (0) jika tidak dicentang.
+        $data['show_on_lingkungan_page'] = $request->has('show_on_lingkungan_page');
+
         // 3. Handle Upload Gambar
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/activities', 'public');
@@ -67,7 +74,8 @@ class ActivityController extends Controller
     public function edit(Activity $activity)
     {
         // Laravel's Route Model Binding akan otomatis mencari Activity berdasarkan ID
-        return view('admin.activities.edit', compact('activity'));
+        $lingkungans = Lingkungan::orderBy('name')->get();
+        return view('admin.activities.edit', compact('activity', 'lingkungans'));
     }
 
     /**
@@ -84,12 +92,16 @@ class ActivityController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'location' => 'required|string|max:255',
+            'lingkungan_id' => 'nullable|exists:lingkungans,id',
         ]);
 
         // 2. Siapkan Data
-        $data = $request->only([
+        $data = $request->all([
             'title', 'description', 'organizer', 'start_time', 'end_time', 'location'
         ]);
+
+        // --- LOGIKA CHECKBOX UNTUK UPDATE ---
+        $data['show_on_lingkungan_page'] = $request->has('show_on_lingkungan_page');
 
         // 3. Handle Upload Gambar Baru
         if ($request->hasFile('image')) {
@@ -106,8 +118,7 @@ class ActivityController extends Controller
         // 4. Update Database
         $activity->update($data);
 
-        return redirect()->route('admin.activities.index')
-                         ->with('success', 'Data kegiatan berhasil diperbarui.');
+        return redirect()->route('admin.activities.index')->with('success', 'Data diperbarui.');
     }
 
     /**
