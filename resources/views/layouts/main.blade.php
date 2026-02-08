@@ -94,7 +94,7 @@
                         </a>
                         
                         <!-- SUB-JUDUL: Sembunyikan di HP yang sangat kecil, Muncul di Tablet/Desktop -->
-                        <span class="hidden sm:block text-[8px] lg:text-[10px] text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
+                        <span class="text-[8px] lg:text-[10px] text-gray-500 font-semibold tracking-widest mt-0.5 uppercase">
                             Paroki Maria Marganingsih Kalasan
                         </span>
                     </div>
