@@ -398,7 +398,7 @@
                 </div>
             </div>
             <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">
-                &copy; {{ date('Y') }} Gereja St. Ignatius Loyola Temanggal. by @piusnando_
+                &copy; {{ date('Y') }} Gereja St. Ignatius Loyola Temanggal. by @komsosgsit
             </div>
         </div>
     </footer>
