@@ -177,7 +177,7 @@
                                             <div x-show="activeSub === '{{ $bidang }}'" x-collapse class="bg-gray-100 border-t border-gray-100">
                                                 <a href="{{ route('organisasi.show', ['category' => $bidang]) }}" class="block px-8 py-2 text-xs font-bold text-logo-blue uppercase tracking-wide hover:bg-gray-200 border-b border-gray-200">Buka Laman Utama</a>
                                                 @foreach($subs as $sub)
-                                                    <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block px-8 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-gray-200 transition border-b border-gray-200 last:border-0 flex items-start">
+                                                    <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block px-8 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-gray-200 transition border-b border-gray-200 last:border-0 items-start">
                                                         <span class="text-red-400 mr-2 mt-0.5">•</span><span class="whitespace-normal leading-snug">{{ $sub }}</span>
                                                     </a>
                                                 @endforeach
@@ -307,7 +307,7 @@
                                             </a>
                                             <!-- List Sub Tim -->
                                             @foreach($subs as $sub)
-                                                <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block pl-4 py-2.5 text-xs font-bold text-gray-700 hover:text-red-700 hover:bg-red-100 transition flex items-center border-b border-red-100 last:border-0">
+                                                <a href="{{ route('organisasi.sub', ['category' => $bidang, 'sub_category' => $sub]) }}" class="block pl-4 py-2.5 text-xs font-bold text-gray-700 hover:text-red-700 hover:bg-red-100 transition items-center border-b border-red-100 last:border-0">
                                                     <span class="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>
                                                     {{ $sub }}
                                                 </a>
