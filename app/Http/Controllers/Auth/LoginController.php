@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+// --- IMPORT BARU YANG DIPERLUKAN ---
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -14,39 +18,56 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    // 2. Proses Login
+    // 2. Proses Login dengan Rate Limiter Manual
     public function login(Request $request)
     {
         // Validasi input
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
-        // Coba Login
-       if (Auth::attempt($credentials, $request->remember)) {
-            $request->session()->regenerate();
+        // --- STEP A: Cek Rate Limiter ---
+        // Kunci unik berdasarkan Email + IP Address
+        $throttleKey = Str::lower($request->input('email')) . '|' . $request->ip();
 
-            // Pastikan ini mengarah ke /admin/liturgy/schedules atau /admin/profile
-            // Jangan ke /admin/users karena itu dibatasi middleware super_admin
-            // Paling aman ke dashboard umum atau jadwal:
-            return redirect()->route('dashboard'); 
+        // Cek apakah sudah terlalu banyak mencoba (Max 5 kali)
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.throttle', [
+                    'seconds' => $seconds,
+                    'minutes' => ceil($seconds / 60),
+                ]),
+            ]);
         }
 
-        // Jika gagal, kembalikan dengan error
-        return back()->withErrors([
+        // --- STEP B: Coba Login ---
+        if (Auth::attempt($request->only('email', 'password'), $request->remember)) {
+            $request->session()->regenerate();
+            
+            // Hapus hitungan gagal jika berhasil login
+            RateLimiter::clear($throttleKey);
+
+            return redirect()->intended(route('dashboard'));
+        }
+
+        // --- STEP C: Jika Gagal ---
+        // Tambahkan hitungan gagal (blokir selama 60 detik jika sudah 5x)
+        RateLimiter::hit($throttleKey, 60);
+
+        throw ValidationException::withMessages([
             'email' => 'Email atau password salah.',
-        ])->onlyInput('email');
+        ]);
     }
 
     // 3. Proses Logout
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('login');
     }
 }
