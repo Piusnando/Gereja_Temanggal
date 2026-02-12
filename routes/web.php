@@ -80,6 +80,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/feedback', [App\Http\Controllers\Admin\FeedbackController::class, 'index'])->name('admin.feedback.index');
         Route::delete('/feedback/{id}', [App\Http\Controllers\Admin\FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
         Route::resource('facility-bookings', FacilityBookingController::class, ['as' => 'admin']);
+        Route::resource('lingkungan', \App\Http\Controllers\Admin\LingkunganController::class, ['as' => 'admin']);
     });
 
 
