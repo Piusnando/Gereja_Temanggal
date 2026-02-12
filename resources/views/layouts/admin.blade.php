@@ -51,8 +51,8 @@
     <!-- ============================================== -->
     <!-- SIDEBAR UTAMA (RESPONSIF) -->
     <!-- ============================================== -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-           class="fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-white transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:inset-0 shadow-2xl flex flex-col">
+    <aside :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full'" 
+       class="fixed inset-y-0 right-0 z-50 w-64 bg-sidebar text-white transition-transform duration-300 ease-in-out md:left-0 md:translate-x-0 md:static md:inset-0 shadow-2xl flex flex-col">
         
         <!-- HEADER (Desktop Only) -->
         <div class="h-16 flex items-center justify-center border-b border-gray-700 bg-gray-900 shadow-md shrink-0 md:flex">
