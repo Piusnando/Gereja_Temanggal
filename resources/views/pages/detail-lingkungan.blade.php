@@ -67,13 +67,6 @@
                 <a href="{{ route('kegiatan.detail', $activity->id) }}" class="group bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden border border-gray-100 flex flex-col h-full">
                     <div class="h-40 overflow-hidden bg-gray-100 relative">
                         <img src="{{ $activity->image_path ? asset('storage/' . $activity->image_path) : 'https://placehold.co/600x400?text=Kegiatan' }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                        
-                        <!-- Badge Khusus -->
-                        @if($activity->lingkungan_id)
-                            <span class="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow">KHUSUS LINGKUNGAN</span>
-                        @else
-                            <span class="absolute top-2 right-2 bg-logo-blue text-white text-[10px] font-bold px-2 py-1 rounded shadow">PAROKI (UMUM)</span>
-                        @endif
                     </div>
                     <div class="p-5 flex flex-col grow">
                         <span class="text-xs text-gray-500 mb-2 font-mono">{{ $activity->start_time->format('d M Y') }}</span>
