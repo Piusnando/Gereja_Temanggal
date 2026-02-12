@@ -362,43 +362,106 @@
     <footer class="bg-logo-blue text-white mt-auto border-t-4 border-logo-red relative z-10">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Kontak -->
-                <div>
-                    <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kontak Kami</h3>
-                    <p class="text-sm leading-relaxed mb-4 text-gray-100">
-                        <span class="block font-bold text-white mb-1">Gereja St. Ignatius Loyola Temanggal</span>
-                        Temanggal II Rt 006 Rw 002, Purwomartani, Kalasan, Sleman DI Yogyakarta, 55571.
-                    </p>
+                
+                <!-- KOLOM 1: IDENTITAS, KONTAK & SOSMED -->
+                <div class="space-y-6">
+                    
+                    <!-- A. Logo & Nama Gereja -->
+                    <div class="flex items-center gap-4">
+                        <div class="p-2 bg-white rounded-full shadow-lg shrink-0">
+                            <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" class="h-12 w-12 object-contain">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg leading-tight uppercase tracking-wide">Gereja St. Ignatius Loyola</h3>
+                            <p class="text-xs text-blue-200 font-semibold tracking-widest">TEMANGGAL</p>
+                        </div>
+                    </div>
+
+                    <!-- B. Alamat & Kontak -->
+                    <div>
+                        <h4 class="text-logo-yellow text-xs font-bold uppercase tracking-widest mb-2">Alamat & Kontak</h4>
+                        <p class="text-sm leading-relaxed text-gray-100 opacity-90">
+                            Temanggal II Rt 006 Rw 002, Purwomartani, Kalasan, Sleman, DI Yogyakarta, 55571.
+                        </p>
+                        <p class="text-sm mt-2 text-gray-100">
+                            <span class="font-bold">Telp/WA:</span> +62 858-7620-4359 <br>
+                            <span class="font-bold">Email:</span> st.ignatius@gmail.com 
+                        </p>
+                    </div>
+
+                    <!-- C. Sosial Media (Icon Clickable) -->
+                    <div>
+                        <h4 class="text-logo-yellow text-xs font-bold uppercase tracking-widest mb-3">Ikuti Kami</h4>
+                        <div class="flex gap-4">
+                            
+                            <!-- Instagram -->
+                            <a href="https://www.instagram.com/komsosgsit/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-800 hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-red-500 hover:to-purple-500 text-white transition duration-300 shadow-md group" title="Instagram">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            </a>
+
+                            <!-- Facebook -->
+                            <a href="https://web.facebook.com/profile.php?id=61586425490209" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-800 hover:bg-[#1877F2] text-white transition duration-300 shadow-md group" title="Facebook">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                            </a>
+
+                            <!-- TikTok -->
+                            <a href="https://www.tiktok.com/@komsoskalasantengah?is_from_webapp=1&sender_device=pc" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-800 hover:bg-black text-white transition duration-300 shadow-md group" title="TikTok">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v6.16c0 2.52-1.12 4.84-2.9 6.24-1.72 1.36-4.04 1.86-6.23 1.29-1.92-.51-3.61-1.77-4.52-3.52-.94-1.81-.97-4.04-.03-5.87 1.05-2.02 3.12-3.37 5.37-3.46h.01v4.03c-.94.06-1.84.59-2.38 1.39-.56.84-.66 1.95-.27 2.87.39.92 1.25 1.59 2.24 1.74 1.21.18 2.45-.19 3.29-1.07.72-.76 1.05-1.83 1.05-2.88.01-6.73 0-13.46 0-20.19z"/></svg>
+                            </a>
+
+                        </div>
+                    </div>
                 </div>
-                <!-- Tautan Cepat -->
-                <div>
-                    <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Tautan Cepat</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="/" class="transition duration-300 {{ request()->is('/') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Beranda</a></li>
-                        <li><a href="/sejarah" class="transition duration-300 {{ request()->is('sejarah*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Sejarah Gereja</a></li>
-                        <li><a href="/pengumuman" class="transition duration-300 {{ request()->is('pengumuman*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Pengumuman Gereja Ignatius Temanggal</a></li>
-                        <li><a href="/kegiatan" class="transition duration-300 {{ request()->is('kegiatan*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Kegiatan Umat Ignatius Temanggal</a></li>
-                        <li><a href="/teritorial" class="transition duration-300 {{ request()->is('teritorial*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}">Pembagian Wilayah Ignatius Temanggal</a></li>
-                        <li><a href="https://gerejakalasan.org/" class="transition duration-300 text-gray-100 hover:text-logo-yellow flex items-center">Paroki Maria Marganingsih Kalasan <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></li>
-                    </ul>
+
+                <!-- KOLOM 2: TAUTAN CEPAT (POSISI DITENGAHKAN) -->
+                <!-- 'flex flex-col md:items-center' membuat blok ini ke tengah -->
+                <div class="flex flex-col md:items-center">
+                    <!-- 'w-full md:w-auto' memastikan konten di dalamnya tetap rata kiri relatif satu sama lain -->
+                    <div class="w-full md:w-auto">
+                        <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Tautan Cepat</h3>
+                        <ul class="space-y-3 text-sm">
+                            <li><a href="/" class="transition duration-300 flex items-center {{ request()->is('/') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Beranda</a></li>
+                            <li><a href="/sejarah" class="transition duration-300 flex items-center {{ request()->is('sejarah*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Sejarah Gereja</a></li>
+                            <li><a href="/pengumuman" class="transition duration-300 flex items-center {{ request()->is('pengumuman*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Pengumuman & Berita</a></li>
+                            <li><a href="/kegiatan" class="transition duration-300 flex items-center {{ request()->is('kegiatan*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Kegiatan Umat</a></li>
+                            <li><a href="/teritorial" class="transition duration-300 flex items-center {{ request()->is('teritorial*') ? 'text-logo-yellow font-bold' : 'text-gray-100 hover:text-logo-yellow' }}"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Peta Wilayah</a></li>
+                            <li><a href="https://gerejakalasan.org/" target="_blank" class="transition duration-300 flex items-center text-gray-100 hover:text-logo-yellow"><svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg> Paroki Kalasan</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <!-- Kritik Saran -->
+
+                <!-- KOLOM 3: KRITIK & SARAN -->
                 <div>
                     <h3 class="text-logo-yellow text-lg font-bold mb-4 uppercase tracking-wider">Kritik & Saran</h3>
+                    
                     @if(session('success_feedback'))
-                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative text-sm">
+                        <div class="mb-4 bg-green-500/20 border border-green-400 text-green-200 px-4 py-3 rounded-lg relative text-sm animate-pulse">
                             {{ session('success_feedback') }}
                         </div>
                     @endif
-                    <form action="{{ route('feedback.store') }}" method="POST" class="space-y-2">
+
+                    <form action="{{ route('feedback.store') }}" method="POST" class="space-y-3">
                         @csrf
-                        <textarea name="message" rows="3" required class="w-full bg-blue-800/50 border border-blue-600 text-white rounded-md p-2 text-sm focus:ring-2 focus:ring-logo-yellow focus:outline-none placeholder-gray-300" placeholder="Tulis pesan Anda di sini..."></textarea>
-                        <button type="submit" class="bg-logo-red hover:bg-red-800 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-150 w-full md:w-auto shadow-md">Kirim Pesan</button>
+                        <div>
+                            <textarea name="message" rows="3" required class="w-full bg-blue-900/50 border border-blue-600/50 text-white rounded-xl p-4 text-sm focus:ring-2 focus:ring-logo-yellow focus:border-transparent outline-none placeholder-gray-400 transition" placeholder="Tulis masukan Anda untuk kemajuan gereja..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-logo-red hover:bg-red-700 text-white text-sm font-bold py-3 px-6 rounded-xl transition duration-300 shadow-lg hover:shadow-red-900/50 flex items-center justify-center group">
+                            <span>Kirim Pesan</span>
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
                     </form>
                 </div>
+
             </div>
-            <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">
-                &copy; {{ date('Y') }} Gereja St. Ignatius Loyola Temanggal. by @komsosgsit
+
+            <!-- COPYRIGHT -->
+            <div class="border-t border-blue-800/50 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-blue-200">
+                <p>&copy; {{ date('Y') }} Gereja St. Ignatius Loyola Temanggal.</p>
+                <p class="mt-2 md:mt-0 flex items-center">
+                    <span class="opacity-70">Develop with</span> 
+                    <svg class="w-4 h-4 mx-1 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> 
+                    <span class="opacity-70">by @komsosgsit</span>
+                </p>
             </div>
         </div>
     </footer>
