@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL; // <--- 1. WAJIB DITAMBAHKAN
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        config(['app.locale' => 'id']);
+        Carbon::setLocale('id');
+        date_default_timezone_set('Asia/Jakarta');
         // --- 2. LOGIKA FIX NGROK (HTTPS) ---
         // Jika request datang dari Ngrok (biasanya membawa header X-Forwarded-Proto: https)
         // Kita paksa Laravel membuat semua link menjadi HTTPS.
