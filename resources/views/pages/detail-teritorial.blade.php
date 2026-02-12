@@ -66,7 +66,7 @@
                     {{-- Info Ketua --}}
                     @if($lingkungan->chief_name)
                     <div class="flex items-start">
-                        <span class="text-xs font-bold text-gray-400 uppercase w-24 pt-1">Ketua:</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase w-24 pt-1">Ketua Lingkungan:</span>
                         <p class="text-sm text-gray-600">{{ $lingkungan->chief_name }}</p>
                     </div>
                     @endif
