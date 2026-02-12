@@ -293,7 +293,7 @@
                         <div>
                             <h4 class="font-bold text-gray-900">Alamat Lengkap</h4>
                             <p class="text-gray-600 text-sm mt-1 leading-relaxed">
-                                Jl. Temanggal Raya, Temanggal, Purwomartani, Kec. Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571.
+                                Temanggal II RT : 006 RW : 002, Purwomartani, Kec. Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571.
                             </p>
                         </div>
                     </div>
