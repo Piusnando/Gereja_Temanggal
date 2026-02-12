@@ -368,12 +368,17 @@
                     
                     <!-- A. Logo & Nama Gereja -->
                     <div class="flex items-center gap-4">
-                        <div class="p-2 bg-white rounded-full shadow-lg shrink-0">
-                            <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" class="h-12 w-12 object-contain">
+                        <!-- PERBAIKAN LOGO DISINI -->
+                        <!-- Menggunakan Flexbox center agar logo pas di tengah lingkaran -->
+                        <div class="h-16 w-16 bg-white rounded-full flex items-center justify-center p-1 shrink-0 overflow-hidden border-2 border-blue-200/30">
+                            <img src="{{ $globalLogo ?? asset('images/logo-default.png') }}" 
+                                 alt="Logo Gereja"
+                                 class="h-full w-full object-contain">
                         </div>
+                        
                         <div>
                             <h3 class="font-bold text-lg leading-tight uppercase tracking-wide">Gereja St. Ignatius Loyola</h3>
-                            <p class="text-xs text-blue-200 font-semibold tracking-widest">TEMANGGAL</p>
+                            <p class="text-xs text-blue-200 font-semibold tracking-widest mt-1">TEMANGGAL</p>
                         </div>
                     </div>
 
