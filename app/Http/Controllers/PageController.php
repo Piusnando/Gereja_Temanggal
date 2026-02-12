@@ -30,9 +30,10 @@ class PageController extends Controller
         }
 
         // BERITA KEGIATAN (Tetap ada di Home)
-        $activityNews = Activity::orderBy('start_time', 'desc')->take(3)->get();
-
-        // HAPUS BAGIAN $facilityBookings DARI SINI
+       $activityNews = Activity::whereNull('lingkungan_id')
+                            ->orderBy('start_time', 'desc')
+                            ->take(3)
+                            ->get();
 
         return view('home', compact('banners', 'announcements', 'territories', 'liturgi', 'activityNews'));
     }
@@ -94,14 +95,18 @@ class PageController extends Controller
     {
         $query = \App\Models\Activity::query();
 
-        // Fitur Search
+        // Fitur Search (tetap ada)
         if ($request->has('search') && $request->search != '') {
-            $query->where('title', 'like', '%' . $request->search . '%')
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
                   ->orWhere('description', 'like', '%' . $request->search . '%')
                   ->orWhere('organizer', 'like', '%' . $request->search . '%');
+            });
         }
 
         // Urutkan dari yang paling baru (start_time descending)
+        $query->whereNull('lingkungan_id');
+
         $activities = $query->orderBy('start_time', 'desc')->paginate(9);
 
         return view('pages.kegiatan', [
@@ -257,20 +262,27 @@ class PageController extends Controller
     public function detailLingkungan($id)
     {
         $lingkungan = \App\Models\Lingkungan::with('territory')->findOrFail($id);
-        // 1. Ambil Data Lingkungan
-        $activities = \App\Models\Activity::where(function ($query) use ($id) {
-                            // 1. Ambil kegiatan spesifik lingkungan ini
-                            $query->where('lingkungan_id', $id)
-                                  // 2. DAN kegiatan itu diizinkan tampil
-                                  ->where('show_on_lingkungan_page', true);
-                        })
-                        // 3. ATAU ambil kegiatan GLOBAL (Paroki) yang juga diizinkan tampil
-                        ->orWhere(function ($query) {
-                            $query->whereNull('lingkungan_id')
-                                  ->where('show_on_lingkungan_page', true);
-                        })
-                        ->orderBy('start_time', 'desc')
-                        ->paginate(6);
+
+        // Ambil ID Lingkungan saat ini
+        $currentLingkunganId = $id;
+
+        // --- QUERY FINAL ---
+        $activities = \App\Models\Activity::query()
+            // Ambil data yang DIZINKAN tampil di halaman lingkungan
+            ->where('show_on_lingkungan_page', true)
+            
+            // DAN memenuhi SALAH SATU dari kondisi ini:
+            ->where(function ($query) use ($currentLingkunganId) {
+                
+                // 1. Kegiatan tersebut adalah milik lingkungan INI
+                $query->where('lingkungan_id', $currentLingkunganId);
+                
+                // 2. ATAU kegiatan tersebut adalah milik Paroki (NULL)
+                $query->orWhereNull('lingkungan_id');
+            })
+            
+            ->orderBy('start_time', 'desc')
+            ->paginate(6);
 
         return view('pages.detail-lingkungan', compact('lingkungan', 'activities'));
     }

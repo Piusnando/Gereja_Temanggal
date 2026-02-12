@@ -8,11 +8,19 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
+
 class ActivityController extends Controller
 {
     /**
      * Menampilkan daftar semua kegiatan.
      */
+    protected $guarded = [];
+
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
     public function index()
     {
         // Ambil data terbaru, paginasi 10 per halaman
@@ -83,10 +91,9 @@ class ActivityController extends Controller
      */
     public function update(Request $request, Activity $activity)
     {
-        // 1. Validasi Input
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'organizer' => 'required|string|max:255',
             'start_time' => 'required|date',
@@ -95,30 +102,32 @@ class ActivityController extends Controller
             'lingkungan_id' => 'nullable|exists:lingkungans,id',
         ]);
 
-        // 2. Siapkan Data
-        $data = $request->all([
-            'title', 'description', 'organizer', 'start_time', 'end_time', 'location'
-        ]);
-
-        // --- LOGIKA CHECKBOX UNTUK UPDATE ---
+        $data = $request->all();
         $data['show_on_lingkungan_page'] = $request->has('show_on_lingkungan_page');
 
-        // 3. Handle Upload Gambar Baru
         if ($request->hasFile('image')) {
             // Hapus gambar lama jika ada
             if ($activity->image_path) {
                 Storage::disk('public')->delete($activity->image_path);
             }
-            
             // Simpan gambar baru
-            $path = $request->file('image')->store('uploads/activities', 'public');
-            $data['image_path'] = $path;
+            $data['image_path'] = $request->file('image')->store('uploads/activities', 'public');
+        }
+        
+        // Handle input lingkungan_id kosong
+        if ($request->input('lingkungan_id') === '') {
+            $data['lingkungan_id'] = null;
         }
 
-        // 4. Update Database
         $activity->update($data);
 
-        return redirect()->route('admin.activities.index')->with('success', 'Data diperbarui.');
+        return redirect()->route('admin.activities.index')
+                         ->with('success', 'Data kegiatan berhasil diperbarui.');
+    }
+
+    public function lingkungan()
+    {
+        return $this->belongsTo(Lingkungan::class);
     }
 
     /**
