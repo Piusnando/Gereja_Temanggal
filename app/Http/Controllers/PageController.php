@@ -30,9 +30,8 @@ class PageController extends Controller
         }
 
         // BERITA KEGIATAN (Tetap ada di Home)
-       $activityNews = Activity::whereNull('lingkungan_id')
-                            ->orderBy('start_time', 'desc')
-                            ->take(3)
+            $activityNews = \App\Models\Activity::orderBy('start_time', 'desc')
+                            ->take(3) // Batasi 3 berita terbaru
                             ->get();
 
         return view('home', compact('banners', 'announcements', 'territories', 'liturgi', 'activityNews'));
@@ -93,7 +92,7 @@ class PageController extends Controller
 
     public function kegiatan(Request $request)
     {
-        $query = \App.Models\Activity::query();
+        $query = \App\Models\Activity::query();
 
         // Fitur Search (tetap)
         if ($request->has('search') && $request->search != '') {
@@ -106,7 +105,7 @@ class PageController extends Controller
 
         // --- INI PERUBAHAN UTAMA ---
         // Paksa query ini HANYA mengambil kegiatan yang lingkungan_id nya KOSONG.
-        $query->whereNull('lingkungan_id');
+        // $query->whereNull('lingkungan_id');
 
         $activities = $query->orderBy('start_time', 'desc')->paginate(9);
 
@@ -262,14 +261,20 @@ class PageController extends Controller
 
     public function detailLingkungan($id)
     {
-        $lingkungan = \App.Models\Lingkungan::with('territory')->findOrFail($id);
+        $lingkungan = \App\Models\Lingkungan::with('territory')->findOrFail($id);
 
-        // --- INI PERUBAHAN KEDUA ---
-        // Hapus "orWhereNull" agar tidak mengambil kegiatan umum/paroki.
-        $activities = \App.Models\Activity::where('lingkungan_id', $id)
-                        ->where('show_on_lingkungan_page', true) // Tetap cek izin tampil
-                        ->orderBy('start_time', 'desc')
-                        ->paginate(6);
+        $activities = \App\Models\Activity::query()
+            // Syarat 1: Admin mengizinkan tampil di halaman lingkungan
+            ->where('show_on_lingkungan_page', true)
+            
+            // Syarat 2: (Milik Lingkungan Ini) ATAU (Milik Paroki/Global)
+            ->where(function ($query) use ($id) {
+                $query->where('lingkungan_id', $id)       // Spesifik
+                      ->orWhereNull('lingkungan_id');     // Global (Paroki) <--- INI KUNCINYA
+            })
+            
+            ->orderBy('start_time', 'desc')
+            ->paginate(6);
 
         return view('pages.detail-lingkungan', compact('lingkungan', 'activities'));
     }

@@ -52,20 +52,20 @@
                          alt="{{ $item->title }}" 
                          class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
                     
-                    <!-- Badge Tanggal -->
+                    <!-- BADGE TANGGAL -->
                     <div class="absolute top-4 left-4 bg-white/90 backdrop-blur text-gray-800 px-3 py-1 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider flex flex-col items-center border border-gray-200">
                         <span class="text-xl leading-none text-logo-blue">{{ $item->start_time->format('d') }}</span>
-                        <span class="text-[10px]">{{ $item->start_time->format('M') }}</span>
+                        <span class="text-[10px]">{{ $item->start_time->translatedFormat('M') }}</span>
                     </div>
 
-                    <!-- Badge Status (Selesai/Akan Datang) -->
-                    @if($item->start_time > now())
-                        <div class="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow">
-                            AKAN DATANG
+                    <!-- BADGE LINGKUNGAN (TAMBAHAN) -->
+                    @if($item->lingkungan)
+                        <div class="absolute top-4 right-4 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow">
+                            LINGK. {{ Str::upper($item->lingkungan->name) }}
                         </div>
                     @else
-                        <div class="absolute top-4 right-4 bg-gray-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow">
-                            SELESAI
+                        <div class="absolute top-4 right-4 bg-logo-blue text-white text-[10px] font-bold px-2 py-1 rounded shadow">
+                            UMUM / PAROKI
                         </div>
                     @endif
                 </div>

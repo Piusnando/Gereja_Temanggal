@@ -211,7 +211,19 @@
                             class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                         
                         {{-- Overlay Gradient --}}
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                        <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-60"></div>
+
+                        {{-- === TAMBAHAN BADGE DI SINI === --}}
+                        @if($news->lingkungan)
+                            <div class="absolute top-4 right-4 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow z-20">
+                                LINGK. {{ Str::upper($news->lingkungan->name) }}
+                            </div>
+                        @else
+                            <div class="absolute top-4 right-4 bg-logo-blue text-white text-[10px] font-bold px-2 py-1 rounded shadow z-20">
+                                UMUM / PAROKI
+                            </div>
+                        @endif
+                        {{-- ============================== --}}
 
                         {{-- Badge Penyelenggara --}}
                         <div class="absolute bottom-4 left-4">

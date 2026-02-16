@@ -63,6 +63,10 @@ class ActivityController extends Controller
         // Kita set default-nya jadi 'false' (0) jika tidak dicentang.
         $data['show_on_lingkungan_page'] = $request->has('show_on_lingkungan_page');
 
+        if (empty($request->input('lingkungan_id'))) {
+            $data['lingkungan_id'] = null;
+        }
+
         // 3. Handle Upload Gambar
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/activities', 'public');
@@ -121,13 +125,14 @@ class ActivityController extends Controller
 
         $activity->update($data);
 
+        if (isset($activity)) {
+        $activity->update($data); // Untuk method update
+        } else {
+            Activity::create($data);  // Untuk method store
+        }
+
         return redirect()->route('admin.activities.index')
                          ->with('success', 'Data kegiatan berhasil diperbarui.');
-    }
-
-    public function lingkungan()
-    {
-        return $this->belongsTo(Lingkungan::class);
     }
 
     /**

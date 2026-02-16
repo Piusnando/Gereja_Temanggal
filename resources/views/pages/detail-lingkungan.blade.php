@@ -68,6 +68,20 @@
                     <div class="h-40 overflow-hidden bg-gray-100 relative">
                         <img src="{{ $activity->image_path ? asset('storage/' . $activity->image_path) : 'https://placehold.co/600x400?text=Kegiatan' }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     </div>
+
+                    <!-- BADGE LOGIC -->
+                    @if($activity->lingkungan_id)
+                            <!-- Jika ada ID Lingkungannya, berarti acara Khusus -->
+                            <span class="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow">
+                                KHUSUS LINGKUNGAN
+                            </span>
+                        @else
+                            <!-- Jika NULL, berarti acara Paroki yang "numpang tampil" -->
+                            <span class="absolute top-2 right-2 bg-logo-blue text-white text-[10px] font-bold px-2 py-1 rounded shadow">
+                                AGENDA PAROKI
+                            </span>
+                        @endif
+    
                     <div class="p-5 flex flex-col grow">
                         <span class="text-xs text-gray-500 mb-2 font-mono">{{ $activity->start_time->format('d M Y') }}</span>
                         <h3 class="font-bold text-gray-800 leading-tight mb-2 group-hover:text-logo-red transition">{{ $activity->title }}</h3>
