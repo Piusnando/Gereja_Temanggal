@@ -107,7 +107,7 @@ class PageController extends Controller
         // Paksa query ini HANYA mengambil kegiatan yang lingkungan_id nya KOSONG.
         // $query->whereNull('lingkungan_id');
 
-        $activities = $query->orderBy('start_time', 'desc')->paginate(9);
+        $activities = $query->orderBy('start_time', 'desc')->paginate(6);
 
         return view('pages.kegiatan', [
             'activities' => $activities,
