@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
-use App\Models\Activity;
 use App\Models\Territory;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
@@ -248,7 +247,7 @@ class PageController extends Controller
                     ->where('sub_bidang', $subName)
                     ->with('lingkungan')
                     ->orderBy('sort_order', 'asc') 
-                    ->get();
+                    ->get(); 
 
         // 3. Jika data tidak ditemukan (user ketik url ngawur), kembalikan ke halaman bidang
         if ($members->isEmpty()) {
