@@ -15,4 +15,9 @@ class Activity extends \Illuminate\Database\Eloquent\Model
     public function lingkungan() {
         return $this->belongsTo(Lingkungan::class);
     }
+
+    public function attendances()
+{
+    return $this->hasMany(YouthAttendance::class);
+}
 }

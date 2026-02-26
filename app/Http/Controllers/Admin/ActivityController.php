@@ -23,17 +23,16 @@ class ActivityController extends Controller
 
     public function index()
     {
-        // Ambil data terbaru, paginasi 10 per halaman
-        $activities = Activity::latest()->paginate(10);
+        // Sekarang tidak perlu filter, karena ini khusus 'general'
+        $activities = Activity::where('type', 'general')
+                        ->latest('start_time')
+                        ->paginate(10);
+        
         return view('admin.activities.index', compact('activities'));
     }
 
-    /**
-     * Menampilkan form untuk membuat kegiatan baru.
-     */
     public function create()
     {
-        // Ambil data lingkungan untuk dropdown
         $lingkungans = Lingkungan::orderBy('name')->get();
         return view('admin.activities.create', compact('lingkungans'));
     }
@@ -54,6 +53,8 @@ class ActivityController extends Controller
             'location' => 'required|string|max:255',
         ]);
 
+
+
         // 2. Siapkan Data
         $data = $request->only([
             'title', 'description', 'organizer', 'start_time', 'end_time', 'location'
@@ -73,6 +74,10 @@ class ActivityController extends Controller
             $data['image_path'] = $path;
         }
 
+
+        $data = $request->all();
+        $data['type'] = 'general';
+        
         // 4. Simpan ke Database
         Activity::create($data);
 
