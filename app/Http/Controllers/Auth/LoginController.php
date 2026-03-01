@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-// --- IMPORT BARU YANG DIPERLUKAN ---
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
@@ -18,7 +17,7 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    // 2. Proses Login dengan Rate Limiter Manual
+    // 2. Proses Login dengan AJAX & Rate Limiting
     public function login(Request $request)
     {
         // Validasi input
@@ -27,35 +26,49 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        // --- STEP A: Cek Rate Limiter ---
-        // Kunci unik berdasarkan Email + IP Address
+        // A. Kunci Unik untuk Rate Limiter
         $throttleKey = Str::lower($request->input('email')) . '|' . $request->ip();
 
-        // Cek apakah sudah terlalu banyak mencoba (Max 5 kali)
+        // B. Cek apakah sudah terlalu banyak mencoba
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
+            $message = 'Terlalu banyak percobaan. Silakan coba lagi dalam ' . $seconds . ' detik.';
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.throttle', [
-                    'seconds' => $seconds,
-                    'minutes' => ceil($seconds / 60),
-                ]),
-            ]);
+            // Jika request minta JSON (dari AJAX), kirim respon JSON
+            if ($request->wantsJson()) {
+                return response()->json(['status' => 'error', 'message' => $message], 429);
+            }
+            
+            // Fallback untuk non-AJAX
+            throw ValidationException::withMessages(['email' => $message]);
         }
 
-        // --- STEP B: Coba Login ---
+        // C. Coba Lakukan Login
         if (Auth::attempt($request->only('email', 'password'), $request->remember)) {
             $request->session()->regenerate();
-            
-            // Hapus hitungan gagal jika berhasil login
-            RateLimiter::clear($throttleKey);
+            RateLimiter::clear($throttleKey); // Hapus catatan gagal
+
+            // Jika request minta JSON, kirim respon SUKSES dengan URL redirect
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'redirect_url' => route('dashboard')
+                ]);
+            }
 
             return redirect()->intended(route('dashboard'));
         }
 
-        // --- STEP C: Jika Gagal ---
-        // Tambahkan hitungan gagal (blokir selama 60 detik jika sudah 5x)
-        RateLimiter::hit($throttleKey, 60);
+        // D. Jika Login Gagal
+        RateLimiter::hit($throttleKey, 60); // Tambah hitungan gagal
+
+        // Jika request minta JSON, kirim respon GAGAL
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email atau password salah.'
+            ], 422); // 422 Unprocessable Entity
+        }
 
         throw ValidationException::withMessages([
             'email' => 'Email atau password salah.',
