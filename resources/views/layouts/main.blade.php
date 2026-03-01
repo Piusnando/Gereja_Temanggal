@@ -386,7 +386,7 @@
                     <div>
                         <h4 class="text-logo-yellow text-xs font-bold uppercase tracking-widest mb-2">Alamat & Kontak</h4>
                         <p class="text-sm leading-relaxed text-gray-100 opacity-90">
-                            Temanggal II Rt 006 Rw 002, Purwomartani, Kalasan, Sleman, DI Yogyakarta, 55571.
+                            Temanggal II RT 006 RW 002, Purwomartani, Kalasan, Sleman, DI Yogyakarta, 55571.
                         </p>
                         <p class="text-sm mt-2 text-gray-100">
                             <span class="font-bold">Telp/WA:</span> +62 858-7620-4359 <br>
