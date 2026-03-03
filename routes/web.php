@@ -77,10 +77,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // 2. DASHBOARD INVENTARIS (Role: Admin & Inventaris)
     Route::middleware(['role:admin,inventaris'])->prefix('inventaris')->name('admin.inventaris.')->group(function () {
-        Route::get('/', function() { return view('admin.inventaris.dashboard'); })->name('dashboard');
+        Route::get('/', [\App\Http\Controllers\Admin\InvDashboardController::class, 'index'])->name('dashboard');
         Route::resource('locations', \App\Http\Controllers\Admin\InvLocationController::class);
         Route::resource('categories', \App\Http\Controllers\Admin\InvCategoryController::class);
         Route::resource('items', \App\Http\Controllers\Admin\InvItemController::class);
+        Route::get('/chart-data', [\App\Http\Controllers\Admin\InvDashboardController::class, 'getDataForCharts'])->name('chart_data');
     });
 
     // 4. KHUSUS ADMIN SUPER USER
