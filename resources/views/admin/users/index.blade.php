@@ -95,6 +95,9 @@
                                     case 'pengurus_gereja':
                                         $badgeClass = 'bg-blue-100 text-blue-800 border border-blue-200';
                                         break;
+                                    case 'inventaris':
+                                        $badgeClass = 'bg-green-100 text-green-800 border-green-200'; 
+                                        break;
                                     case 'direktur_musik':
                                         $badgeClass = 'bg-purple-100 text-purple-800 border border-purple-200';
                                         break;

@@ -52,8 +52,8 @@ public function store(Request $request)
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required',
-            // Password boleh kosong jika tidak ingin diganti
+            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik,omk,pia_pir,inventaris',
+            
             'password' => 'nullable|min:8',
         ]);
 
@@ -63,7 +63,6 @@ public function store(Request $request)
             'role' => $request->role,
         ];
 
-        // Hanya update password jika diisi
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }

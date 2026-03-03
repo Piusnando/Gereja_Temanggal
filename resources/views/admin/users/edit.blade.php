@@ -26,7 +26,7 @@
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2">Role / Hak Akses</label>
             <select name="role" class="w-full border rounded p-2 bg-white">
-                @foreach(['misdinar', 'lektor', 'direktur_musik', 'pengurus_gereja', 'omk', 'pia_pir', 'admin'] as $roleOption)
+                @foreach(['admin', 'pengurus_gereja', 'inventaris', 'misdinar', 'lektor', 'direktur_musik', 'omk', 'pia_pir'] as $roleOption)
                     <option value="{{ $roleOption }}" {{ $user->role == $roleOption ? 'selected' : '' }}>
                         {{ ucwords(str_replace('_', ' ', $roleOption)) }}
                     </option>
