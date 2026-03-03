@@ -11,9 +11,11 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\OrganizationController;
-use App\Http\Controllers\FeedbackController; // Public
+use App\Http\Controllers\FeedbackController; 
 use App\Http\Controllers\Admin\FacilityBookingController;
-use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController; // Admin
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Admin\LingkunganController; // Pastikan ini di-import
+
 
 /*
 |--------------------------------------------------------------------------
@@ -32,13 +34,12 @@ Route::get('/teritorial/{slug}', [PageController::class, 'showTeritorial'])->nam
 Route::get('/organisasi', [PageController::class, 'organisasi'])->name('organisasi.index');
 Route::get('/organisasi/{category}', [PageController::class, 'showOrganization'])->name('organisasi.show');
 Route::get('/organisasi/{category}/{sub_category}', [PageController::class, 'showSubOrganization'])->name('organisasi.sub');
-Route::post('/organization/reorder-teams', [OrganizationController::class, 'reorderTeams'])->name('admin.organization.reorder_teams');
 Route::get('/jadwal-petugas', [PageController::class, 'jadwalPetugas'])->name('jadwal.petugas');
 Route::get('/petugas/{role}', [PageController::class, 'showPetugasRole'])->name('petugas.role');
 Route::get('/lingkungan/{id}', [PageController::class, 'detailLingkungan'])->name('lingkungan.detail');
 
-// Route untuk Menyimpan Data ke DB (POST) - INI YANG DIPAKAI FOOTER
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+
 /*
 |--------------------------------------------------------------------------
 | Auth Routes (Login/Logout)
@@ -57,137 +58,92 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 */
 Route::middleware(['auth'])->prefix('admin')->group(function () {
 
-    // 1. DASHBOARD & PROFILE (Bisa diakses SEMUA role yang login)
-    Route::get('/dashboard', function() { return view('admin.dashboard'); })->name('dashboard');
-    Route::get('/choose-dashboard', function() {
-        // Keamanan ekstra: Jika bukan admin, tendang ke dashboard biasa
-        if(Auth::user()->role !== 'admin') return redirect()->route('dashboard');
-        return view('admin.choose_dashboard');
-    })->name('admin.choose_dashboard');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password');
-
-    Route::middleware(['role:admin,inventaris'])->group(function () {
-        Route::get('/inventaris', function() { 
-            return view('admin.inventaris.dashboard'); 
-        })->name('admin.inventaris.dashboard');
-        
-        // Nanti route CRUD barang inventaris diletakkan di dalam sini
-    });
-
+    // 1. DASHBOARD UTAMA & PROFILE
     Route::get('/dashboard', function() { 
-        // Jika yang login adalah role 'inventaris', paksa tendang ke dashboardnya sendiri
         if (Auth::user()->role === 'inventaris') {
             return redirect()->route('admin.inventaris.dashboard');
         }
-        
-        // Selain inventaris (Admin, Pengurus, OMK, dll) boleh masuk ke sini
         return view('admin.dashboard'); 
     })->name('dashboard');
 
     Route::get('/choose-dashboard', function() {
-        // Jika bukan admin, tendang ke dashboard utama
-        if(Auth::user()->role !== 'admin') {
-            return redirect()->route('dashboard');
-        }
+        if(Auth::user()->role !== 'admin') return redirect()->route('dashboard');
         return view('admin.choose_dashboard');
     })->name('admin.choose_dashboard');
 
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password');
 
-    // 3. DASHBOARD INVENTARIS
-    // Hanya bisa diakses oleh Admin DAN Inventaris
-    Route::middleware(['role:admin,inventaris'])->group(function () {
-        Route::get('/inventaris', function() { 
-            return view('admin.inventaris.dashboard'); 
-        })->name('admin.inventaris.dashboard');
+    // 2. DASHBOARD INVENTARIS (Role: Admin & Inventaris)
+    Route::middleware(['role:admin,inventaris'])->prefix('inventaris')->name('admin.inventaris.')->group(function () {
+        Route::get('/', function() { return view('admin.inventaris.dashboard'); })->name('dashboard');
+        Route::resource('locations', \App\Http\Controllers\Admin\InvLocationController::class);
+        Route::resource('categories', \App\Http\Controllers\Admin\InvCategoryController::class);
+        Route::resource('items', \App\Http\Controllers\Admin\InvItemController::class);
     });
 
-
-    // 2. KHUSUS ADMIN (Logo, Banner, Settings Sistem)
+    // 4. KHUSUS ADMIN SUPER USER
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
         Route::post('/settings/logo', [SettingController::class, 'updateLogo'])->name('admin.settings.logo');
         Route::post('/banners', [SettingController::class, 'storeBanner'])->name('admin.banners.store');
         Route::put('/banners/update-all', [SettingController::class, 'updateAllBanners'])->name('admin.banners.update_all');
         Route::delete('/banners/{id}', [SettingController::class, 'destroyBanner'])->name('admin.banners.destroy');
-        Route::resource('users', \App\Http\Controllers\Admin\UserController::class, ['as' => 'admin']);
-        
+        Route::resource('users', UserController::class, ['as' => 'admin']);
     });
 
-
+    // 5. ADMIN & PENGURUS GEREJA (Umum)
     Route::middleware(['role:admin,pengurus_gereja'])->group(function () {
-        Route::get('/feedback', [App\Http\Controllers\Admin\FeedbackController::class, 'index'])->name('admin.feedback.index');
-        Route::delete('/feedback/{id}', [App\Http\Controllers\Admin\FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
+        Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('admin.feedback.index');
+        Route::delete('/feedback/{id}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
         Route::resource('facility-bookings', FacilityBookingController::class, ['as' => 'admin']);
-        Route::resource('lingkungan', \App\Http\Controllers\Admin\LingkunganController::class, ['as' => 'admin']);
+        Route::resource('lingkungan', LingkunganController::class, ['as' => 'admin']);
     });
 
-
-    // 4. ADMIN & DIREKTUR MUSIK (Kelola Petugas Musik & Jadwal)
-    // Direktur musik boleh mengatur jadwal karena musik bagian dari liturgi
-    Route::middleware(['role:admin,direktur_musik'])->group(function () {
-        // Bisa akses database petugas Mazmur, Organis, Padus
-        // Note: Logic filter tipe petugas bisa ditambahkan di Controller jika ingin strict
-    });
-
-
-    // 5. ZONA LITURGI (Kompleks: Admin, Misdinar, Lektor, DirMusik semua bisa akses tapi beda hak)
-    // Kita buka akses route-nya untuk semua role liturgi, tapi nanti tombolnya kita sembunyikan di View
+    // 6. ZONA LITURGI
     Route::middleware(['role:admin,direktur_musik,misdinar,lektor,pengurus_gereja'])->group(function () {
-        
-        // A. DATABASE PETUGAS
         Route::get('/liturgy/personnels', [LiturgyController::class, 'personnelIndex'])->name('admin.liturgy.personnels');
         Route::get('/liturgy/personnels/create', [LiturgyController::class, 'personnelCreate'])->name('admin.liturgy.personnels.create');
         Route::post('/liturgy/personnels', [LiturgyController::class, 'personnelStore'])->name('admin.liturgy.personnels.store');
-
-        // B. LIHAT DAFTAR JADWAL (Semua Role boleh lihat)
         Route::get('/liturgy/schedules', [LiturgyController::class, 'scheduleIndex'])->name('admin.liturgy.schedules');
+        Route::delete('/liturgy/personnels/{id}', [LiturgyController::class, 'personnelDestroy'])->name('admin.liturgy.personnels.destroy');
 
-        // C. MEMBUAT JADWAL BARU (Hanya Admin, Pengurus, Dir. Musik)
-        // Misdinar & Lektor TIDAK BOLEH buat jadwal baru, cuma boleh ngisi.
+        // CRUD Jadwal
         Route::middleware(['role:admin,pengurus_gereja,direktur_musik'])->group(function() {
             Route::get('/liturgy/schedules/create', [LiturgyController::class, 'scheduleCreate'])->name('admin.liturgy.schedules.create');
             Route::post('/liturgy/schedules', [LiturgyController::class, 'scheduleStore'])->name('admin.liturgy.schedules.store');
-
-            // --- TAMBAHKAN INI (EDIT & DELETE JADWAL) ---
             Route::get('/liturgy/schedules/{id}/edit', [LiturgyController::class, 'editSchedule'])->name('admin.liturgy.schedules.edit');
             Route::put('/liturgy/schedules/{id}', [LiturgyController::class, 'updateSchedule'])->name('admin.liturgy.schedules.update');
             Route::delete('/liturgy/schedules/{id}', [LiturgyController::class, 'destroySchedule'])->name('admin.liturgy.schedules.destroy');
         });
         
-        // D. MENGATUR/MENGISI PETUGAS (Admin, Pengurus, Dir. Musik, Misdinar, Lektor)
-        // PERBAIKAN: Tambahkan 'misdinar' dan 'lektor' di sini agar tidak Error 403
+        // Assign Petugas
         Route::middleware(['role:admin,pengurus_gereja,direktur_musik,misdinar,lektor'])->group(function() {
             Route::get('/liturgy/schedules/{id}/assign', [LiturgyController::class, 'scheduleEdit'])->name('admin.liturgy.assign');
             Route::post('/liturgy/schedules/{id}/assign', [LiturgyController::class, 'assignmentStore'])->name('admin.liturgy.assign.store');
             Route::delete('/liturgy/assignments/{id}', [LiturgyController::class, 'assignmentDestroy'])->name('admin.liturgy.assign.destroy');
         });
-
-        // E. MENGHAPUS DATA PETUGAS (Hanya Admin)
-        Route::delete('/liturgy/personnels/{id}', [LiturgyController::class, 'personnelDestroy'])->name('admin.liturgy.personnels.destroy');
-
-        
     });
 
-    // 6. ORGANISASI (Admin & Pengurus Gereja)
+    // 7. ORGANISASI & KONTEN
     Route::middleware(['role:admin,pengurus_gereja,omk,misdinar,lektor,direktur_musik,pia_pir'])->group(function () {
         
-        // 1. Route Pengumuman (PINDAHKAN KE SINI)
+        // Konten (Pengumuman & Kegiatan)
         Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir'])->group(function () {
             Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
             Route::resource('activities', ActivityController::class, ['as' => 'admin']);
         });
         
-        // 2. Route Organisasi
-        Route::get('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'index'])->name('admin.organization.index');
-        Route::get('/organization/create', [App\Http\Controllers\Admin\OrganizationController::class, 'create'])->name('admin.organization.create');
-        Route::post('/organization', [App\Http\Controllers\Admin\OrganizationController::class, 'store'])->name('admin.organization.store');
-        Route::delete('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'destroy'])->name('admin.organization.destroy');
-        Route::get('/organization/{id}/edit', [App\Http\Controllers\Admin\OrganizationController::class, 'edit'])->name('admin.organization.edit');
-        Route::put('/organization/{id}', [App\Http\Controllers\Admin\OrganizationController::class, 'update'])->name('admin.organization.update');
+        // Struktur Organisasi
+        Route::get('/organization', [OrganizationController::class, 'index'])->name('admin.organization.index');
+        Route::get('/organization/create', [OrganizationController::class, 'create'])->name('admin.organization.create');
+        Route::post('/organization', [OrganizationController::class, 'store'])->name('admin.organization.store');
+        Route::delete('/organization/{id}', [OrganizationController::class, 'destroy'])->name('admin.organization.destroy');
+        Route::get('/organization/{id}/edit', [OrganizationController::class, 'edit'])->name('admin.organization.edit');
+        Route::put('/organization/{id}', [OrganizationController::class, 'update'])->name('admin.organization.update');
         Route::post('/organization/reorder', [OrganizationController::class, 'reorder'])->name('admin.organization.reorder');
+        Route::post('/organization/reorder-teams', [OrganizationController::class, 'reorderTeams'])->name('admin.organization.reorder_teams');
     });
-         
     
 });
