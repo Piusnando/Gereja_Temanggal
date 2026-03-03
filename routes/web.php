@@ -86,6 +86,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/chart-data', [InvDashboardController::class, 'getDataForCharts'])->name('chart_data');
         Route::resource('locations', InvLocationController::class);
         Route::resource('categories', InvCategoryController::class);
+        Route::get('items/export', [\App\Http\Controllers\Admin\InvItemController::class, 'export'])->name('items.export');
         Route::resource('items', InvItemController::class);
     });
 

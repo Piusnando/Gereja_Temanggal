@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\InvItemExport;
 use App\Http\Controllers\Controller;
-use App\Models\InvItem;
 use App\Models\InvCategory;
+use App\Models\InvItem;
 use App\Models\InvLocation;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InvItemController extends Controller
 {
@@ -136,5 +138,14 @@ class InvItemController extends Controller
         $item = InvItem::findOrFail($id);
         $item->delete();
         return back()->with('success', 'Barang berhasil dihapus dari inventaris.');
+    }
+
+    public function export(Request $request) 
+    {
+        // Generate nama file dengan tanggal hari ini
+        $fileName = 'Data_Inventaris_Gereja_' . date('Y-m-d') . '.xlsx';
+        
+        // Memanggil class Export dan melemparkan $request (yg berisi data filter)
+        return Excel::download(new InvItemExport($request->all()), $fileName);
     }
 }

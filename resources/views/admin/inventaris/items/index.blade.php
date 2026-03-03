@@ -7,10 +7,23 @@
         <h1 class="text-2xl font-bold text-gray-800">Data Barang Inventaris</h1>
         <p class="text-sm text-gray-500">Daftar semua aset dan peralatan gereja.</p>
     </div>
-    <a href="{{ route('admin.inventaris.items.create') }}" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex justify-center items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        Input Barang Baru
-    </a>
+    
+    <!-- PERUBAHAN DI SINI: Kita buat wrapper div untuk menampung 2 tombol -->
+    <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+        
+        <!-- TOMBOL EXPORT EXCEL (BARU) -->
+        <!-- request()->all() berfungsi untuk MENGIRIM FILTER SAAT INI ke controller export -->
+        <a href="{{ route('admin.inventaris.items.export', request()->all()) }}" class="w-full sm:w-auto bg-green-100 text-green-700 hover:bg-green-600 hover:text-white border border-green-600 font-bold py-2 px-4 rounded-lg shadow-sm transition flex justify-center items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+            Export Excel
+        </a>
+
+        <!-- TOMBOL INPUT BARU (LAMA) -->
+        <a href="{{ route('admin.inventaris.items.create') }}" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex justify-center items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Tambah Barang
+        </a>
+    </div>
 </div>
 
 {{-- FORM FILTER & SEARCH --}}
