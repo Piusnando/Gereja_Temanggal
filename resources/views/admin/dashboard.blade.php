@@ -18,6 +18,18 @@
             <p class="mt-4 text-sm text-gray-500">
                 Selamat bertugas melayani di Gereja St. Ignatius Loyola Temanggal.
             </p>
+
+            <!-- TOMBOL BERALIH KE INVENTARIS (HANYA UNTUK ADMIN) -->
+            @if(Auth::user()->role === 'admin')
+            <div class="mt-6">
+                <a href="{{ route('admin.inventaris.dashboard') }}" class="inline-flex items-center bg-green-50 text-green-700 hover:bg-green-600 hover:text-white font-bold py-2.5 px-5 rounded-lg shadow-sm transition duration-300 border border-green-200 hover:border-transparent">
+                    <!-- Icon Switch / Panah Bolak Balik -->
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    Beralih ke Dashboard Inventaris
+                </a>
+            </div>
+            @endif
+
         </div>
         
         <!-- Decoration Icon Background -->

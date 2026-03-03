@@ -29,7 +29,7 @@ public function store(Request $request)
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik,omk,pia_pir',
+            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik,omk,pia_pir,inventaris',
         ]);
 
         User::create([

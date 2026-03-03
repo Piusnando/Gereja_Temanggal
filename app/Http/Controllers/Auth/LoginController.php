@@ -46,17 +46,28 @@ class LoginController extends Controller
         // C. Coba Lakukan Login
         if (Auth::attempt($request->only('email', 'password'), $request->remember)) {
             $request->session()->regenerate();
-            RateLimiter::clear($throttleKey); // Hapus catatan gagal
+            RateLimiter::clear($throttleKey);
 
-            // Jika request minta JSON, kirim respon SUKSES dengan URL redirect
+            // LOGIKA REDIRECT BERDASARKAN ROLE
+            $user = Auth::user();
+            $redirectUrl = route('dashboard'); // Default ke dashboard utama
+
+            if ($user->role === 'admin') {
+                // Jika Admin, arahkan ke halaman Pilihan Dashboard
+                $redirectUrl = route('admin.choose_dashboard');
+            } elseif ($user->role === 'inventaris') {
+                // Jika khusus role Inventaris, langsung ke dashboard inventaris
+                $redirectUrl = route('admin.inventaris.dashboard');
+            }
+
             if ($request->wantsJson()) {
                 return response()->json([
                     'status' => 'success',
-                    'redirect_url' => route('dashboard')
+                    'redirect_url' => $redirectUrl // Kirim URL dinamis ini ke JS
                 ]);
             }
 
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended($redirectUrl);
         }
 
         // D. Jika Login Gagal

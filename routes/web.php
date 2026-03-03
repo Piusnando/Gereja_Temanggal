@@ -59,9 +59,49 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // 1. DASHBOARD & PROFILE (Bisa diakses SEMUA role yang login)
     Route::get('/dashboard', function() { return view('admin.dashboard'); })->name('dashboard');
+    Route::get('/choose-dashboard', function() {
+        // Keamanan ekstra: Jika bukan admin, tendang ke dashboard biasa
+        if(Auth::user()->role !== 'admin') return redirect()->route('dashboard');
+        return view('admin.choose_dashboard');
+    })->name('admin.choose_dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password');
+
+    Route::middleware(['role:admin,inventaris'])->group(function () {
+        Route::get('/inventaris', function() { 
+            return view('admin.inventaris.dashboard'); 
+        })->name('admin.inventaris.dashboard');
+        
+        // Nanti route CRUD barang inventaris diletakkan di dalam sini
+    });
+
+    Route::get('/dashboard', function() { 
+        // Jika yang login adalah role 'inventaris', paksa tendang ke dashboardnya sendiri
+        if (Auth::user()->role === 'inventaris') {
+            return redirect()->route('admin.inventaris.dashboard');
+        }
+        
+        // Selain inventaris (Admin, Pengurus, OMK, dll) boleh masuk ke sini
+        return view('admin.dashboard'); 
+    })->name('dashboard');
+
+    Route::get('/choose-dashboard', function() {
+        // Jika bukan admin, tendang ke dashboard utama
+        if(Auth::user()->role !== 'admin') {
+            return redirect()->route('dashboard');
+        }
+        return view('admin.choose_dashboard');
+    })->name('admin.choose_dashboard');
+
+
+    // 3. DASHBOARD INVENTARIS
+    // Hanya bisa diakses oleh Admin DAN Inventaris
+    Route::middleware(['role:admin,inventaris'])->group(function () {
+        Route::get('/inventaris', function() { 
+            return view('admin.inventaris.dashboard'); 
+        })->name('admin.inventaris.dashboard');
+    });
 
 
     // 2. KHUSUS ADMIN (Logo, Banner, Settings Sistem)
