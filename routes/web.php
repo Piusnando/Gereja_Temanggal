@@ -1,20 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\LiturgyController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
-use App\Http\Controllers\Admin\OrganizationController;
-use App\Http\Controllers\FeedbackController; 
 use App\Http\Controllers\Admin\FacilityBookingController;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Admin\InvCategoryController;
+use App\Http\Controllers\Admin\InvDashboardController;
+use App\Http\Controllers\Admin\InvLocationController;
 use App\Http\Controllers\Admin\LingkunganController; // Pastikan ini di-import
+use App\Http\Controllers\Admin\LiturgyController;
+use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\FeedbackController; 
+use App\Http\Controllers\PageController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\InvItemController;
 
 
 /*
@@ -58,7 +62,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 */
 Route::middleware(['auth'])->prefix('admin')->group(function () {
 
-    // 1. DASHBOARD UTAMA & PROFILE
+    // 1. RUTE UMUM (Bisa diakses semua role yang login)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password');
+
+    // 2. LOGIKA PEMILIHAN & DASHBOARD
     Route::get('/dashboard', function() { 
         if (Auth::user()->role === 'inventaris') {
             return redirect()->route('admin.inventaris.dashboard');
@@ -71,17 +80,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.choose_dashboard');
     })->name('admin.choose_dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password');
-
-    // 2. DASHBOARD INVENTARIS (Role: Admin & Inventaris)
+    // 3. RUTE INVENTARIS (HANYA UNTUK ADMIN & INVENTARIS)
     Route::middleware(['role:admin,inventaris'])->prefix('inventaris')->name('admin.inventaris.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\InvDashboardController::class, 'index'])->name('dashboard');
-        Route::resource('locations', \App\Http\Controllers\Admin\InvLocationController::class);
-        Route::resource('categories', \App\Http\Controllers\Admin\InvCategoryController::class);
-        Route::resource('items', \App\Http\Controllers\Admin\InvItemController::class);
-        Route::get('/chart-data', [\App\Http\Controllers\Admin\InvDashboardController::class, 'getDataForCharts'])->name('chart_data');
+        Route::get('/', [InvDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/chart-data', [InvDashboardController::class, 'getDataForCharts'])->name('chart_data');
+        Route::resource('locations', InvLocationController::class);
+        Route::resource('categories', InvCategoryController::class);
+        Route::resource('items', InvItemController::class);
     });
 
     // 4. KHUSUS ADMIN SUPER USER
