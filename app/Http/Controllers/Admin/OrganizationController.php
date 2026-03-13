@@ -134,7 +134,7 @@ class OrganizationController extends Controller
         $data['sub_bidang'] = $this->normalizeSubBidang($request->sub_bidang);
         
         if ($request->hasFile('image')) {
-            // ... kode upload ...
+            $data['image'] = $request->file('image')->store('uploads/organization', 'public');
         }
 
         $member->update($data);

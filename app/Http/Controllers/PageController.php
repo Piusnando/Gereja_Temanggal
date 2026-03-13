@@ -226,11 +226,10 @@ class PageController extends Controller
 
         $members = \App\Models\OrganizationMember::where('bidang', $bidangName)
                     ->with('lingkungan')
-                    // Urutkan berdasarkan nama tim A-Z
                     ->orderBy('sub_bidang', 'asc') 
-                    // --- PERBAIKAN DI SINI ---
-                    // LALU, urutkan anggota di dalam tim sesuai admin panel
-                    ->orderBy('sort_order', 'asc') 
+                    // Trik SQL yang sama
+                    ->orderByRaw('sort_order = 0, sort_order ASC')
+                    ->orderBy('id', 'asc')
                     ->get()
                     ->groupBy('sub_bidang');
 
@@ -238,23 +237,22 @@ class PageController extends Controller
     }
     public function showSubOrganization($category, $sub_category)
     {
-        // 1. Decode URL (menghilangkan %20 dsb)
         $bidangName = urldecode($category);
         $subName = urldecode($sub_category);
 
-        // 2. Ambil Anggota HANYA dari Bidang & Sub Bidang tersebut
         $members = \App\Models\OrganizationMember::where('bidang', $bidangName)
                     ->where('sub_bidang', $subName)
                     ->with('lingkungan')
-                    ->orderBy('sort_order', 'asc') 
-                    ->get(); 
+                    // 1. Trik SQL: Taruh yang sort_order-nya 0 di paling bawah
+                    ->orderByRaw('sort_order = 0, sort_order ASC')
+                    // 2. Fallback: Jika sama-sama 0, urutkan dari ID terlama
+                    ->orderBy('id', 'asc')
+                    ->get();
 
-        // 3. Jika data tidak ditemukan (user ketik url ngawur), kembalikan ke halaman bidang
         if ($members->isEmpty()) {
             return redirect()->route('organisasi.show', ['category' => $bidangName]);
         }
 
-        // 4. Return ke View Baru
         return view('pages.detail-tim', compact('members', 'bidangName', 'subName'));
     }
 
