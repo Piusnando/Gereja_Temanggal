@@ -80,25 +80,26 @@ class SettingController extends Controller
     }
 
     public function updateAllBanners(Request $request)
-    {
-        $request->validate([
-            'banners' => 'required|array',
-            'banners.*.title' => 'nullable|string|max:255',
-            'banners.*.order' => 'required|integer',
-            'banners.*.is_active' => 'required|boolean',
-        ]);
+{
+    $request->validate([
+        'banners' => 'nullable|array',
+        'banners.*.title' => 'nullable|string|max:255',
+        'banners.*.order' => 'required|integer',
+        'banners.*.is_active' => 'required|boolean',
+    ]);
 
-        $banners = $request->input('banners');
+    $banners = $request->input('banners');
 
+    if ($banners) {
         foreach ($banners as $id => $data) {
-            // Update tiap baris berdasarkan ID
             Banner::where('id', $id)->update([
                 'title' => $data['title'],
                 'order' => $data['order'],
                 'is_active' => $data['is_active'],
             ]);
         }
-
-        return back()->with('success', 'Semua perubahan berhasil disimpan!');
     }
+
+    return back()->with('success', 'Semua perubahan berhasil disimpan!');
+}
 }
