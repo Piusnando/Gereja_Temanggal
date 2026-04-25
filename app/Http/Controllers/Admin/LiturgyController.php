@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Territory;
 use App\Models\Lingkungan;
 use Illuminate\Http\Request;
 use App\Models\LiturgySchedule;
@@ -106,10 +105,39 @@ class LiturgyController extends Controller
     // =========================================================================
 
     public function scheduleIndex()
-    {
-        $schedules = LiturgySchedule::orderBy('event_at', 'desc')->paginate(10);
-        return view('admin.liturgy.schedules', compact('schedules'));
+{
+    $userRole = Auth::user()->role;
+
+    // 1. Ambil SEMUA jadwal untuk dimasukkan ke dalam Kalender
+    $allSchedules = \App\Models\LiturgySchedule::with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])->get();
+
+    // 2. Ambil jadwal terdekat (Upcoming) untuk list di sidebar kanan
+    $upcomingSchedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
+                            ->with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])
+                            ->orderBy('event_at', 'asc')
+                            ->take(5)
+                            ->get();
+
+    // 3. Tentukan hak akses (Siapa yang boleh mendaftarkan tugas apa)
+    $allowedRoles =[];
+    if (in_array($userRole, ['admin', 'pengurus_gereja'])) {
+        $allowedRoles =['Misdinar', 'Lektor', 'Mazmur', 'Organis', 'Paduan Suara', 'Parkir'];
+    } elseif ($userRole == 'direktur_musik') {
+        $allowedRoles =['Mazmur', 'Organis', 'Paduan Suara'];
+    } elseif ($userRole == 'misdinar') {
+        $allowedRoles = ['Misdinar'];
+    } elseif ($userRole == 'lektor') {
+        $allowedRoles = ['Lektor'];
     }
+
+    // 4. Ambil semua master data agar siap dipilih di dalam Pop-up nanti
+    $personnels = \App\Models\LiturgyPersonnel::with('lingkungan')->orderBy('name')->get();
+    $lingkungans = \App\Models\Lingkungan::orderBy('name')->get();
+
+    return view('admin.liturgy.schedules', compact(
+        'allSchedules', 'upcomingSchedules', 'allowedRoles', 'personnels', 'lingkungans'
+    ));
+}
 
     public function scheduleCreate()
     {

@@ -1,6 +1,17 @@
 @extends('layouts.admin')
 
 @section('content')
+
+{{-- HELPER PHP UNTUK FORMATTING DATA JSON KE ALPINE.JS --}}
+@php
+    $formatData = function($items) {
+        return $items->map(function($p) {
+            $asal = $p->is_external ? 'Luar: ' . $p->external_description : ($p->lingkungan->name ?? 'Lintas Lingkungan');
+            return['id' => $p->id, 'name' => $p->name, 'asal' => $asal];
+        })->values()->toJson();
+    };
+@endphp
+
 <div class="flex flex-col md:flex-row gap-6">
     
     <!-- ============================================= -->
@@ -8,7 +19,7 @@
     <!-- ============================================= -->
     <div class="w-full md:w-1/3">
         
-        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100 mb-6" 
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-6" 
             x-data="{ 
                 role: '{{ $roles[0] ?? '' }}', 
                 selectedWilayah: '', 
@@ -19,7 +30,9 @@
                 init() {
                     this.$watch('role', (value) => {
                         this.inputMode = 'existing';
-                        this.selectedWilayah = ''; // Reset wilayah jika ganti peran
+                        this.selectedWilayah = ''; 
+                        // Memancarkan event untuk mereset kolom pencarian saat ganti peran
+                        window.dispatchEvent(new CustomEvent('reset-search'));
                     });
                 }
             }" x-init="init()">
@@ -53,17 +66,14 @@
                 <!-- 1. PILIH PERAN -->
                 <div class="mb-4">
                     <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Peran / Tugas</label>
-                    <select name="role" x-model="role" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    <select name="role" x-model="role" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition font-semibold text-gray-800">
                         @foreach($roles as $r)
                             <option value="{{ $r }}">{{ $r }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- 
-                   TOGGLE: INPUT BARU / LUAR 
-                   Hanya muncul untuk Paduan Suara & Parkir
-                -->
+                <!-- TOGGLE: INPUT BARU / LUAR -->
                 <div class="mb-4 bg-yellow-50 p-3 rounded-lg border border-yellow-200" 
                      x-show="['Paduan Suara', 'Parkir'].includes(role)" 
                      x-transition>
@@ -78,56 +88,45 @@
                 </div>
                 
                 <!-- ============================================= -->
-                <!-- MODE 1: PILIH DARI DATABASE (EXISTING) -->
+                <!-- MODE 1: PILIH DARI DATABASE (SEARCHABLE) -->
                 <!-- ============================================= -->
                 <div x-show="inputMode === 'existing'" x-transition>
                     
-                    <!-- A. TUGAS PERORANGAN (DROPDOWN TERPISAH) -->
-                    <!-- Teknik ini menjamin semua data muncul -->
-                    
                     <div class="space-y-4">
-                        <!-- Misdinar -->
+                        <!-- Komponen Pencarian Misdinar -->
                         <div x-show="role === 'Misdinar'">
-                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Misdinar</label>
-                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Misdinar'">
-                                <option value="">-- Pilih Misdinar --</option>
-                                @foreach($misdinars as $p) 
-                                    <option value="{{ $p->id }}">{{ $p->name }} {{ $p->lingkungan ? '('.$p->lingkungan->name.')' : '' }}</option> 
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Cari Nama Misdinar</label>
+                            <div x-data="searchableSelect({!! $formatData($misdinars) !!})" @reset-search.window="reset()">
+                                @include('admin.liturgy.partials.search_dropdown')
+                                <input type="hidden" name="personnel_id" x-model="selectedId" :disabled="role !== 'Misdinar'">
+                            </div>
                         </div>
 
-                        <!-- Lektor -->
+                        <!-- Komponen Pencarian Lektor -->
                         <div x-show="role === 'Lektor'">
-                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Lektor</label>
-                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Lektor'">
-                                <option value="">-- Pilih Lektor --</option>
-                                @foreach($lektors as $p) 
-                                    <option value="{{ $p->id }}">{{ $p->name }} {{ $p->lingkungan ? '('.$p->lingkungan->name.')' : '' }}</option> 
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Cari Nama Lektor</label>
+                            <div x-data="searchableSelect({!! $formatData($lektors) !!})" @reset-search.window="reset()">
+                                @include('admin.liturgy.partials.search_dropdown')
+                                <input type="hidden" name="personnel_id" x-model="selectedId" :disabled="role !== 'Lektor'">
+                            </div>
                         </div>
 
-                        <!-- Mazmur -->
+                        <!-- Komponen Pencarian Mazmur -->
                         <div x-show="role === 'Mazmur'">
-                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Pemazmur</label>
-                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Mazmur'">
-                                <option value="">-- Pilih Pemazmur --</option>
-                                @foreach($mazmurs as $p) 
-                                    <option value="{{ $p->id }}">{{ $p->name }}</option> 
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Cari Nama Pemazmur</label>
+                            <div x-data="searchableSelect({!! $formatData($mazmurs) !!})" @reset-search.window="reset()">
+                                @include('admin.liturgy.partials.search_dropdown')
+                                <input type="hidden" name="personnel_id" x-model="selectedId" :disabled="role !== 'Mazmur'">
+                            </div>
                         </div>
 
-                        <!-- Organis -->
+                        <!-- Komponen Pencarian Organis -->
                         <div x-show="role === 'Organis'">
-                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Nama Organis</label>
-                            <select name="personnel_id" class="w-full border border-gray-300 rounded-lg p-2.5" :disabled="role !== 'Organis'">
-                                <option value="">-- Pilih Organis --</option>
-                                @foreach($organis as $p) 
-                                    <option value="{{ $p->id }}">{{ $p->name }}</option> 
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Cari Nama Organis</label>
+                            <div x-data="searchableSelect({!! $formatData($organis) !!})" @reset-search.window="reset()">
+                                @include('admin.liturgy.partials.search_dropdown')
+                                <input type="hidden" name="personnel_id" x-model="selectedId" :disabled="role !== 'Organis'">
+                            </div>
                         </div>
                     </div>
 
@@ -135,8 +134,8 @@
                     <template x-if="['Paduan Suara', 'Parkir'].includes(role)">
                         <div class="space-y-4 bg-blue-50 p-4 rounded-lg border border-blue-100">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Filter Wilayah</label>
-                                <select x-model="selectedWilayah" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
+                                <label class="block text-xs font-bold uppercase text-blue-700 mb-1">Filter Wilayah</label>
+                                <select x-model="selectedWilayah" class="w-full border border-blue-300 rounded-lg p-3 bg-white focus:ring-2 focus:ring-blue-500 shadow-sm">
                                     <option value="">-- Pilih Wilayah --</option>
                                     <template x-for="wilayah in territoriesData" :key="wilayah.id">
                                         <option :value="wilayah.id" x-text="wilayah.name"></option>
@@ -144,8 +143,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Pilih Lingkungan</label>
-                                <select name="lingkungan_id" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white disabled:bg-gray-100" 
+                                <label class="block text-xs font-bold uppercase text-blue-700 mb-1">Pilih Lingkungan</label>
+                                <select name="lingkungan_id" class="w-full border border-blue-300 rounded-lg p-3 bg-white disabled:bg-gray-100 shadow-sm focus:ring-2 focus:ring-blue-500" 
                                         :disabled="selectedWilayah === ''">
                                     <option value="">-- Pilih Lingkungan --</option>
                                     <template x-for="wilayah in territoriesData">
@@ -158,7 +157,6 @@
                                         </template>
                                     </template>
                                 </select>
-                                <p x-show="selectedWilayah === ''" class="text-xs text-blue-500 mt-1 italic">* Pilih wilayah dulu.</p>
                             </div>
                         </div>
                     </template>
@@ -170,16 +168,15 @@
                 <div x-show="inputMode === 'new'" class="space-y-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-4" x-transition>
                     <div>
                         <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">Nama Kelompok</label>
-                        <input type="text" name="new_name" class="w-full border border-yellow-300 rounded-lg p-2.5 focus:ring-2 focus:ring-yellow-500" placeholder="Contoh: Padus Univ. Atma Jaya">
+                        <input type="text" name="new_name" class="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 shadow-sm" placeholder="Contoh: Padus Univ. Atma Jaya">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">Asal (Paroki / Instansi)</label>
-                        <input type="text" name="new_description" class="w-full border border-yellow-300 rounded-lg p-2.5 focus:ring-2 focus:ring-yellow-500" placeholder="Contoh: Paroki Nandan">
+                        <input type="text" name="new_description" class="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 shadow-sm" placeholder="Contoh: Paroki Nandan">
                     </div>
-                    <p class="text-xs text-yellow-600 italic">* Data ini akan otomatis tersimpan sebagai "Luar Paroki".</p>
                 </div>
 
-                <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center">
+                <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center transform hover:-translate-y-0.5">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     Simpan Petugas
                 </button>
@@ -194,4 +191,41 @@
         @include('admin.liturgy.partials.table_assign') 
     </div>
 </div>
+
+<!-- ========================================== -->
+<!-- SCRIPT KOMPONEN PENCARIAN (ALPINE.JS) -->
+<!-- ========================================== -->
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('searchableSelect', (optionsData) => ({
+            options: optionsData,
+            search: '',
+            selectedId: '',
+            isOpen: false,
+
+            get filteredOptions() {
+                if (this.search === '') {
+                    return this.options;
+                }
+                const lowerSearch = this.search.toLowerCase();
+                return this.options.filter(opt => 
+                    opt.name.toLowerCase().includes(lowerSearch) || 
+                    opt.asal.toLowerCase().includes(lowerSearch)
+                );
+            },
+
+            selectOption(opt) {
+                this.selectedId = opt.id;
+                this.search = opt.name; // Ganti teks pencarian dengan nama terpilih
+                this.isOpen = false;
+            },
+
+            reset() {
+                this.search = '';
+                this.selectedId = '';
+                this.isOpen = false;
+            }
+        }));
+    });
+</script>
 @endsection
