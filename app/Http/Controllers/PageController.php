@@ -180,26 +180,15 @@ class PageController extends Controller
 
     public function jadwalPetugas() 
     {
-        // KODE ASLI (Disimpan/Komentar dulu)
-        /*
         $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
                         ->with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])
                         ->orderBy('event_at', 'asc')
                         ->get();
         return view('pages.jadwal-petugas', compact('schedules'));
-        */
-
-        // KODE SEMENTARA
-        return view('pages.coming-soon', [
-            'title' => 'Jadwal Petugas - Segera Hadir',
-            'pageName' => 'Jadwal Petugas Liturgi'
-        ]);
     }
 
     public function showPetugasRole($role)
     {
-        // KODE ASLI (Disimpan/Komentar dulu)
-        /*
         $schedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
             ->whereHas('assignments', function($q) use ($role) {
                 $q->where('role', $role);
@@ -211,13 +200,6 @@ class PageController extends Controller
             ->get();
 
         return view('pages.petugas-role', compact('schedules', 'role'));
-        */
-
-        // KODE SEMENTARA
-        return view('pages.coming-soon', [
-            'title' => "Jadwal $role - Segera Hadir",
-            'pageName' => "Jadwal $role"
-        ]);
     }
 
     public function showOrganization($category) 

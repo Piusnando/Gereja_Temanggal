@@ -1,11 +1,6 @@
 @extends('layouts.main')
 
 @section('title', 'Jadwal Petugas Liturgi - Gereja St. Ignatius Loyola')
-@section('header', '')
-<meta name="description" content="@yield('meta_description', 'Website resmi Gereja St. Ignatius Loyola Kalasan Tengah - Paroki Maria Marganingsih Kalasan. Informasi jadwal misa, pengumuman, dan teritorial wilayah.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'Gereja St. Ignatius Loyola, Kalasan Tengah, Gereja Temanggal, Paroki Kalasan, Gereja Katolik, gereja di Sleman, Jadwal Misa, Pengumuman Gereja, Teritorial Wilayah, Organisasi Gereja, Petugas Liturgi, OMK, Misdinar, Lektor, Mazmur, Paduan Suara, Parkir Gereja, kalasan tengah, gereja yogyakarta, 
-    gereja sleman, gereja di kalasan, paroki maria marganingsih kalasan, Gereja St. Ignatius Loyola Temanggal, Gereja Katolik di Kalasan, Jadwal Misa Kalasan, Pengumuman Gereja Kalasan, Teritorial Wilayah Kalasan, Organisasi Gereja Kalasan, Petugas Liturgi Kalasan, OMK Kalasan, Misdinar Kalasan, Lektor Kalasan, Mazmur Kalasan, Paduan Suara Kalasan, Parkir Gereja Kalasan,
-    gereja temanggal, gereja di temanggal, paroki kalasan, Gereja St. Ignatius Loyola Kalasan Tengah Temanggal ')">
 
 @section('content')
 <div class="bg-gray-50 min-h-screen py-12">
@@ -15,7 +10,7 @@
         <div class="text-center mb-12">
             <span class="text-logo-blue font-bold tracking-widest uppercase text-sm">Informasi Pelayanan</span>
             <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Jadwal Petugas Liturgi</h1>
-            <p class="text-gray-500 mt-2">Jadwal tugas pelayanan ekaristi Gereja St. Ignatius Loyola Temanggal</p>
+            <p class="text-gray-500 mt-2">Jadwal tugas pelayanan ekaristi Gereja St. Ignatius Loyola Temanggal yang akan datang.</p>
         </div>
 
         <!-- GRID JADWAL -->
@@ -47,7 +42,14 @@
                 <div class="p-0 bg-gray-50 grow">
                     <table class="w-full text-sm text-left">
                         <tbody class="divide-y divide-gray-200">
-                            @foreach($schedule->assignments as $tugas)
+                            @php
+                                $sortedAssignments = $schedule->assignments->sortBy(function ($item) {
+                                    $order = ['Misdinar'=>1, 'Lektor'=>2, 'Mazmur'=>3, 'Organis'=>4, 'Paduan Suara'=>5, 'Parkir'=>6];
+                                    return $order[$item->role] ?? 99;
+                                });
+                            @endphp
+
+                            @forelse($sortedAssignments as $tugas)
                             <tr class="group hover:bg-white transition">
                                 <!-- Kolom Peran -->
                                 <td class="py-4 px-6 font-bold text-gray-500 w-1/3 align-top uppercase text-xs tracking-wider">
@@ -56,71 +58,33 @@
                                 
                                 <!-- Kolom Nama Petugas -->
                                 <td class="py-4 px-6 align-top">
-                                    
-                                    {{-- 1. JIKA PETUGAS PERORANGAN (Misdinar, Lektor, Mazmur, Organis) --}}
                                     @if($tugas->personnel)
                                         <div class="flex items-start">
-                                            <span class="text-gray-800 font-bold text-base leading-snug">
-                                                {{ $tugas->personnel->name }}
-                                            </span>
+                                            <span class="text-gray-800 font-bold text-base leading-snug">{{ $tugas->personnel->name }}</span>
                                         </div>
-                                        
-                                        <!-- Info Asal -->
                                         <div class="mt-1">
                                             @if($tugas->personnel->is_external)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                    {{ $tugas->personnel->external_description }} (Luar)
-                                                </span>
-                                            @else
-                                                <span class="text-gray-500 text-xs flex items-center">
-                                                    <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                                    {{ $tugas->personnel->lingkungan->name ?? '-' }}
-                                                </span>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{ $tugas->personnel->external_description }}</span>
+                                            @elseif($tugas->personnel->lingkungan)
+                                                <span class="text-gray-500 text-xs flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>{{ $tugas->personnel->lingkungan->name }}</span>
                                             @endif
                                         </div>
-
-                                    {{-- 2. JIKA TUGAS KELOMPOK INTERNAL (Padus/Parkir Wilayah) --}}
                                     @elseif($tugas->lingkungan)
-                                        <div class="flex items-start">
-                                            <span class="text-gray-800 font-bold text-base leading-snug">
-                                                {{ $tugas->lingkungan->name }}
-                                            </span>
-                                        </div>
-                                        <div class="mt-1">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                                Tugas Wilayah
-                                            </span>
-                                        </div>
-
-                                    {{-- 3. JIKA TUGAS KELOMPOK EKSTERNAL (Padus Tamu/Karang Taruna) --}}
+                                        <div class="flex items-start"><span class="text-gray-800 font-bold text-base leading-snug">{{ $tugas->lingkungan->name }}</span></div>
+                                        <div class="mt-1"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Tugas Wilayah</span></div>
                                     @elseif($tugas->description)
-                                        <div class="flex items-start">
-                                            <span class="text-gray-800 font-bold text-base leading-snug">
-                                                {{ $tugas->description }}
-                                            </span>
-                                        </div>
-                                        <div class="mt-1">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                                Dari Luar Paroki
-                                            </span>
-                                        </div>
-
-                                    {{-- 4. JIKA DATA HILANG --}}
+                                        <div class="flex items-start"><span class="text-gray-800 font-bold text-base leading-snug">{{ $tugas->description }}</span></div>
+                                        <div class="mt-1"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">Dari Luar Paroki</span></div>
                                     @else
-                                        <span class="text-red-400 italic text-xs">Data petugas tidak ditemukan</span>
+                                        <span class="text-red-400 italic text-xs">Data tidak ditemukan</span>
                                     @endif
-
                                 </td>
                             </tr>
-                            @endforeach
-
-                            @if($schedule->assignments->isEmpty())
+                            @empty
                             <tr>
-                                <td colspan="2" class="py-8 text-center text-gray-400 italic text-sm">
-                                    Belum ada petugas yang dijadwalkan untuk misa ini.
-                                </td>
+                                <td colspan="2" class="py-8 text-center text-gray-400 italic text-sm">Belum ada petugas yang dijadwalkan untuk misa ini.</td>
                             </tr>
-                            @endif
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -134,7 +98,6 @@
                 <p class="text-gray-500 mt-2">Jadwal petugas liturgi belum tersedia saat ini. Silakan cek kembali nanti.</p>
             </div>
             @endforelse
-
         </div>
     </div>
 </div>

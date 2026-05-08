@@ -1,11 +1,8 @@
 @extends('layouts.main')
-@section('title', 'Jadwal ' . $role)
-@section('content')
-<meta name="description" content="@yield('meta_description', 'Website resmi Gereja St. Ignatius Loyola Kalasan Tengah - Paroki Maria Marganingsih Kalasan. Informasi jadwal misa, pengumuman, dan teritorial wilayah.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'Gereja St. Ignatius Loyola, Kalasan Tengah, Gereja Temanggal, Paroki Kalasan, Gereja Katolik, gereja di Sleman, Jadwal Misa, Pengumuman Gereja, Teritorial Wilayah, Organisasi Gereja, Petugas Liturgi, OMK, Misdinar, Lektor, Mazmur, Paduan Suara, Parkir Gereja, kalasan tengah, gereja yogyakarta, 
-    gereja sleman, gereja di kalasan, paroki maria marganingsih kalasan, Gereja St. Ignatius Loyola Temanggal, Gereja Katolik di Kalasan, Jadwal Misa Kalasan, Pengumuman Gereja Kalasan, Teritorial Wilayah Kalasan, Organisasi Gereja Kalasan, Petugas Liturgi Kalasan, OMK Kalasan, Misdinar Kalasan, Lektor Kalasan, Mazmur Kalasan, Paduan Suara Kalasan, Parkir Gereja Kalasan,
-    gereja temanggal, gereja di temanggal, paroki kalasan, Gereja St. Ignatius Loyola Kalasan Tengah Temanggal ')">
 
+@section('title', 'Jadwal ' . $role . ' - Gereja St. Ignatius Loyola')
+
+@section('content')
 <div class="bg-gray-50 min-h-screen py-12">
     <div class="max-w-4xl mx-auto px-4">
         <div class="text-center mb-10">
@@ -31,54 +28,27 @@
                 <div class="space-y-3">
                 @foreach($schedule->assignments as $assign)
                 <div class="flex items-center p-3 bg-blue-50/50 rounded-lg border border-blue-100 hover:bg-blue-100 transition">
-                    
-                    <!-- Ikon -->
                     <div class="bg-white p-2 rounded-full text-logo-blue mr-4 shadow-sm shrink-0">
                         @if(in_array($assign->role, ['Paduan Suara', 'Parkir']))
-                            <!-- Ikon Group -->
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         @else
-                            <!-- Ikon User -->
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         @endif
                     </div>
 
-                    <!-- Detail Nama -->
                     <div>
-                        @if(in_array($role, ['Paduan Suara', 'Parkir']))
-                            {{-- LOGIKA BARU UNTUK KELOMPOK --}}
-                            @if($assign->lingkungan)
-                                <!-- Internal -->
-                                <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->lingkungan->name }}</p>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 uppercase tracking-wide mt-1">
-                                    Tugas Wilayah
-                                </span>
-                            @elseif($assign->description)
-                                <!-- Eksternal -->
-                                <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->description }}</p>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 uppercase tracking-wide mt-1">
-                                    Dari Luar Paroki
-                                </span>
-                            @else
-                                <!-- Data Kosong -->
-                                <p class="font-bold text-gray-400 italic">Data Tidak Ditemukan</p>
-                            @endif
-
+                        @if($assign->lingkungan)
+                            <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->lingkungan->name }}</p>
+                        @elseif($assign->description)
+                             <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->description }}</p>
                         @else
-                            {{-- LOGIKA UNTUK PERORANGAN (Misdinar, Lektor, dll) --}}
-                            <p class="font-bold text-gray-900 text-lg leading-tight">
-                                {{ $assign->personnel->name ?? 'Nama Terhapus' }}
-                            </p>
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                {{ $assign->personnel->is_external 
-                                    ? 'Luar: ' . $assign->personnel->external_description 
-                                    : ($assign->personnel->lingkungan->name ?? '-') 
-                                }}
-                            </p>
+                            <p class="font-bold text-gray-900 text-lg leading-tight">{{ $assign->personnel->name ?? 'Nama Terhapus' }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">{{ $assign->personnel->is_external ? 'Luar: ' . $assign->personnel->external_description : ($assign->personnel->lingkungan->name ?? '-') }}</p>
                         @endif
                     </div>
                 </div>
                 @endforeach
+                </div>
             </div>
         </div>
         @empty
