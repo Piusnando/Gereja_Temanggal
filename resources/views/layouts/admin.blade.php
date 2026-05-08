@@ -168,18 +168,34 @@
                         <span class="font-medium">Berita Kegiatan</span>
                     </a>
                 @endif
-{{-- 
-                <!-- BINA IMAN (NEW) -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir']))
-                    <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Bina Iman</div>
+
+                <!-- MENU 1: KHUSUS OMK (Tampil untuk Admin & OMK) -->
+                @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'omk']))
+                    <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Bina Iman OMK</div>
                     
-                    <a href="{{ route('admin.youth.dashboard') }}" 
-                    class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.youth.dashboard') ? 'bg-active text-white' : '' }}">
-                        <!-- Icon User Group (Orange) -->
-                        <svg class="w-5 h-5 mr-3 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        <span class="font-medium">Dashboard Youth</span>
+                    <a href="{{ route('admin.youth.members', 'omk') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->is('admin/youth/omk/members*') ? 'bg-active text-white' : '' }}">
+                        <svg class="w-5 h-5 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="font-medium">Data Anggota OMK</span>
                     </a>
-                @endif --}}
+                    <a href="{{ route('admin.youth.events', 'omk') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->is('admin/youth/omk/events*') ? 'bg-active text-white' : '' }}">
+                        <svg class="w-5 h-5 mr-3 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        <span class="font-medium">Absensi OMK</span>
+                    </a>
+                @endif
+
+                <!-- MENU 2: KHUSUS PIA/PIR (Tampil untuk Admin & PIA/PIR) -->
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'pia_pir']))
+                    <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Bina Iman PIA / PIR</div>
+                    
+                    <a href="{{ route('admin.youth.members', 'pia-pir') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->is('admin/youth/pia-pir/members*') ? 'bg-active text-white' : '' }}">
+                        <svg class="w-5 h-5 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <span class="font-medium">Data Anak PIA/PIR</span>
+                    </a>
+                    <a href="{{ route('admin.youth.events', 'pia-pir') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->is('admin/youth/pia-pir/events*') ? 'bg-active text-white' : '' }}">
+                        <svg class="w-5 h-5 mr-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        <span class="font-medium">Absensi PIA/PIR</span>
+                    </a>
+                @endif
 
                 <!-- FASILITAS GEREJA -->
                 @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))

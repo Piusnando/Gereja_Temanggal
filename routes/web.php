@@ -152,5 +152,21 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/organization/reorder', [OrganizationController::class, 'reorder'])->name('admin.organization.reorder');
         Route::post('/organization/reorder-teams', [OrganizationController::class, 'reorderTeams'])->name('admin.organization.reorder_teams');
     });
+
+    // BINA IMAN (OMK & PIA/PIR) - Dipisah berdasarkan URL {category}
+    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir'])->prefix('youth/{category}')->name('admin.youth.')->group(function () {
+        Route::get('/members', [\App\Http\Controllers\Admin\YouthController::class, 'membersIndex'])->name('members');
+        Route::post('/members',[\App\Http\Controllers\Admin\YouthController::class, 'memberStore'])->name('members.store');
+        Route::delete('/members/{id}',[\App\Http\Controllers\Admin\YouthController::class, 'memberDestroy'])->name('members.destroy');
+        
+        Route::get('/members/{id}/edit',[\App\Http\Controllers\Admin\YouthController::class, 'memberEdit'])->name('members.edit');
+        Route::put('/members/{id}', [\App\Http\Controllers\Admin\YouthController::class, 'memberUpdate'])->name('members.update');
+
+        Route::get('/events', [\App\Http\Controllers\Admin\YouthController::class, 'eventsIndex'])->name('events');
+        Route::post('/events',[\App\Http\Controllers\Admin\YouthController::class, 'eventStore'])->name('events.store');
+        
+        Route::get('/events/{id}/attendance', [\App\Http\Controllers\Admin\YouthController::class, 'attendanceShow'])->name('attendance');
+        Route::post('/events/{id}/attendance',[\App\Http\Controllers\Admin\YouthController::class, 'attendanceStore'])->name('attendance.store');
+    });
     
 });
