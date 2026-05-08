@@ -81,11 +81,34 @@ class YouthController extends Controller
         $this->checkAccess($categoryUrl);
         $dbCategory = $this->resolveCategory($categoryUrl);
 
-        $events = YouthEvent::where('category', $dbCategory)->orderBy('event_date', 'desc')->paginate(10);
+        // 1. Ambil daftar kegiatan beserta jumlah yang HADIR (untuk ditampilkan di card)
+        $events = YouthEvent::withCount(['attendances' => function($query) {
+                        $query->where('status', 'Hadir');
+                    }])
+                    ->where('category', $dbCategory)
+                    ->orderBy('event_date', 'desc')
+                    ->paginate(6);
         
-        return view('admin.youth.events', compact('events', 'dbCategory', 'categoryUrl'));
-    }
+        // 2. Siapkan Data untuk Grafik (Ambil 10 Kegiatan Terakhir)
+        $latestEvents = YouthEvent::where('category', $dbCategory)
+                        ->withCount(['attendances' => function($query) {
+                            $query->where('status', 'Hadir');
+                        }])
+                        ->orderBy('event_date', 'desc')
+                        ->take(10)
+                        ->get()
+                        ->reverse() // Balik urutan agar di grafik tampil dari kiri (lama) ke kanan (baru)
+                        ->values();
 
+        // 3. Pisahkan nama label (tanggal + judul) dan nilai angkanya
+        $chartLabels = $latestEvents->map(function($e) {
+            return $e->event_date->format('d M') . ' (' . \Illuminate\Support\Str::limit($e->title, 12) . ')';
+        })->toArray();
+
+        $chartData = $latestEvents->pluck('attendances_count')->toArray();
+
+        return view('admin.youth.events', compact('events', 'dbCategory', 'categoryUrl', 'chartLabels', 'chartData'));
+    }
     public function eventStore(Request $request, $categoryUrl)
     {
         $this->checkAccess($categoryUrl);
