@@ -169,10 +169,88 @@
                 <h3 class="text-2xl font-bold">Pilih Peran</h3>
             </div>
 
-            <!-- Title Step 4 (Pilih Orang) -->
-            <div x-show="step === 4" class="flex items-center" style="display: none;">
-                <button @click="step = 3; searchQuery=''" class="mr-4 hover:text-blue-200 bg-white/10 p-2 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                <h3 class="text-2xl font-bold">Pilih <span x-text="selectedRole" class="text-yellow-400"></span></h3>
+           <!-- ============================================== -->
+            <!-- STEP 4: PILIH ORANG/LINGKUNGAN & SAVE          -->
+            <!-- ============================================== -->
+            <div x-show="step === 4" style="display: none;">
+                
+                <!-- OPSI CHECKBOX UNTUK PETUGAS LUAR -->
+                <div x-show="['Paduan Suara', 'Parkir'].includes(selectedRole)" 
+                    class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200" x-transition>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_external_manual_toggle" x-model="isExternal"
+                            class="form-checkbox h-5 w-5 text-yellow-600 rounded focus:ring-yellow-500">
+                        <span class="ml-3 text-sm font-medium text-yellow-800 select-none">
+                            Petugas dari Luar Paroki? (Ketik Manual)
+                        </span>
+                    </label>
+                </div>
+
+                <!-- ================================================================ -->
+                <!-- DIPERBAIKI: Gunakan <template x-if="..."> untuk mencegah konflik   -->
+                <!-- ================================================================ -->
+
+                <!-- TAMPILAN 1: FORM UNTUK PETUGAS DARI LUAR (MANUAL) -->
+                <template x-if="isExternal">
+                    <div x-transition class="bg-yellow-50 p-4 rounded-xl border-2 border-dashed border-yellow-300">
+                        <form :action="`/admin/liturgy/schedules/${selectedSchedule.id}/assign`" method="POST" class="space-y-4">
+                            @csrf
+                            <input type="hidden" name="role" :value="selectedRole">
+                            <input type="hidden" name="is_external_manual" value="1">
+                            
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">
+                                    Nama Kelompok / Keterangan
+                                </label>
+                                <input type="text" name="description" 
+                                    class="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 shadow-sm" 
+                                    placeholder="Contoh: Paduan Suara UGM, Karang Taruna RW 02" required>
+                            </div>
+                            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg shadow-md transition">
+                                Tambahkan Petugas Luar
+                            </button>
+                        </form>
+                    </div>
+                </template>
+
+                <!-- TAMPILAN 2: PILIH DARI DATABASE (DEFAULT) -->
+                <template x-if="!isExternal">
+                    <div x-transition>
+                        <div class="relative mb-4">
+                            <input type="text" x-model="searchQuery" placeholder="Ketik nama untuk mencari..." 
+                                class="w-full border border-gray-300 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-blue-600 outline-none shadow-sm text-gray-700">
+                            <svg class="w-6 h-6 absolute left-4 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[50vh] pr-2 custom-scrollbar">
+                            <template x-for="item in filteredList" :key="item.id">
+                                <form :action="`/admin/liturgy/schedules/${selectedSchedule.id}/assign`" method="POST" class="m-0">
+                                    @csrf
+                                    <input type="hidden" name="role" :value="selectedRole">
+                                    <template x-if="['Paduan Suara', 'Parkir'].includes(selectedRole)"><input type="hidden" name="lingkungan_id" :value="item.id"></template>
+                                    <template x-if="!['Paduan Suara', 'Parkir'].includes(selectedRole)"><input type="hidden" name="personnel_id" :value="item.id"></template>
+
+                                    <button type="submit" class="w-full bg-white border border-gray-200 hover:border-green-500 hover:bg-green-50 p-4 rounded-xl flex justify-between items-center text-left transition group shadow-sm">
+                                        <div>
+                                            <h5 class="font-bold text-gray-800 text-lg leading-tight" x-text="item.name"></h5>
+                                            <p class="text-xs font-semibold text-gray-500 mt-1 flex items-center">
+                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                                <span x-text="item.asal"></span>
+                                            </p>
+                                        </div>
+                                        <span class="bg-gray-100 text-gray-600 group-hover:bg-green-500 group-hover:text-white px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
+                                            Pilih
+                                        </span>
+                                    </button>
+                                </form>
+                            </template>
+                            <template x-if="filteredList.length === 0">
+                                <div class="text-center py-10 bg-white rounded-xl border border-gray-200 text-gray-400 italic">Data tidak ditemukan.</div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                
             </div>
 
             <!-- Tombol X Close Modal -->
@@ -333,8 +411,7 @@
             allPersonnels: personnels,
             allLingkungans: lingkungans,
             
-            modalOpen: false, step: 1, selectedDateNum: null, selectedDateSchedules:[], selectedSchedule: null, selectedRole: '', searchQuery: '',
-
+            modalOpen: false, step: 1, selectedDateNum: null, selectedDateSchedules:[], selectedSchedule: null, selectedRole: '', searchQuery: '',isExternal: false,
             initCalendar() {
                 const firstDay = new Date(this.year, this.month, 1);
                 const lastDay = new Date(this.year, this.month + 1, 0);

@@ -187,15 +187,6 @@ class LiturgyController extends Controller
         return redirect()->route('admin.liturgy.schedules')->with('success', 'Jadwal Misa berhasil dihapus.');
     }
 
-    // =========================================================================
-    // BAGIAN 3: PENUGASAN (ASSIGNMENT) - INTI SISTEM
-    // =========================================================================
-
-    // Pastikan import model ini ada di paling atas file
-    // use App\Models\Territory; 
-    // use App\Models\LiturgyPersonnel;
-    // use App\Models\LiturgySchedule;
-    // use App\Models\Lingkungan;
 
     public function scheduleEdit($id)
     {
@@ -266,82 +257,71 @@ class LiturgyController extends Controller
     public function assignmentStore(Request $request, $scheduleId)
     {
         $role = $request->role;
-        $personnelId = $request->personnel_id;
-        $lingkunganId = $request->lingkungan_id;
+        $personnelId = $request->input('personnel_id');
+        $lingkunganId = $request->input('lingkungan_id');
+        $description = null; // Inisialisasi deskripsi
 
-        // --- 1. CEK: APAKAH INPUT PETUGAS BARU (EKSTERNAL)? ---
-        if ($request->boolean('is_new_external')) {
+        // =========================================================================
+        // LOGIKA BARU: MENANGANI INPUT MANUAL UNTUK PETUGAS LUAR
+        // =========================================================================
+        if ($request->boolean('is_external_manual')) {
             
-            // [VALIDASI TAMBAHAN]
-            // Pastikan fitur Eksternal HANYA untuk Paduan Suara & Parkir
+            // 1. Validasi input teks yang diketik manual
+            $request->validate(['description' => 'required|string|max:255']);
+
+            // 2. Pastikan fitur ini hanya untuk Paduan Suara & Parkir
             if (!in_array($role, ['Paduan Suara', 'Parkir'])) {
-                return back()->with('error', 'Gagal: Fitur petugas luar hanya berlaku untuk Paduan Suara dan Parkir.');
+                return back()->with('error', 'Fitur petugas luar hanya untuk Paduan Suara dan Parkir.');
             }
 
-            $request->validate([
-                'new_name' => 'required|string|max:255',
-                'new_description' => 'required|string|max:255'
-            ]);
-
-            // Buat data personnel baru
-            $newPerson = LiturgyPersonnel::create([
-                'name' => $request->new_name,
-                'type' => $role,
-                'is_external' => true,
-                'external_description' => $request->new_description,
-                'lingkungan_id' => null
-            ]);
-
-            $personnelId = $newPerson->id;
+            // 3. Siapkan data untuk disimpan: Kosongkan ID, isi deskripsi
+            $description = $request->description;
+            $personnelId = null;
             $lingkunganId = null;
+            
+        } 
+        // =========================================================================
+        // LOGIKA LAMA (YANG SUDAH ADA): UNTUK PETUGAS INTERNAL
+        // =========================================================================
+        elseif (in_array($role, ['Paduan Suara', 'Parkir'])) {
+            // Jika tugas kelompok internal, validasi lingkungan_id
+            $request->validate(['lingkungan_id' => 'required|exists:lingkungans,id']);
+        } 
+        else {
+            // Jika tugas perorangan, validasi personnel_id
+            $request->validate(['personnel_id' => 'required|exists:liturgy_personnels,id']);
         }
 
-        // --- 2. VALIDASI & SIMPAN KE JADWAL ---
+        // --- CEK DUPLIKASI DATA (GABUNGAN) ---
+        $isDuplicate = \App\Models\LiturgyAssignment::where('liturgy_schedule_id', $scheduleId)
+            ->where('role', $role)
+            ->where(function ($query) use ($personnelId, $lingkunganId, $description) {
+                if ($description) {
+                    // Cek duplikasi berdasarkan teks deskripsi untuk petugas luar
+                    $query->where('description', $description);
+                } elseif ($lingkunganId) {
+                    // Cek duplikasi berdasarkan ID lingkungan
+                    $query->where('lingkungan_id', $lingkunganId);
+                } elseif ($personnelId) {
+                    // Cek duplikasi berdasarkan ID personel
+                    $query->where('liturgy_personnel_id', $personnelId);
+                }
+            })->exists();
 
-        // KASUS A: TUGAS KELOMPOK INTERNAL (Padus/Parkir dr Lingkungan)
-        if (in_array($role, ['Paduan Suara', 'Parkir']) && !$personnelId) {
-            $request->validate(['lingkungan_id' => 'required']);
-            
-            // Cek Double (Lingkungan sama di tugas sama)
-            $exists = LiturgyAssignment::where('liturgy_schedule_id', $scheduleId)
-                        ->where('lingkungan_id', $lingkunganId)
-                        ->whereIn('role', ['Paduan Suara', 'Parkir'])
-                        ->exists();
-            
-            if($exists) return back()->with('error', 'Gagal: Lingkungan ini sudah bertugas di jadwal ini.');
+        if ($isDuplicate) {
+            return back()->with('error', 'Gagal: Petugas atau kelompok tersebut sudah terdaftar di jadwal ini.');
         }
         
-        // KASUS B: TUGAS PERORANGAN / EKSTERNAL (Misdinar, Lektor, atau Padus Luar)
-        else {
-            // Jika bukan input baru, pastikan personnel_id terpilih
-            if (!$request->boolean('is_new_external')) {
-                $request->validate(['personnel_id' => 'required']);
-            }
-
-            // Cek Nama Kembar (Validasi Manual agar akurat)
-            $calon = LiturgyPersonnel::find($personnelId);
-            $namaCalon = trim(strtolower($calon->name));
-            
-            $currentAssignments = LiturgyAssignment::where('liturgy_schedule_id', $scheduleId)
-                                ->whereNotNull('liturgy_personnel_id')
-                                ->with('personnel')->get();
-                                
-            foreach($currentAssignments as $asg) {
-                if($asg->personnel && trim(strtolower($asg->personnel->name)) === $namaCalon) {
-                    return back()->with('error', "Gagal: {$calon->name} sudah terdaftar di jadwal ini.");
-                }
-            }
-        }
-
-        // Simpan Assignment
-        LiturgyAssignment::create([
+        // --- SIMPAN KE DATABASE ---
+        \App\Models\LiturgyAssignment::create([
             'liturgy_schedule_id' => $scheduleId,
             'role' => $role,
             'liturgy_personnel_id' => $personnelId,
-            'lingkungan_id' => $lingkunganId
+            'lingkungan_id' => $lingkunganId,
+            'description' => $description // Kolom ini akan terisi jika petugas dari luar
         ]);
 
-        return back()->with('success', 'Petugas berhasil ditambahkan.');
+        return back()->with('success', 'Petugas berhasil ditambahkan ke jadwal.');
     }
 
     public function assignmentDestroy($id)
