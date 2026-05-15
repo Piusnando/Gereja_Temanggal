@@ -176,7 +176,7 @@
                 <div x-show="step === 1" style="display: none;">
                     <div class="flex justify-between items-center mb-4">
                         <h4 class="font-bold text-gray-700 text-lg">Misa yang Tersedia</h4>
-                        @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+                        @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
                         <a href="{{ route('admin.liturgy.schedules.create') }}" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg shadow-sm transition text-sm">
                             + Buat Jadwal Baru
                         </a>
@@ -203,7 +203,7 @@
 
                 <!-- STEP 2: DETAIL JADWAL MISA -->
                 <div x-show="step === 2" style="display: none;">
-                    @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+                    @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
                     <div class="flex flex-wrap justify-end gap-3 mb-6 pb-6 border-b border-gray-200" x-show="selectedSchedule">
                         <a :href="`/admin/liturgy/schedules/${selectedSchedule?.id}/edit`" class="bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center transition border border-yellow-200 hover:border-transparent shadow-sm">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Edit Info Misa
