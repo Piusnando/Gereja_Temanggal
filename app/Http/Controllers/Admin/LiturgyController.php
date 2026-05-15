@@ -18,15 +18,15 @@ class LiturgyController extends Controller
     public function personnelIndex(Request $request)
     {
         $type = $request->query('type'); // Ambil dari URL ?type=Misdinar
+        $userRole = Auth::user()->role;
 
-        // 1. KEAMANAN: Non-Admin tidak boleh melihat "Semua Data"
-        if (Auth::user()->role !== 'admin' && !$type) {
+        // 1. KEAMANAN: Tambahkan 'koster' dan 'pengurus_gereja' agar bisa melihat "Semua Data"
+        if (!in_array($userRole, ['admin', 'pengurus_gereja', 'koster']) && !$type) {
             abort(403, 'Akses Ditolak. Anda hanya diizinkan melihat data petugas kategori spesifik.');
         }
 
-        // 2. LOGIKA ADMIN MELIHAT SEMUA (TAMPILAN TERPISAH PER KATEGORI)
+        // 2. LOGIKA MELIHAT SEMUA (TAMPILAN TERPISAH PER KATEGORI)
         if (!$type) {
-            // Tambahkan ->withCount('assignments') di setiap query
             $groupedData = [
                 'Misdinar' => LiturgyPersonnel::with('lingkungan')->withCount('assignments')->where('type', 'Misdinar')->orderBy('name')->get(),
                 'Lektor'   => LiturgyPersonnel::with('lingkungan')->withCount('assignments')->where('type', 'Lektor')->orderBy('name')->get(),
@@ -37,11 +37,7 @@ class LiturgyController extends Controller
             return view('admin.liturgy.personnels', compact('groupedData', 'type'));
         }
 
-        
-
         // 3. LOGIKA SATU JENIS SAJA (PAGINATION)
-        
-        // Pastikan ada ->withCount('assignments')
         $query = LiturgyPersonnel::with('lingkungan')->withCount('assignments'); 
         
         if ($type) {
