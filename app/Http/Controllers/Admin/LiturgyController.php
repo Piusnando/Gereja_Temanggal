@@ -80,6 +80,51 @@ class LiturgyController extends Controller
                          ->with('success', 'Data ' . $request->type . ' berhasil disimpan');
     }
 
+    public function personnelEdit($id)
+    {
+        $personnel = LiturgyPersonnel::findOrFail($id);
+        $userRole = Auth::user()->role;
+
+        // --- SECURITY CHECK (Hanya boleh edit sesuai bidangnya) ---
+        if ($userRole == 'misdinar' && $personnel->type !== 'Misdinar') {
+            abort(403, 'Akses Ditolak: Anda hanya boleh mengedit data Misdinar!');
+        }
+        if ($userRole == 'lektor' && $personnel->type !== 'Lektor') {
+            abort(403, 'Akses Ditolak: Anda hanya boleh mengedit data Lektor!');
+        }
+        if ($userRole == 'direktur_musik' && !in_array($personnel->type, ['Mazmur', 'Organis', 'Paduan Suara'])) {
+            abort(403, 'Akses Ditolak: Anda hanya boleh mengedit data petugas musik!');
+        }
+
+        $lingkungans = Lingkungan::orderBy('name')->get();
+        $type = $personnel->type; // Untuk UI Kembali
+
+        return view('admin.liturgy.personnels_edit', compact('personnel', 'lingkungans', 'type'));
+    }
+
+    public function personnelUpdate(Request $request, $id)
+    {
+        $personnel = LiturgyPersonnel::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required',
+            'type' => 'required',
+            // Jika tidak dari luar, maka lingkungan WAJIB diisi
+            'lingkungan_id' => 'required_without:is_external',
+        ]);
+
+        $personnel->update([
+            'name' => $request->name,
+            'type' => $request->type,
+            'lingkungan_id' => $request->has('is_external') ? null : $request->lingkungan_id,
+            'is_external' => $request->has('is_external'),
+            'external_description' => $request->has('is_external') ? $request->external_description : null
+        ]);
+
+        return redirect()->route('admin.liturgy.personnels', ['type' => $request->type])
+                         ->with('success', 'Data ' . $request->type . ' berhasil diperbarui');
+    }
+
     public function personnelDestroy($id)
     {
         $personnel = LiturgyPersonnel::findOrFail($id);

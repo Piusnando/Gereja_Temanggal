@@ -122,6 +122,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/liturgy/personnels/create', [LiturgyController::class, 'personnelCreate'])->name('admin.liturgy.personnels.create');
         Route::post('/liturgy/personnels', [LiturgyController::class, 'personnelStore'])->name('admin.liturgy.personnels.store');
         Route::get('/liturgy/schedules', [LiturgyController::class, 'scheduleIndex'])->name('admin.liturgy.schedules');
+        Route::get('/liturgy/personnels/{id}/edit', [LiturgyController::class, 'personnelEdit'])->name('admin.liturgy.personnels.edit');
+        Route::put('/liturgy/personnels/{id}', [LiturgyController::class, 'personnelUpdate'])->name('admin.liturgy.personnels.update');
         Route::delete('/liturgy/personnels/{id}', [LiturgyController::class, 'personnelDestroy'])->name('admin.liturgy.personnels.destroy');
 
         // CRUD Jadwal Misa
