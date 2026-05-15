@@ -154,7 +154,7 @@
                 @endif
 
                 <!-- KONTEN WEBSITE -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir', 'koster']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir', 'koster','misdinar','lektor']))
 
                     <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Konten & Informasi</div>
                     
@@ -212,7 +212,7 @@
                     </a>
                 @endif
 
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'misdinar', 'lektor', 'direktur_musik', 'pia_pir']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
                     <a href="{{ route('admin.organization.index') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.organization*') ? 'bg-active text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <span class="font-medium">Organisasi</span>
