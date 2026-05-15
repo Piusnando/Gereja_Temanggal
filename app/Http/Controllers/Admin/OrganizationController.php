@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrganizationMember;
-use App\Models\Lingkungan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 
 class OrganizationController extends Controller
 {
@@ -72,7 +70,6 @@ class OrganizationController extends Controller
 
         $data = $request->all();
 
-        // --- TAMBAHAN: Handle Checkbox ---
         // Jika checkbox 'tampil_di_menu' dicentang, nilainya true, jika tidak false.
         $data['tampil_di_menu'] = $request->has('tampil_di_menu');
         // ---------------------------------
@@ -85,7 +82,6 @@ class OrganizationController extends Controller
 
         OrganizationMember::create($data);
         
-        // --- TAMBAHAN: Update semua anggota di tim yang sama ---
         // Jika dicentang, semua anggota lain di tim ini juga akan ikut tampil
         if ($data['tampil_di_menu']) {
             OrganizationMember::where('bidang', $data['bidang'])
@@ -166,9 +162,6 @@ class OrganizationController extends Controller
 
     public function reorderTeams(Request $request)
     {
-        // Expects: 
-        // teams: ['Koordinator', 'Koor', 'Koster'] (Ordered array of names)
-        // bidang: 'Tim Pelayanan Bidang Liturgi'
         
         $bidang = $request->bidang;
         $teams = $request->teams;

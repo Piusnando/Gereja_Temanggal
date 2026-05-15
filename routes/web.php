@@ -144,13 +144,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     });
 
     // 7. KONTEN & INFORMASI (Pengumuman, Kegiatan)
-    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir,koster'])->group(function () {
+    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir,koster,misdinar,lektor'])->group(function () {
         Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
         Route::resource('activities', ActivityController::class, ['as' => 'admin']);
     });
 
     // 8. ORGANISASI (Koster tidak diberi akses ke sini)
-    Route::middleware(['role:admin,pengurus_gereja,omk,misdinar,lektor,direktur_musik,pia_pir'])->group(function () {
+    Route::middleware(['role:admin,pengurus_gereja'])->group(function () {
         Route::get('/organization', [OrganizationController::class, 'index'])->name('admin.organization.index');
         Route::get('/organization/create', [OrganizationController::class, 'create'])->name('admin.organization.create');
         Route::post('/organization', [OrganizationController::class, 'store'])->name('admin.organization.store');
