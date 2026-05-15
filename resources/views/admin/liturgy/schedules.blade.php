@@ -128,99 +128,183 @@
 
     <!-- MODAL (Kodenya sama persis, tidak perlu diubah) -->
     <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center px-4">
-    
-    <!-- Background Hitam Transparan -->
-    <div class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm transition-opacity" 
-         x-show="modalOpen" 
-         x-transition.opacity 
-         @click="closeModal()"></div>
-    
-    <!-- Kotak Modal Utama -->
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-50 flex flex-col max-h-[90vh] overflow-hidden transform transition-all"
-         x-show="modalOpen" 
-         x-transition:enter="ease-out duration-300" 
-         x-transition:enter-start="opacity-0 translate-y-4 sm:scale-95" 
-         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-         x-transition:leave="ease-in duration-200" 
-         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-         x-transition:leave-end="opacity-0 translate-y-4 sm:scale-95">
         
-        <!-- MODAL HEADER (Dinamic Berdasarkan Step) -->
-        <div class="bg-blue-800 p-6 flex justify-between items-center text-white shrink-0">
+        <!-- Background Hitam Transparan -->
+        <div class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm transition-opacity" 
+             x-show="modalOpen" 
+             x-transition.opacity 
+             @click="closeModal()"></div>
+        
+        <!-- Kotak Modal Utama -->
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-50 flex flex-col max-h-[90vh] overflow-hidden transform transition-all"
+             x-show="modalOpen" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-4 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-4 sm:scale-95">
             
-            <!-- Title Step 1 (Pilih Jadwal) -->
-            <div x-show="step === 1" style="display: none;">
-                <h3 class="text-xl md:text-2xl font-bold">Pilih Jadwal Misa</h3>
-                <p class="text-sm text-blue-200 mt-1">Tanggal <span x-text="selectedDateNum"></span> <span x-text="monthNames[month] + ' ' + year"></span></p>
-            </div>
-            
-            <!-- Title Step 2 (Detail Jadwal) -->
-            <div x-show="step === 2" class="flex items-center" style="display: none;">
-                <button @click="step = 1" class="mr-4 hover:text-blue-200 bg-white/10 p-2 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                <div>
-                    <h3 class="text-xl font-bold truncate max-w-[200px] md:max-w-xs" x-text="selectedSchedule?.title"></h3>
-                    <p class="text-sm text-blue-200 mt-1" x-text="formatFullDate(selectedSchedule?.event_at)"></p>
+            <!-- 1. MODAL HEADER -->
+            <div class="bg-blue-800 p-6 flex justify-between items-center text-white shrink-0">
+                <div x-show="step === 1" style="display: none;">
+                    <h3 class="text-xl md:text-2xl font-bold">Pilih Jadwal Misa</h3>
+                    <p class="text-sm text-blue-200 mt-1">Tanggal <span x-text="selectedDateNum"></span> <span x-text="monthNames[month] + ' ' + year"></span></p>
                 </div>
+                <div x-show="step === 2" class="flex items-center" style="display: none;">
+                    <button @click="step = 1" class="mr-4 hover:text-blue-200 bg-white/10 p-2 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                    <div>
+                        <h3 class="text-xl font-bold truncate max-w-[200px] md:max-w-xs" x-text="selectedSchedule?.title"></h3>
+                        <p class="text-sm text-blue-200 mt-1" x-text="formatFullDate(selectedSchedule?.event_at)"></p>
+                    </div>
+                </div>
+                <div x-show="step === 3" class="flex items-center" style="display: none;">
+                    <button @click="step = 2" class="mr-4 hover:text-blue-200 bg-white/10 p-2 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                    <h3 class="text-2xl font-bold">Pilih Peran</h3>
+                </div>
+                <div x-show="step === 4" class="flex items-center" style="display: none;">
+                    <button @click="step = 3; searchQuery=''" class="mr-4 hover:text-blue-200 bg-white/10 p-2 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                    <h3 class="text-2xl font-bold">Pilih <span x-text="selectedRole" class="text-yellow-400"></span></h3>
+                </div>
+                <button @click="closeModal()" class="text-white hover:text-red-400 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
 
-            <!-- Title Step 3 (Pilih Peran) -->
-            <div x-show="step === 3" class="flex items-center" style="display: none;">
-                <button @click="step = 2" class="mr-4 hover:text-blue-200 bg-white/10 p-2 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                <h3 class="text-2xl font-bold">Pilih Peran</h3>
-            </div>
-
-           <!-- ============================================== -->
-            <!-- STEP 4: PILIH ORANG/LINGKUNGAN & SAVE          -->
-            <!-- ============================================== -->
-            <div x-show="step === 4" style="display: none;">
+            <!-- 2. MODAL BODY -->
+            <div class="p-6 overflow-y-auto custom-scrollbar bg-gray-50 grow min-h-[400px]">
                 
-                <!-- OPSI CHECKBOX UNTUK PETUGAS LUAR -->
-                <div x-show="['Paduan Suara', 'Parkir'].includes(selectedRole)" 
-                    class="mb-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200" x-transition>
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="is_external_manual_toggle" x-model="isExternal"
-                            class="form-checkbox h-5 w-5 text-yellow-600 rounded focus:ring-yellow-500">
-                        <span class="ml-3 text-sm font-medium text-yellow-800 select-none">
-                            Petugas dari Luar Paroki? (Ketik Manual)
-                        </span>
-                    </label>
+                <!-- STEP 1: DAFTAR JADWAL -->
+                <div x-show="step === 1" style="display: none;">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-gray-700 text-lg">Misa yang Tersedia</h4>
+                        @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+                        <a href="{{ route('admin.liturgy.schedules.create') }}" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg shadow-sm transition text-sm">
+                            + Buat Jadwal Baru
+                        </a>
+                        @endif
+                    </div>
+                    <div class="space-y-3">
+                        <template x-for="sched in selectedDateSchedules" :key="sched.id">
+                            <div @click="openSchedule(sched)" class="bg-white border border-gray-200 hover:border-blue-400 hover:shadow-md p-5 rounded-xl cursor-pointer transition group flex justify-between items-center">
+                                <div>
+                                    <h5 class="text-lg font-bold text-gray-800 group-hover:text-blue-700 transition" x-text="sched.title"></h5>
+                                    <p class="text-sm text-gray-500 font-mono mt-1">Pukul <span x-text="formatTime(sched.event_at)"></span> WIB</p>
+                                </div>
+                                <div class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    <span x-text="sched.assignments.length"></span> Petugas
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="selectedDateSchedules.length === 0">
+                            <div class="text-center py-16 bg-white border border-gray-200 rounded-xl text-gray-400 italic">Belum ada jadwal misa pada tanggal ini.</div>
+                        </template>
+                    </div>
                 </div>
 
-                <!-- TAMPILAN 1: FORM UNTUK PETUGAS DARI LUAR (MANUAL) -->
-                <template x-if="isExternal">
-                    <div x-transition class="bg-yellow-50 p-4 rounded-xl border-2 border-dashed border-yellow-300">
-                        <form :action="`/admin/liturgy/schedules/${selectedSchedule.id}/assign`" method="POST" class="space-y-4">
+                <!-- STEP 2: DETAIL JADWAL MISA -->
+                <div x-show="step === 2" style="display: none;">
+                    @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+                    <div class="flex flex-wrap justify-end gap-3 mb-6 pb-6 border-b border-gray-200" x-show="selectedSchedule">
+                        <a :href="`/admin/liturgy/schedules/${selectedSchedule?.id}/edit`" class="bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center transition border border-yellow-200 hover:border-transparent shadow-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Edit Info Misa
+                        </a>
+                        <form :action="`/admin/liturgy/schedules/${selectedSchedule?.id}`" method="POST" onsubmit="return confirm('PERINGATAN!\n\nMenghapus jadwal ini akan MENGHAPUS SEMUA DATA PETUGAS di Misa ini.\n\nYakin hapus?');" class="m-0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="bg-red-50 text-red-600 hover:bg-red-500 hover:text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center transition border border-red-200 hover:border-transparent shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Hapus Jadwal
+                            </button>
+                        </form>
+                    </div>
+                    @endif
+
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-gray-700 text-lg">Petugas Bertugas</h4>
+                        @if(!empty($allowedRoles))
+                        <button @click="step = 3" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition flex items-center text-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Tambah Petugas
+                        </button>
+                        @endif
+                    </div>
+
+                    <template x-if="selectedSchedule && selectedSchedule.assignments.length > 0">
+                        <div class="grid grid-cols-1 gap-3">
+                            <template x-for="assign in selectedSchedule.assignments" :key="assign.id">
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center hover:border-blue-300 transition">
+                                    <div>
+                                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded uppercase tracking-wider" x-text="assign.role"></span>
+                                        <h5 class="font-bold text-gray-800 text-base mt-1" x-text="assign.personnel ? assign.personnel.name : (assign.lingkungan ? assign.lingkungan.name : assign.description)"></h5>
+                                        <p class="text-xs text-gray-500 mt-0.5" x-text="assign.personnel && assign.personnel.lingkungan ? assign.personnel.lingkungan.name : ''"></p>
+                                    </div>
+                                    <form :action="`/admin/liturgy/assignments/${assign.id}`" method="POST" onsubmit="return confirm('Hapus petugas ini dari jadwal?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="text-gray-400 bg-gray-100 p-2.5 hover:bg-red-100 hover:text-red-600 rounded-lg transition" title="Cabut Tugas"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                    </form>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="selectedSchedule && selectedSchedule.assignments.length === 0">
+                        <div class="text-center py-10 bg-white border border-gray-200 rounded-xl text-gray-400 italic">Belum ada petugas yang dijadwalkan untuk misa ini.</div>
+                    </template>
+                </div>
+
+                <!-- STEP 3: PILIH PERAN -->
+                <div x-show="step === 3" style="display: none;">
+                    <p class="text-gray-500 mb-4 text-center">Pilih peran/tugas yang ingin Anda tambahkan:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        @foreach($allowedRoles as $role)
+                            <button @click="selectRole('{{ $role }}')" class="bg-white border-2 border-gray-200 hover:border-blue-600 hover:shadow-lg p-6 rounded-2xl text-center transition group">
+                                <div class="w-14 h-14 mx-auto bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                </div>
+                                <span class="font-bold text-gray-800 text-sm block">{{ $role }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- STEP 4: PILIH ORANG/LINGKUNGAN & SAVE -->
+                <div x-show="step === 4" style="display: none;" class="w-full">
+                    
+                    <!-- CHECKBOX PETUGAS LUAR (Hanya tampil di peran tertentu) -->
+                    <div x-show="['Paduan Suara', 'Parkir'].includes(selectedRole)" class="mb-4 bg-yellow-50 p-4 rounded-xl border border-yellow-200 shadow-sm">
+                        <label class="inline-flex items-center cursor-pointer w-full">
+                            <input type="checkbox" x-model="isExternal" class="form-checkbox h-5 w-5 text-yellow-600 rounded focus:ring-yellow-500">
+                            <span class="ml-3 text-sm font-bold text-yellow-800 select-none">
+                                Petugas dari Luar Paroki? (Ketik Manual)
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- TAMPILAN JIKA CENTANG (FORM MANUAL) -->
+                    <div x-show="isExternal" style="display: none;" class="bg-yellow-50 p-5 rounded-xl border-2 border-dashed border-yellow-400 shadow-sm">
+                        <form :action="`/admin/liturgy/schedules/${selectedSchedule?.id}/assign`" method="POST" class="m-0 space-y-4">
                             @csrf
                             <input type="hidden" name="role" :value="selectedRole">
                             <input type="hidden" name="is_external_manual" value="1">
                             
                             <div>
-                                <label class="block text-xs font-bold uppercase text-yellow-700 mb-1">
+                                <label class="block text-xs font-bold uppercase text-yellow-800 mb-2">
                                     Nama Kelompok / Keterangan
                                 </label>
-                                <input type="text" name="description" 
-                                    class="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 shadow-sm" 
-                                    placeholder="Contoh: Paduan Suara UGM, Karang Taruna RW 02" required>
+                                <input type="text" name="description" class="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 shadow-sm text-gray-900 bg-white" placeholder="Contoh: SD Kanisius Kalasan, Suster/Bruder" required>
                             </div>
                             <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg shadow-md transition">
                                 Tambahkan Petugas Luar
                             </button>
                         </form>
                     </div>
-                </template>
 
-                <!-- TAMPILAN 2: PILIH DARI DATABASE (DEFAULT) -->
-                <template x-if="!isExternal">
-                    <div x-transition>
-                        <div class="relative mb-4">
-                            <input type="text" x-model="searchQuery" placeholder="Ketik nama untuk mencari..." 
-                                class="w-full border border-gray-300 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-blue-600 outline-none shadow-sm text-gray-700">
-                            <svg class="w-6 h-6 absolute left-4 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <!-- TAMPILAN DEFAULT (PILIH DATABASE) -->
+                    <div x-show="!isExternal" class="space-y-4">
+                        <div class="relative">
+                            <input type="text" x-model="searchQuery" placeholder="Ketik nama untuk mencari..." class="w-full border border-gray-300 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-blue-600 outline-none shadow-sm text-gray-900 bg-white">
+                            <svg class="w-6 h-6 absolute left-4 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
 
                         <div class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[50vh] pr-2 custom-scrollbar">
                             <template x-for="item in filteredList" :key="item.id">
-                                <form :action="`/admin/liturgy/schedules/${selectedSchedule.id}/assign`" method="POST" class="m-0">
+                                <form :action="`/admin/liturgy/schedules/${selectedSchedule?.id}/assign`" method="POST" class="m-0">
                                     @csrf
                                     <input type="hidden" name="role" :value="selectedRole">
                                     <template x-if="['Paduan Suara', 'Parkir'].includes(selectedRole)"><input type="hidden" name="lingkungan_id" :value="item.id"></template>
@@ -230,13 +314,11 @@
                                         <div>
                                             <h5 class="font-bold text-gray-800 text-lg leading-tight" x-text="item.name"></h5>
                                             <p class="text-xs font-semibold text-gray-500 mt-1 flex items-center">
-                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                                                 <span x-text="item.asal"></span>
                                             </p>
                                         </div>
-                                        <span class="bg-gray-100 text-gray-600 group-hover:bg-green-500 group-hover:text-white px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
-                                            Pilih
-                                        </span>
+                                        <span class="bg-gray-100 text-gray-600 group-hover:bg-green-500 group-hover:text-white px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">Pilih</span>
                                     </button>
                                 </form>
                             </template>
@@ -245,154 +327,11 @@
                             </template>
                         </div>
                     </div>
-                </template>
-                
-            </div>
 
-            <!-- Tombol X Close Modal -->
-            <button @click="closeModal()" class="text-white hover:text-red-400 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-        </div>
-
-        <!-- MODAL BODY -->
-        <div class="p-6 overflow-y-auto custom-scrollbar bg-gray-50 grow min-h-[400px]">
-            
-            <!-- STEP 1: DAFTAR JADWAL PADA TANGGAL YANG DIKLIK -->
-            <div x-show="step === 1" style="display: none;">
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="font-bold text-gray-700 text-lg">Misa yang Tersedia</h4>
-                    @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
-                    <a href="{{ route('admin.liturgy.schedules.create') }}" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg shadow-sm transition text-sm">
-                        + Buat Jadwal Baru
-                    </a>
-                    @endif
-                </div>
-
-                <div class="space-y-3">
-                    <template x-for="sched in selectedDateSchedules" :key="sched.id">
-                        <div @click="openSchedule(sched)" class="bg-white border border-gray-200 hover:border-blue-400 hover:shadow-md p-5 rounded-xl cursor-pointer transition group flex justify-between items-center">
-                            <div>
-                                <h5 class="text-lg font-bold text-gray-800 group-hover:text-blue-700 transition" x-text="sched.title"></h5>
-                                <p class="text-sm text-gray-500 font-mono mt-1">Pukul <span x-text="formatTime(sched.event_at)"></span> WIB</p>
-                            </div>
-                            <div class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                <span x-text="sched.assignments.length"></span> Petugas
-                            </div>
-                        </div>
-                    </template>
-                    <template x-if="selectedDateSchedules.length === 0">
-                        <div class="text-center py-16 bg-white border border-gray-200 rounded-xl text-gray-400 italic">
-                            Belum ada jadwal misa pada tanggal ini.
-                        </div>
-                    </template>
                 </div>
             </div>
-
-            <!-- STEP 2: DETAIL JADWAL MISA (EDIT, HAPUS, LIST) -->
-            <div x-show="step === 2" style="display: none;">
-                
-                @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
-                <div class="flex flex-wrap justify-end gap-3 mb-6 pb-6 border-b border-gray-200" x-show="selectedSchedule">
-                    <!-- Tombol Edit Jadwal -->
-                    <a :href="`/admin/liturgy/schedules/${selectedSchedule?.id}/edit`" class="bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center transition border border-yellow-200 hover:border-transparent shadow-sm">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Edit Info Misa
-                    </a>
-                    
-                    <!-- Tombol Hapus Jadwal -->
-                    <form :action="`/admin/liturgy/schedules/${selectedSchedule?.id}`" method="POST" onsubmit="return confirm('PERINGATAN!\n\nMenghapus jadwal ini akan MENGHAPUS SEMUA DATA PETUGAS di Misa ini.\n\nYakin hapus?');" class="m-0">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="bg-red-50 text-red-600 hover:bg-red-500 hover:text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center transition border border-red-200 hover:border-transparent shadow-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Hapus Jadwal
-                        </button>
-                    </form>
-                </div>
-                @endif
-
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="font-bold text-gray-700 text-lg">Petugas Bertugas</h4>
-                    @if(!empty($allowedRoles))
-                    <button @click="step = 3" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition flex items-center text-sm">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg> 
-                        Tambah Petugas
-                    </button>
-                    @endif
-                </div>
-
-                <!-- List Petugas Terdaftar -->
-                <template x-if="selectedSchedule && selectedSchedule.assignments.length > 0">
-                    <div class="grid grid-cols-1 gap-3">
-                        <template x-for="assign in selectedSchedule.assignments" :key="assign.id">
-                            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center hover:border-blue-300 transition">
-                                <div>
-                                    <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded uppercase tracking-wider" x-text="assign.role"></span>
-                                    <h5 class="font-bold text-gray-800 text-base mt-1" x-text="assign.personnel ? assign.personnel.name : (assign.lingkungan ? assign.lingkungan.name : assign.description)"></h5>
-                                    <p class="text-xs text-gray-500 mt-0.5" x-text="assign.personnel && assign.personnel.lingkungan ? assign.personnel.lingkungan.name : ''"></p>
-                                </div>
-                                <form :action="`/admin/liturgy/assignments/${assign.id}`" method="POST" onsubmit="return confirm('Hapus petugas ini dari jadwal?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-gray-400 bg-gray-100 p-2.5 hover:bg-red-100 hover:text-red-600 rounded-lg transition" title="Cabut Tugas"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                                </form>
-                            </div>
-                        </template>
-                    </div>
-                </template>
-                <template x-if="selectedSchedule && selectedSchedule.assignments.length === 0">
-                    <div class="text-center py-10 bg-white border border-gray-200 rounded-xl text-gray-400 italic">Belum ada petugas yang dijadwalkan untuk misa ini.</div>
-                </template>
-            </div>
-
-            <!-- STEP 3: PILIH PERAN -->
-            <div x-show="step === 3" style="display: none;">
-                <p class="text-gray-500 mb-4 text-center">Pilih peran/tugas yang ingin Anda tambahkan:</p>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    @foreach($allowedRoles as $role)
-                        <button @click="selectRole('{{ $role }}')" class="bg-white border-2 border-gray-200 hover:border-blue-600 hover:shadow-lg p-6 rounded-2xl text-center transition group">
-                            <div class="w-14 h-14 mx-auto bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            </div>
-                            <span class="font-bold text-gray-800 text-sm block">{{ $role }}</span>
-                        </button>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- STEP 4: PILIH ORANG/LINGKUNGAN & SAVE -->
-            <div x-show="step === 4" style="display: none;">
-                <div class="relative mb-4">
-                    <input type="text" x-model="searchQuery" placeholder="Ketik nama untuk mencari..." class="w-full border border-gray-300 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-blue-600 outline-none shadow-sm text-gray-700">
-                    <svg class="w-6 h-6 absolute left-4 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-
-                <div class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[50vh] pr-2 custom-scrollbar">
-                    <template x-for="item in filteredList" :key="item.id">
-                        <form :action="`/admin/liturgy/schedules/${selectedSchedule.id}/assign`" method="POST" class="m-0">
-                            @csrf
-                            <input type="hidden" name="role" :value="selectedRole">
-                            <template x-if="['Paduan Suara', 'Parkir'].includes(selectedRole)"><input type="hidden" name="lingkungan_id" :value="item.id"></template>
-                            <template x-if="!['Paduan Suara', 'Parkir'].includes(selectedRole)"><input type="hidden" name="personnel_id" :value="item.id"></template>
-                            <button type="submit" class="w-full bg-white border border-gray-200 hover:border-green-500 hover:bg-green-50 p-4 rounded-xl flex justify-between items-center text-left transition group shadow-sm">
-                                <div>
-                                    <h5 class="font-bold text-gray-800 text-lg leading-tight" x-text="item.name"></h5>
-                                    <p class="text-xs font-semibold text-gray-500 mt-1 flex items-center">
-                                        <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                        <span x-text="item.asal"></span>
-                                    </p>
-                                </div>
-                                <span class="bg-gray-100 text-gray-600 group-hover:bg-green-500 group-hover:text-white px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">Pilih</span>
-                            </button>
-                        </form>
-                    </template>
-
-                    <template x-if="filteredList.length === 0">
-                        <div class="text-center py-10 bg-white rounded-xl border border-gray-200 text-gray-400 italic">Data tidak ditemukan.</div>
-                    </template>
-                </div>
-            </div>
-
         </div>
     </div>
-</div>
-
 <!-- SCRIPT LOGIKA ALPINE.JS (PERBAIKAN UTAMA ADA DI SINI) -->
 <script>
     function liturgyCalendar(schedules, personnels, lingkungans) {
