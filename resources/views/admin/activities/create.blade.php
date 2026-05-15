@@ -18,7 +18,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Penyelenggara</label>
-                <input type="text" name="organizer" class="w-full border border-gray-300 rounded p-2.5" placeholder="Contoh: OMK Kalasan" required>
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
+                    <input type="text" name="organizer" class="w-full border border-gray-300 rounded p-2.5 focus:ring-blue-500" placeholder="Contoh: OMK Kalasan" required>
+                @else
+                    <!-- Jika non-admin, input di-disable dan dikunci -->
+                    <input type="text" value="{{ $myOrg }}" class="w-full border border-gray-300 rounded p-2.5 bg-gray-100 font-bold text-gray-600 cursor-not-allowed" disabled>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">*Terkunci otomatis sesuai akses Anda.</p>
+                @endif
             </div>
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Lokasi Kegiatan</label>
