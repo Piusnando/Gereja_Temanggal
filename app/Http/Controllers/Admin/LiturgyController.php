@@ -150,39 +150,46 @@ class LiturgyController extends Controller
     // =========================================================================
 
     public function scheduleIndex()
-{
-    $userRole = Auth::user()->role;
+    {
+        $userRole = Auth::user()->role;
 
-    // 1. Ambil SEMUA jadwal untuk dimasukkan ke dalam Kalender
-    $allSchedules = \App\Models\LiturgySchedule::with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])->get();
+        // 1. Tentukan hak akses (Siapa yang boleh melihat & mendaftarkan tugas apa)
+        $allowedRoles = [];
+        if (in_array($userRole, ['admin', 'pengurus_gereja', 'koster'])) {
+            $allowedRoles = ['Misdinar', 'Lektor', 'Mazmur', 'Organis', 'Paduan Suara', 'Parkir'];
+        } elseif ($userRole == 'direktur_musik') {
+            $allowedRoles = ['Mazmur', 'Organis', 'Paduan Suara'];
+        } elseif ($userRole == 'misdinar') {
+            $allowedRoles = ['Misdinar'];
+        } elseif ($userRole == 'lektor') {
+            $allowedRoles = ['Lektor'];
+        }
 
-    // 2. Ambil jadwal terdekat (Upcoming) untuk list di sidebar kanan
-    $upcomingSchedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
-                            ->with(['assignments.personnel.lingkungan', 'assignments.lingkungan'])
-                            ->orderBy('event_at', 'asc')
-                            ->take(5)
-                            ->get();
+        // 2. LOGIKA BARU: Filter Relasi Assignments berdasarkan Hak Akses
+        $filterAssignments = function ($query) use ($allowedRoles) {
+            // Hanya ambil assignment (tugas) yang role-nya ada di dalam $allowedRoles
+            $query->whereIn('role', $allowedRoles)
+                ->with(['personnel.lingkungan', 'lingkungan']); // Tetap load data orang & lingkungannya
+        };
 
-    // 3. Tentukan hak akses (Siapa yang boleh mendaftarkan tugas apa)
-    $allowedRoles =[];
-    if (in_array($userRole, ['admin', 'pengurus_gereja', 'koster'])) {
-        $allowedRoles =['Misdinar', 'Lektor', 'Mazmur', 'Organis', 'Paduan Suara', 'Parkir'];
-    } elseif ($userRole == 'direktur_musik') {
-        $allowedRoles =['Mazmur', 'Organis', 'Paduan Suara'];
-    } elseif ($userRole == 'misdinar') {
-        $allowedRoles = ['Misdinar'];
-    } elseif ($userRole == 'lektor') {
-        $allowedRoles = ['Lektor'];
+        // 3. Ambil SEMUA jadwal untuk Kalender (Terapkan filter di atas)
+        $allSchedules = \App\Models\LiturgySchedule::with(['assignments' => $filterAssignments])->get();
+
+        // 4. Ambil jadwal terdekat (Upcoming) untuk Sidebar (Terapkan filter di atas)
+        $upcomingSchedules = \App\Models\LiturgySchedule::where('event_at', '>=', now())
+                                ->with(['assignments' => $filterAssignments])
+                                ->orderBy('event_at', 'asc')
+                                ->take(5)
+                                ->get();
+
+        // 5. Ambil semua master data agar siap dipilih di dalam Pop-up nanti
+        $personnels = \App\Models\LiturgyPersonnel::with('lingkungan')->orderBy('name')->get();
+        $lingkungans = \App\Models\Lingkungan::orderBy('name')->get();
+
+        return view('admin.liturgy.schedules', compact(
+            'allSchedules', 'upcomingSchedules', 'allowedRoles', 'personnels', 'lingkungans'
+        ));
     }
-
-    // 4. Ambil semua master data agar siap dipilih di dalam Pop-up nanti
-    $personnels = \App\Models\LiturgyPersonnel::with('lingkungan')->orderBy('name')->get();
-    $lingkungans = \App\Models\Lingkungan::orderBy('name')->get();
-
-    return view('admin.liturgy.schedules', compact(
-        'allSchedules', 'upcomingSchedules', 'allowedRoles', 'personnels', 'lingkungans'
-    ));
-}
 
     public function scheduleCreate()
     {
