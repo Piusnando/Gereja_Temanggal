@@ -52,7 +52,7 @@ public function store(Request $request)
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik,omk,pia_pir,inventaris',
+            'role' => 'required|in:admin,pengurus_gereja,misdinar,lektor,direktur_musik,omk,pia_pir,inventaris,koster',
             
             'password' => 'nullable|min:8',
         ]);

@@ -120,7 +120,7 @@ class LiturgyController extends Controller
 
     // 3. Tentukan hak akses (Siapa yang boleh mendaftarkan tugas apa)
     $allowedRoles =[];
-    if (in_array($userRole, ['admin', 'pengurus_gereja'])) {
+    if (in_array($userRole, ['admin', 'pengurus_gereja', 'koster'])) {
         $allowedRoles =['Misdinar', 'Lektor', 'Mazmur', 'Organis', 'Paduan Suara', 'Parkir'];
     } elseif ($userRole == 'direktur_musik') {
         $allowedRoles =['Mazmur', 'Organis', 'Paduan Suara'];

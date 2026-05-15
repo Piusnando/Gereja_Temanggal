@@ -112,6 +112,10 @@
                                     default: // Misdinar & Lektor
                                         $badgeClass = 'bg-green-100 text-green-800 border border-green-200';
                                         break;
+                                    case 'koster':
+                                        $badgeClass = 'bg-teal-100 text-teal-800 border border-teal-200';
+                                        $labelText = 'Koster';
+                                        break;
                                 }
                             @endphp
                             <!-- Pada mobile text role lebih kecil (text-[10px]) -->

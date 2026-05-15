@@ -21,6 +21,7 @@
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2">Role / Hak Akses</label>
             <select name="role" class="w-full border rounded p-2 bg-white">
+                <option value="koster">Koster / Sakristian</option>
                 <option value="misdinar">Misdinar</option>
                 <option value="lektor">Lektor</option>
                 <option value="direktur_musik">Direktur Musik</option>

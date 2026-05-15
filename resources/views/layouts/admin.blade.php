@@ -137,13 +137,16 @@
                 </a>
 
                 <!-- ADMIN ONLY: PENGATURAN & USER -->
-                @if(Auth::user()->role == 'admin')
+                @if(in_array(Auth::user()->role, ['admin', 'koster']))
                     <div class="px-4 mt-4 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Pengaturan Utama</div>
                     
                     <a href="{{ route('admin.settings') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.settings') ? 'bg-active text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <span class="font-medium">Logo & Banner</span>
                     </a>
+                @endif
+
+                @if(Auth::user()->role == 'admin')
                     <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.users*') ? 'bg-active text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <span class="font-medium">Kelola User</span>
@@ -151,7 +154,8 @@
                 @endif
 
                 <!-- KONTEN WEBSITE -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir', 'koster']))
+
                     <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Konten & Informasi</div>
                     
                     <!-- PENGUMUMAN -->
@@ -198,7 +202,7 @@
                 @endif
 
                 <!-- FASILITAS GEREJA -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'koster']))
                     <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Fasilitas Gereja</div>
                     
                     <a href="{{ route('admin.facility-bookings.index') }}" 
@@ -226,7 +230,7 @@
                     </a>
                 @endif
 
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'koster']))
                     <a href="{{ route('admin.feedback.index') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition {{ request()->routeIs('admin.feedback*') ? 'bg-active text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                         <span class="font-medium">Kritik & Saran</span>
@@ -234,13 +238,13 @@
                 @endif
 
                 <!-- LITURGI -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik', 'misdinar', 'lektor']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik', 'misdinar', 'lektor','koster']))
                     <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Liturgi & Peribadatan</div>
 
                     <a href="{{ route('admin.liturgy.schedules') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition group {{ request()->routeIs('admin.liturgy.schedules*') ? 'bg-active text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <span class="font-medium">
-                            {{ in_array(Auth::user()->role, ['misdinar', 'lektor']) ? 'Lihat Jadwal' : 'Kelola Jadwal' }}
+                            {{ in_array(Auth::user()->role, ['misdinar', 'lektor','koster']) ? 'Lihat Jadwal' : 'Kelola Jadwal' }}
                         </span>
                     </a>
 
@@ -252,13 +256,13 @@
                         </div>
                         
                         <div x-show="openDb" x-transition class="space-y-1">
-                            @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
+                            @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'koster']))
                                 <a href="{{ route('admin.liturgy.personnels') }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-gray-500 mr-3"></span> Semua Data</a>
                                 <a href="{{ route('admin.liturgy.personnels', ['type' => 'Misdinar']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-red-500 mr-3"></span> Misdinar</a>
                                 <a href="{{ route('admin.liturgy.personnels', ['type' => 'Lektor']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-green-500 mr-3"></span> Lektor</a>
                             @endif
 
-                            @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik']))
+                            @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'direktur_musik', 'koster']))
                                 <a href="{{ route('admin.liturgy.personnels', ['type' => 'Mazmur']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-yellow-500 mr-3"></span> Mazmur</a>
                                 <a href="{{ route('admin.liturgy.personnels', ['type' => 'Organis']) }}" class="flex items-center px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"><span class="w-2 h-2 rounded-full bg-purple-500 mr-3"></span> Organis</a>
                             @endif

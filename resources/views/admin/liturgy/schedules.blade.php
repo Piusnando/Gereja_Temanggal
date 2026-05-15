@@ -25,7 +25,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Kalender & Penugasan Liturgi</h1>
             <p class="text-sm text-gray-500 mt-1">Pilih tanggal pada kalender untuk mengelola misa dan mengatur petugas.</p>
         </div>
-        @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+        @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
         <a href="{{ route('admin.liturgy.schedules.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-md flex items-center transition">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Buat Jadwal Misa Baru
@@ -186,10 +186,6 @@
                     </label>
                 </div>
 
-                <!-- ================================================================ -->
-                <!-- DIPERBAIKI: Gunakan <template x-if="..."> untuk mencegah konflik   -->
-                <!-- ================================================================ -->
-
                 <!-- TAMPILAN 1: FORM UNTUK PETUGAS DARI LUAR (MANUAL) -->
                 <template x-if="isExternal">
                     <div x-transition class="bg-yellow-50 p-4 rounded-xl border-2 border-dashed border-yellow-300">
@@ -264,7 +260,7 @@
             <div x-show="step === 1" style="display: none;">
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="font-bold text-gray-700 text-lg">Misa yang Tersedia</h4>
-                    @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+                    @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
                     <a href="{{ route('admin.liturgy.schedules.create') }}" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg shadow-sm transition text-sm">
                         + Buat Jadwal Baru
                     </a>
@@ -295,7 +291,7 @@
             <!-- STEP 2: DETAIL JADWAL MISA (EDIT, HAPUS, LIST) -->
             <div x-show="step === 2" style="display: none;">
                 
-                @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'direktur_musik']))
+                @if(in_array(Auth::user()->role,['admin', 'pengurus_gereja', 'koster']))
                 <div class="flex flex-wrap justify-end gap-3 mb-6 pb-6 border-b border-gray-200" x-show="selectedSchedule">
                     <!-- Tombol Edit Jadwal -->
                     <a :href="`/admin/liturgy/schedules/${selectedSchedule?.id}/edit`" class="bg-yellow-50 text-yellow-600 hover:bg-yellow-500 hover:text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center transition border border-yellow-200 hover:border-transparent shadow-sm">

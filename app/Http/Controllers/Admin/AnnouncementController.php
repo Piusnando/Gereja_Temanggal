@@ -31,7 +31,7 @@ class AnnouncementController extends Controller
         $userRole = Auth::user()->role;
 
         // 1. ADMIN & PENGURUS: Bisa pilih semua kategori
-        if (in_array($userRole, ['admin', 'pengurus_gereja'])) {
+        if (in_array($userRole, ['admin', 'pengurus_gereja', 'koster'])) {
             return $this->allCategories;
         }
 
