@@ -22,7 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
-        'role', // <--- Tambahkan ini
+        'role',
+        'territory_id',
+        'lingkungan_id'
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -33,6 +35,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    public function territory() { return $this->belongsTo(Territory::class); }
+    public function lingkungan() { return $this->belongsTo(Lingkungan::class); }
 
     // Helper untuk mengecek role (opsional tapi sangat berguna)
     public function hasRole($role)

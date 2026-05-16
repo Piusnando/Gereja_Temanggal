@@ -112,7 +112,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     });
 
     // 5.5. ADMIN & PENGURUS GEREJA (Data Teritorial)
-    Route::middleware(['role:admin,pengurus_gereja'])->group(function () {
+    Route::middleware(['role:admin,pengurus_gereja,ketua_wilayah,ketua_lingkungan'])->group(function () {
         Route::resource('lingkungan', LingkunganController::class, ['as' => 'admin']);
     });
 
@@ -144,7 +144,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     });
 
     // 7. KONTEN & INFORMASI (Pengumuman, Kegiatan)
-    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir,koster,misdinar,lektor'])->group(function () {
+    Route::middleware(['role:admin,pengurus_gereja,omk,pia_pir,koster,misdinar,lektor,ketua_wilayah,ketua_lingkungan'])->group(function () {
         Route::resource('announcements', AnnouncementController::class, ['as' => 'admin']);
         Route::resource('activities', ActivityController::class, ['as' => 'admin']);
     });

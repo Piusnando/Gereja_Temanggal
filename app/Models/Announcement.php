@@ -13,8 +13,12 @@ class Announcement extends Model
         'image_path', 
         'category', 
         'event_date',
-        'is_pinned'
+        'is_pinned',
+        'territory_id', 
+        'lingkungan_id'
     ];
+public function territory() { return $this->belongsTo(Territory::class); }
+public function lingkungan() { return $this->belongsTo(Lingkungan::class); }
 
     protected $casts = [
         'event_date' => 'date',

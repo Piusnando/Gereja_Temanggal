@@ -121,13 +121,22 @@
                                     @endif
                                 </p>
                                 
-                                <!-- Label Kategori -->
-                                <div>
-                                    <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border
+                                <<!-- Label Kategori & Nama Spesifik -->
+                                <div class="mt-2">
+                                    <span class="inline-block px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide border
                                         {{ $item->category == 'Pengumuman Gereja' ? 'bg-blue-50 text-blue-700 border-blue-100' : 
-                                          ($item->category == 'OMK' ? 'bg-orange-50 text-orange-700 border-orange-100' : 
-                                          ($item->category == 'Berita Duka' ? 'bg-gray-800 text-white border-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200')) }}">
+                                            ($item->category == 'OMK' ? 'bg-orange-50 text-orange-700 border-orange-100' : 
+                                            ($item->category == 'Berita Duka' ? 'bg-gray-800 text-white border-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200')) }}">
+                                        
                                         {{ $item->category }}
+                                        
+                                        <!-- Tambahan Nama Spesifik Jika Ada -->
+                                        @if($item->category == 'Lingkungan' && $item->lingkungan)
+                                            &bull; {{ $item->lingkungan->name }}
+                                        @elseif($item->category == 'Wilayah' && $item->territory)
+                                            &bull; {{ $item->territory->name }}
+                                        @endif
+
                                     </span>
                                 </div>
                             </div>

@@ -154,7 +154,7 @@
                 @endif
 
                 <!-- KONTEN WEBSITE -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir', 'koster','misdinar','lektor']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja', 'omk', 'pia_pir', 'koster','misdinar','lektor','ketua_wilayah', 'ketua_lingkungan']))
 
                     <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Konten & Informasi</div>
                     
@@ -220,7 +220,7 @@
                 @endif
 
                 <!-- DATA TERITORIAL -->
-                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja']))
+                @if(in_array(Auth::user()->role, ['admin', 'pengurus_gereja','ketua_wilayah', 'ketua_lingkungan']))
                     <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Data Teritorial</div>
                     
                     <a href="{{ route('admin.lingkungan.index') }}" 

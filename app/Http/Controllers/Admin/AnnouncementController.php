@@ -4,39 +4,35 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Models\Lingkungan;
+use App\Models\Territory;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AnnouncementController extends Controller
 {
-    // Daftar Semua Kategori yang Ada
+    use AuthorizesRequests; 
+
     private $allCategories = [
-        'Pengumuman Gereja', 
-        'Paroki', 
-        'Wilayah', 
-        'Lingkungan', 
-        'OMK', 
-        'Misdinar', 
-        'PIA/PIR', 
-        'Calon Manten', 
-        'Berita Duka'
+        'Pengumuman Gereja', 'Paroki', 'Wilayah', 'Lingkungan', 
+        'OMK', 'Misdinar', 'PIA/PIR', 'Calon Manten', 'Berita Duka'
     ];
 
-    /**
-     * Helper: Filter Kategori Berdasarkan Role
-     */
     private function getAllowedCategories()
     {
         $userRole = Auth::user()->role;
 
-        // 1. ADMIN & PENGURUS: Bisa pilih semua kategori
+        // Admin, Pengurus, Koster bebas
         if (in_array($userRole, ['admin', 'pengurus_gereja', 'koster'])) {
             return $this->allCategories;
         }
 
-        // 2. ROLE SPESIFIK: Hanya bisa pilih kategori miliknya sendiri
+        // ROLE SPESIFIK: Batasi dropdown kategori yang muncul
         $map = [
+            'ketua_wilayah'  => ['Wilayah', 'Lingkungan'], // Ketua Wilayah boleh buat untuk wilayahnya atau 1 lingkungan di bawahnya
+            'ketua_lingkungan'=> ['Lingkungan'],
             'omk'            => ['OMK'],
             'pia_pir'        => ['PIA/PIR'],
             'misdinar'       => ['Misdinar'],
@@ -44,22 +40,27 @@ class AnnouncementController extends Controller
             'direktur_musik' => ['Pengumuman Gereja'],
         ];
 
-        return $map[$userRole] ?? []; // Default kosong jika tidak punya hak
+        return $map[$userRole] ?? [];
     }
 
     public function index(Request $request)
     {
-        // 1. Ambil daftar kategori yang DIIZINKAN untuk user ini
-        $allowedCategories = $this->getAllowedCategories();
+        $user = Auth::user();
+        // Load relasi agar nama wilayah & lingkungan bisa dipanggil
+        $query = Announcement::with(['territory', 'lingkungan']);
 
-        // 2. Mulai Query
-        $query = Announcement::query();
+        // Filter berdasarkan hak akses
+        if ($user->role === 'ketua_wilayah') {
+            $query->where('territory_id', $user->territory_id);
+        } elseif ($user->role === 'ketua_lingkungan') {
+            $query->where('lingkungan_id', $user->lingkungan_id);
+        } elseif (!in_array($user->role, ['admin', 'pengurus_gereja', 'koster'])) {
+            $allowed = $this->getAllowedCategories();
+            if(!empty($allowed)) {
+                $query->whereIn('category', $allowed);
+            }
+        }
 
-        // 3. TERAPKAN FILTER ROLE (PENTING)
-        // Hanya tampilkan pengumuman yang kategorinya ada dalam daftar izin user
-        $query->whereIn('category', $allowedCategories);
-
-        // 4. Filter Tambahan dari Input Search/Dropdown (Opsional)
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
@@ -67,36 +68,67 @@ class AnnouncementController extends Controller
             $query->where('category', $request->category);
         }
 
-        // 5. Ambil Data
         $announcements = $query->latest()->paginate(10);
+        $allowedCategories = $this->getAllowedCategories();
 
-        // 6. Kirim data dan daftar kategori ke View
         return view('admin.announcements.index', compact('announcements', 'allowedCategories'));
     }
 
     public function create()
     {
-        // Kirim daftar kategori yang DIIZINKAN ke view
         $categories = $this->getAllowedCategories();
+        $user = Auth::user();
         
-        return view('admin.announcements.create', compact('categories'));
+        // Siapkan data wilayah untuk dropdown (hanya yang diawasi jika ketua wilayah)
+        if ($user->role === 'ketua_wilayah') {
+            $territories = Territory::where('id', $user->territory_id)->with('lingkungans')->get();
+        } else {
+            $territories = Territory::with('lingkungans')->orderBy('name')->get();
+        }
+
+        return view('admin.announcements.create', compact('categories', 'territories'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'image' => 'nullable|image|max:2048',
-            'category' => 'required',
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category' => 'required|string',
             'event_date' => 'required|date',
-            // is_pinned tidak perlu required, karena opsional
+            'image' => 'nullable|image|max:2048',
+            'territory_id' => 'nullable|exists:territories,id',
+            'lingkungan_id' => 'nullable|exists:lingkungans,id',
         ]);
-
-        $data = $request->all();
-
-        // Handle Checkbox: Jika dicentang bernilai 1, jika tidak 0
+        
+        $user = Auth::user();
         $data['is_pinned'] = $request->has('is_pinned');
+
+        // Otomatis tandai pemilik pengumuman berdasarkan role
+        if ($user->role === 'ketua_lingkungan') {
+            $data['lingkungan_id'] = $user->lingkungan_id;
+            $data['territory_id'] = $user->lingkungan->territory_id;
+            $data['category'] = 'Lingkungan';
+        } 
+        elseif ($user->role === 'ketua_wilayah') {
+            $data['territory_id'] = $user->territory_id;
+            // Jika dia milih lingkungan spesifik, simpan. Jika tidak, kosongkan.
+            if ($request->filled('lingkungan_id')) {
+                $isOwnLingkungan = Lingkungan::where('id', $request->lingkungan_id)->where('territory_id', $user->territory_id)->exists();
+                $data['lingkungan_id'] = $isOwnLingkungan ? $request->lingkungan_id : null;
+                $data['category'] = 'Lingkungan';
+            } else {
+                $data['lingkungan_id'] = null;
+                $data['category'] = 'Wilayah';
+            }
+        } 
+        else {
+            // Jika yang login Admin, reset nilai id jika bukan kategori wilayah/lingkungan
+            if (!in_array($data['category'], ['Wilayah', 'Lingkungan'])) {
+                $data['territory_id'] = null;
+                $data['lingkungan_id'] = null;
+            }
+        }
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('uploads/announcements', 'public');
@@ -107,36 +139,64 @@ class AnnouncementController extends Controller
         return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil ditambahkan!');
     }
 
-    public function edit($id)
+    public function edit(Announcement $announcement)
     {
-        $announcement = Announcement::findOrFail($id);
-        
-        // Kirim daftar kategori yang DIIZINKAN ke view edit juga
+        $this->authorize('update', $announcement);
         $categories = $this->getAllowedCategories();
+        
+        $user = Auth::user();
+        if ($user->role === 'ketua_wilayah') {
+            $territories = Territory::where('id', $user->territory_id)->with('lingkungans')->get();
+        } else {
+            $territories = Territory::with('lingkungans')->orderBy('name')->get();
+        }
 
-        return view('admin.announcements.edit', compact('announcement', 'categories'));
+        return view('admin.announcements.edit', compact('announcement', 'categories', 'territories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Announcement $announcement)
     {
-        $announcement = Announcement::findOrFail($id);
-        
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'image' => 'nullable|image|max:2048',
-            'category' => 'required',
+        $this->authorize('update', $announcement);
+
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category' => 'required|string',
             'event_date' => 'required|date',
+            'image' => 'nullable|image|max:2048',
+            'territory_id' => 'nullable|exists:territories,id',
+            'lingkungan_id' => 'nullable|exists:lingkungans,id',
         ]);
 
-        $data = $request->all();
-        
-        // Handle Checkbox Update
+        $user = Auth::user();
         $data['is_pinned'] = $request->has('is_pinned');
+
+        if ($user->role === 'ketua_lingkungan') {
+            $data['lingkungan_id'] = $user->lingkungan_id;
+            $data['territory_id'] = $user->lingkungan->territory_id;
+            $data['category'] = 'Lingkungan';
+        } 
+        elseif ($user->role === 'ketua_wilayah') {
+            $data['territory_id'] = $user->territory_id;
+            if ($request->filled('lingkungan_id')) {
+                $isOwnLingkungan = Lingkungan::where('id', $request->lingkungan_id)->where('territory_id', $user->territory_id)->exists();
+                $data['lingkungan_id'] = $isOwnLingkungan ? $request->lingkungan_id : null;
+                $data['category'] = 'Lingkungan';
+            } else {
+                $data['lingkungan_id'] = null;
+                $data['category'] = 'Wilayah';
+            }
+        } 
+        else {
+            if (!in_array($data['category'], ['Wilayah', 'Lingkungan'])) {
+                $data['territory_id'] = null;
+                $data['lingkungan_id'] = null;
+            }
+        }
 
         if ($request->hasFile('image')) {
             if ($announcement->image_path) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($announcement->image_path);
+                Storage::disk('public')->delete($announcement->image_path);
             }
             $data['image_path'] = $request->file('image')->store('uploads/announcements', 'public');
         }
@@ -146,16 +206,12 @@ class AnnouncementController extends Controller
         return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil diperbarui!');
     }
 
-    public function destroy($id)
+    public function destroy(Announcement $announcement)
     {
-        // Opsional: Cek hak akses sebelum hapus (misal OMK tidak boleh hapus pengumuman Paroki)
-        $announcement = Announcement::findOrFail($id);
-        
-        if ($announcement->image_path) {
-            Storage::disk('public')->delete($announcement->image_path);
-        }
+        $this->authorize('delete', $announcement);
+        if ($announcement->image_path) Storage::disk('public')->delete($announcement->image_path);
         $announcement->delete();
 
-        return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman dihapus!');
+        return back()->with('success', 'Pengumuman berhasil dihapus.');
     }
 }
