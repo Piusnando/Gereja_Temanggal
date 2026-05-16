@@ -121,7 +121,7 @@
                                     @endif
                                 </p>
                                 
-                                <<!-- Label Kategori & Nama Spesifik -->
+                                <!-- Label Kategori & Nama Spesifik -->
                                 <div class="mt-2">
                                     <span class="inline-block px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide border
                                         {{ $item->category == 'Pengumuman Gereja' ? 'bg-blue-50 text-blue-700 border-blue-100' : 
